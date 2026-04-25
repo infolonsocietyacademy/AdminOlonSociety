@@ -4,32 +4,229 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OLON Society Academy | Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-:root{--bg:#080a10;--surface:#111622;--surface2:#182033;--border:rgba(255,255,255,.08);--text:#f4f6ff;--muted:#8891ad;--green:#29e6a7;--red:#ff5f70;--yellow:#ffd35a;--accent:#8c72ff;--accent2:#28d7ff}
+:root{
+--bg:#f7f9fc;
+--surface:#ffffff;
+--surface2:#f1f4f9;
+--border:#e4e8f0;
+--text:#1a1d2b;
+--muted:#6b7280;
+--green:#10b981;
+--red:#ef4444;
+--yellow:#f59e0b;
+--accent:#6366f1;
+}
+
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Outfit,sans-serif;background:radial-gradient(circle at top left,rgba(140,114,255,.18),transparent 34%),radial-gradient(circle at top right,rgba(40,215,255,.1),transparent 28%),var(--bg);color:var(--text);min-height:100vh;padding:2rem}
-header{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-bottom:2rem}
-.logo{font-family:'DM Serif Display',serif;font-size:2.05rem}.logo span{color:var(--accent)}.subtitle{color:var(--muted);font-size:.9rem}.month-badge{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:7px 15px;border-radius:999px}
-.hero{background:linear-gradient(135deg,rgba(140,114,255,.16),rgba(40,215,255,.06));border:1px solid var(--border);border-radius:22px;padding:1.5rem;margin-bottom:1.6rem;display:flex;justify-content:space-between;gap:1rem}
-.hero h1{font-family:'DM Serif Display',serif;font-size:1.8rem;margin-bottom:6px}.hero p{color:var(--muted)}.hero-pill{font-family:'DM Mono',monospace;font-size:.74rem;border:1px solid rgba(41,230,167,.25);color:var(--green);background:rgba(41,230,167,.11);padding:8px 12px;border-radius:999px;height:max-content}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:1rem;margin-bottom:1.5rem}.stat{background:rgba(17,22,34,.9);border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem}.stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.55rem}.stat-value{font-family:'DM Serif Display',serif;font-size:2.15rem}.premium{color:var(--yellow)}.active{color:var(--green)}.pending{color:var(--red)}.money{color:var(--accent2);font-size:1.55rem!important}
-.progress-bar{margin-top:.75rem;background:var(--surface2);border-radius:999px;height:5px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent2))}
-.controls{display:flex;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap}.controls input{flex:1;min-width:215px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;color:var(--text);font-family:Outfit,sans-serif}.filter-btn,.add-btn,.export-btn{border-radius:12px;padding:10px 16px;font-family:Outfit,sans-serif;font-size:.82rem;cursor:pointer;font-weight:600}.filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted)}.filter-btn.on,.filter-btn:hover{border-color:var(--accent);color:var(--text);background:rgba(140,114,255,.1)}.add-btn{background:linear-gradient(135deg,var(--accent),#6246ea);border:0;color:#fff}.export-btn{background:transparent;border:1px solid rgba(40,215,255,.35);color:var(--accent2)}
-.table-wrap{background:rgba(17,22,34,.92);border:1px solid var(--border);border-radius:18px;overflow:hidden}table{width:100%;border-collapse:collapse}th{text-align:left;padding:15px 20px;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);background:var(--surface2)}td{padding:14px 20px;font-size:.89rem;border-top:1px solid var(--border)}tr:hover{background:rgba(32,42,66,.75)}.name-cell{display:flex;align-items:center}.avatar{width:35px;height:35px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:700;margin-right:10px}.sub-text{font-size:.76rem;color:var(--muted);margin-top:2px}.badge{display:inline-flex;gap:5px;padding:4px 10px;border-radius:999px;font-size:.72rem;font-weight:700}.badge.activo{background:rgba(41,230,167,.11);color:var(--green)}.badge.pendiente{background:rgba(255,95,112,.11);color:var(--red)}.badge.parcial{background:rgba(255,211,90,.12);color:var(--yellow)}.badge.plan{background:rgba(140,114,255,.13);color:#b9adff}.action-btn{background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--muted);font-family:Outfit,sans-serif;font-size:.75rem;cursor:pointer;text-decoration:none}.action-btn.mark,.action-btn.whatsapp{border-color:rgba(41,230,167,.3);color:var(--green)}.empty{text-align:center;padding:3rem;color:var(--muted)}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);z-index:100;align-items:center;justify-content:center;padding:1rem}.modal-overlay.open{display:flex}.modal{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:2rem;width:100%;max-width:460px}.modal h2{font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:1.35rem}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-group.full{grid-column:1/-1}.form-group{margin-bottom:1rem}.form-group label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.form-group input,.form-group select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:10px 14px;color:var(--text);font-family:Outfit,sans-serif}.modal-actions{display:flex;gap:10px;margin-top:1.2rem}.modal-actions button{flex:1;padding:11px;border-radius:11px;font-family:Outfit,sans-serif;cursor:pointer;font-weight:700}.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-save{background:var(--accent);border:0;color:#fff}
-@media(max-width:720px){body{padding:1rem}header,.hero{flex-direction:column;align-items:flex-start}.table-wrap{overflow-x:auto}table{min-width:820px}.form-grid{grid-template-columns:1fr}}
+
+body{
+font-family:Outfit,sans-serif;
+background:var(--bg);
+color:var(--text);
+padding:2rem;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+margin-bottom:2rem;
+}
+
+.logo{
+font-family:'DM Serif Display',serif;
+font-size:2rem;
+}
+
+.subtitle{
+color:var(--muted);
+font-size:.9rem;
+}
+
+.month-badge{
+font-size:.8rem;
+background:var(--surface2);
+padding:8px 14px;
+border-radius:20px;
+}
+
+.hero{
+background:#fff;
+border:1px solid var(--border);
+border-radius:20px;
+padding:1.5rem;
+margin-bottom:1.5rem;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:1rem;
+margin-bottom:1.5rem;
+}
+
+.stat{
+background:#fff;
+border:1px solid var(--border);
+border-radius:15px;
+padding:1.2rem;
+}
+
+.stat-label{
+font-size:.7rem;
+color:var(--muted);
+margin-bottom:5px;
+}
+
+.stat-value{
+font-size:1.8rem;
+font-weight:600;
+}
+
+.controls{
+display:flex;
+gap:10px;
+margin-bottom:1rem;
+flex-wrap:wrap;
+}
+
+.controls input{
+flex:1;
+padding:10px;
+border-radius:10px;
+border:1px solid var(--border);
+background:#fff;
+}
+
+button{
+cursor:pointer;
+border-radius:10px;
+padding:10px 15px;
+border:1px solid var(--border);
+background:#fff;
+}
+
+.add-btn{
+background:var(--accent);
+color:#fff;
+border:none;
+}
+
+.table-wrap{
+background:#fff;
+border:1px solid var(--border);
+border-radius:15px;
+overflow:hidden;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th{
+background:var(--surface2);
+padding:15px;
+font-size:.7rem;
+text-align:left;
+}
+
+td{
+padding:14px;
+border-top:1px solid var(--border);
+}
+
+.badge{
+padding:4px 10px;
+border-radius:20px;
+font-size:.7rem;
+}
+
+.activo{background:#dcfce7;color:#16a34a}
+.pendiente{background:#fee2e2;color:#dc2626}
+.parcial{background:#fef3c7;color:#d97706}
+
 </style>
 </head>
+
 <body>
-<header><div><div class="logo">OLON Society<span>.</span></div><div class="subtitle">Dashboard interno de estudiantes, membresías y pagos</div></div><div class="month-badge" id="monthBadge"></div></header>
-<section class="hero"><div><h1>Control de comunidad y pagos</h1><p>Administra estudiantes, planes VIP, mentoría 1/1, pagos pendientes y contacto directo por WhatsApp.</p></div><div class="hero-pill">ACADEMY CONTROL CENTER</div></section>
-<div class="stats"><div class="stat"><div class="stat-label">Total miembros</div><div class="stat-value" id="statTotal">0</div></div><div class="stat"><div class="stat-label">VIP Premium</div><div class="stat-value premium" id="statPremium">0</div></div><div class="stat"><div class="stat-label">Pagos activos</div><div class="stat-value active" id="statActivos">0</div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div></div><div class="stat"><div class="stat-label">Pendientes</div><div class="stat-value pending" id="statPendientes">0</div></div><div class="stat"><div class="stat-label">Recaudado</div><div class="stat-value money" id="statMonto">$0</div></div></div>
-<div class="controls"><input type="text" id="searchInput" placeholder="Buscar por nombre, WhatsApp o plan..." oninput="renderTable()"><button class="filter-btn on" onclick="setFilter('todos',this)">Todos</button><button class="filter-btn" onclick="setFilter('activo',this)">Activos</button><button class="filter-btn" onclick="setFilter('pendiente',this)">Pendientes</button><button class="filter-btn" onclick="setFilter('parcial',this)">Parcial</button><button class="export-btn" onclick="exportCSV()">Exportar CSV</button><button class="add-btn" onclick="openModal()">+ Agregar miembro</button></div>
-<div class="table-wrap"><table><thead><tr><th>Miembro</th><th>Plan</th><th>Monto</th><th>Estado</th><th>Último pago</th><th>Acción</th></tr></thead><tbody id="tableBody"></tbody></table></div>
-<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)"><div class="modal"><h2 id="modalTitle">Nuevo miembro</h2><div class="form-grid"><div class="form-group full"><label>Nombre completo</label><input id="fName" placeholder="Ej: Carlos Rivera"></div><div class="form-group"><label>WhatsApp</label><input id="fWhatsapp" placeholder="7875551234"></div><div class="form-group"><label>Plan</label><select id="fPlan"><option>VIP Regular</option><option>VIP Premium</option><option>Mentoría 1/1</option></select></div><div class="form-group"><label>Monto mensual ($)</label><input type="number" id="fAmount" placeholder="225"></div><div class="form-group"><label>Estado</label><select id="fStatus"><option value="pendiente">Pendiente</option><option value="activo">Activo</option><option value="parcial">Parcial</option></select></div><div class="form-group full"><label>Fecha de pago</label><input type="date" id="fDate"></div></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button><button class="btn-save" onclick="saveStudent()">Guardar</button></div></div></div>
+
+<header>
+<div>
+<div class="logo">OLON Society</div>
+<div class="subtitle">Dashboard de miembros</div>
+</div>
+<div class="month-badge" id="monthBadge"></div>
+</header>
+
+<section class="hero">
+<h2>Control de comunidad</h2>
+<p>Administra estudiantes y pagos</p>
+</section>
+
+<div class="stats">
+<div class="stat"><div class="stat-label">Total</div><div class="stat-value" id="statTotal">0</div></div>
+<div class="stat"><div class="stat-label">Activos</div><div class="stat-value" id="statActivos">0</div></div>
+<div class="stat"><div class="stat-label">Pendientes</div><div class="stat-value" id="statPendientes">0</div></div>
+</div>
+
+<div class="controls">
+<input type="text" id="searchInput" placeholder="Buscar..." oninput="renderTable()">
+<button class="add-btn" onclick="add()">+ Agregar</button>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Nombre</th>
+<th>Plan</th>
+<th>Monto</th>
+<th>Estado</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+
 <script>
-const months=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];let filter='todos',editId=null;const defaultStudents=[{id:1,name:'Carlos Mendoza',whatsapp:'7875551111',plan:'VIP Regular',amount:100,status:'activo',date:'2026-04-03'},{id:2,name:'Sofía Reyes',whatsapp:'7875552222',plan:'VIP Premium',amount:225,status:'activo',date:'2026-04-05'},{id:3,name:'Luis Torres',whatsapp:'7875553333',plan:'VIP Regular',amount:100,status:'pendiente',date:''},{id:4,name:'Valentina Cruz',whatsapp:'7875554444',plan:'Mentoría 1/1',amount:500,status:'activo',date:'2026-04-08'}];let students=JSON.parse(localStorage.getItem('olon_members')||'null')||defaultStudents;let nextId=students.length?Math.max(...students.map(s=>s.id))+1:1;function save(){localStorage.setItem('olon_members',JSON.stringify(students))}function initials(n){return n.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()}function statusLabel(s){return `<span class="badge ${s}">${s}</span>`}function fmt(d){if(!d)return '—';let [y,m,day]=d.split('-');return `${day}/${m}/${y}`}function wa(phone,name){let p=String(phone||'').replace(/\D/g,'');return p?`https://wa.me/1${p}?text=${encodeURIComponent('Saludos '+name+', te escribe OLON Society Academy sobre tu membresía.')}`:'#'}function setFilter(f,b){filter=f;document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderTable()}function updateStats(){let total=students.length,act=students.filter(s=>s.status==='activo').length,pen=students.filter(s=>s.status==='pendiente').length,prem=students.filter(s=>s.plan==='VIP Premium').length,monto=students.filter(s=>s.status==='activo').reduce((a,s)=>a+Number(s.amount||0),0);document.getElementById('statTotal').textContent=total;document.getElementById('statPremium').textContent=prem;document.getElementById('statActivos').textContent=act;document.getElementById('statPendientes').textContent=pen;document.getElementById('statMonto').textContent='$'+monto.toLocaleString();document.getElementById('progressFill').style.width=(total?Math.round(act/total*100):0)+'%'}function renderTable(){let q=document.getElementById('searchInput').value.toLowerCase();let list=students.filter(s=>(filter==='todos'||s.status===filter)&&(s.name.toLowerCase().includes(q)||String(s.whatsapp||'').includes(q)||s.plan.toLowerCase().includes(q)));let tb=document.getElementById('tableBody');if(!list.length){tb.innerHTML='<tr><td colspan="6" class="empty">No se encontraron miembros</td></tr>';return}tb.innerHTML=list.map(s=>`<tr><td><div class="name-cell"><div class="avatar" style="background:#8c72ff22;color:#8c72ff">${initials(s.name)}</div><div><b>${s.name}</b><div class="sub-text">WhatsApp: ${s.whatsapp||'—'}</div></div></div></td><td><span class="badge plan">${s.plan}</span></td><td>$${Number(s.amount||0).toLocaleString()}</td><td>${statusLabel(s.status)}</td><td>${fmt(s.date)}</td><td><button class="action-btn mark" onclick="markPaid(${s.id})">Activo</button> <button class="action-btn" onclick="editStudent(${s.id})">Editar</button> <a class="action-btn whatsapp" href="${wa(s.whatsapp,s.name)}" target="_blank">WhatsApp</a></td></tr>`).join('')}function markPaid(id){let s=students.find(x=>x.id===id);if(s){s.status='activo';s.date=new Date().toISOString().split('T')[0];save();updateStats();renderTable()}}function openModal(id=null){editId=id;let s=id?students.find(x=>x.id===id):null;document.getElementById('modalTitle').textContent=id?'Editar miembro':'Nuevo miembro';fName.value=s?.name||'';fWhatsapp.value=s?.whatsapp||'';fPlan.value=s?.plan||'VIP Regular';fAmount.value=s?.amount||'';fStatus.value=s?.status||'pendiente';fDate.value=s?.date||'';modalOverlay.classList.add('open')}function closeModal(){modalOverlay.classList.remove('open')}function closeModalOutside(e){if(e.target===modalOverlay)closeModal()}function editStudent(id){openModal(id)}function saveStudent(){let name=fName.value.trim();if(!name){fName.focus();return}let data={name,whatsapp:fWhatsapp.value.trim(),plan:fPlan.value,amount:parseFloat(fAmount.value)||0,status:fStatus.value,date:fDate.value};if(editId){Object.assign(students.find(x=>x.id===editId),data)}else{students.push({id:nextId++,...data})}save();updateStats();renderTable();closeModal()}function exportCSV(){let csv=[['Nombre','WhatsApp','Plan','Monto','Estado','Fecha'],...students.map(s=>[s.name,s.whatsapp,s.plan,s.amount,s.status,s.date])].map(r=>r.map(c=>`"${String(c??'').replaceAll('"','""')}"`).join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='olon_society_miembros.csv';a.click()}let now=new Date();monthBadge.textContent=months[now.getMonth()].toUpperCase()+' '+now.getFullYear();updateStats();renderTable();
+
+let students=[
+{name:'Carlos',plan:'VIP',amount:100,status:'activo'},
+{name:'Luis',plan:'VIP',amount:100,status:'pendiente'}
+];
+
+function renderTable(){
+let q=document.getElementById('searchInput').value.toLowerCase();
+let list=students.filter(s=>s.name.toLowerCase().includes(q));
+
+let html=list.map(s=>`
+<tr>
+<td>${s.name}</td>
+<td>${s.plan}</td>
+<td>$${s.amount}</td>
+<td><span class="badge ${s.status}">${s.status}</span></td>
+</tr>
+`).join('');
+
+document.getElementById('tableBody').innerHTML=html;
+
+document.getElementById('statTotal').textContent=students.length;
+document.getElementById('statActivos').textContent=students.filter(s=>s.status==='activo').length;
+document.getElementById('statPendientes').textContent=students.filter(s=>s.status==='pendiente').length;
+}
+
+function add(){
+students.push({name:'Nuevo',plan:'VIP',amount:100,status:'pendiente'});
+renderTable();
+}
+
+renderTable();
+
 </script>
+
 </body>
 </html>
