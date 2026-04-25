@@ -1,1067 +1,851 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OLON Society Academy | Pro Dashboard</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --bg:#f4f6fb;
-      --card:#ffffff;
-      --text:#101828;
-      --muted:#667085;
-      --soft:#f7f9fc;
-      --line:#e6ebf2;
-      --dark:#07111f;
-      --dark2:#0d1f36;
-      --gold:#e8b93f;
-      --gold2:#f7d66b;
-      --green:#16a34a;
-      --red:#ef4444;
-      --blue:#2563eb;
-      --purple:#7c3aed;
-      --shadow:0 20px 50px rgba(16,24,40,.08);
-      --radius:24px;
-    }
-
-    *{margin:0;padding:0;box-sizing:border-box}
-
-    body{
-      min-height:100vh;
-      font-family:Outfit,system-ui,sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(232,185,63,.15), transparent 28%),
-        var(--bg);
-      color:var(--text);
-    }
-
-    button,input,select{font-family:inherit}
-    button{cursor:pointer}
-
-    .app{
-      display:grid;
-      grid-template-columns:290px 1fr;
-      min-height:100vh;
-    }
-
-    .sidebar{
-      position:sticky;
-      top:0;
-      height:100vh;
-      padding:24px;
-      color:white;
-      background:
-        radial-gradient(circle at 25% 0%, rgba(247,214,107,.2), transparent 30%),
-        linear-gradient(180deg,var(--dark),var(--dark2));
-      overflow:auto;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin-bottom:34px;
-    }
-
-    .brand-mark{
-      width:54px;
-      height:54px;
-      display:grid;
-      place-items:center;
-      border-radius:18px;
-      background:linear-gradient(135deg,var(--gold2),var(--gold));
-      color:var(--dark);
-      font-size:1.15rem;
-      font-weight:900;
-      box-shadow:0 14px 34px rgba(232,185,63,.26);
-    }
-
-    .brand h1{
-      font-size:1.08rem;
-      line-height:1.1;
-      font-weight:900;
-    }
-
-    .brand p{
-      margin-top:4px;
-      color:var(--gold2);
-      font-size:.78rem;
-      font-weight:800;
-    }
-
-    .nav-label{
-      margin:26px 0 10px;
-      color:rgba(255,255,255,.43);
-      font-size:.72rem;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.13em;
-    }
-
-    .nav a{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-height:48px;
-      padding:0 14px;
-      margin-bottom:8px;
-      color:rgba(255,255,255,.72);
-      text-decoration:none;
-      font-size:.95rem;
-      font-weight:800;
-      border-radius:16px;
-      transition:.2s ease;
-    }
-
-    .nav a:hover,.nav a.active{
-      color:var(--dark);
-      background:linear-gradient(135deg,var(--gold2),var(--gold));
-      box-shadow:0 12px 30px rgba(232,185,63,.2);
-    }
-
-    .nav-icon{
-      width:26px;
-      height:26px;
-      display:grid;
-      place-items:center;
-      border-radius:9px;
-      background:rgba(255,255,255,.08);
-    }
-
-    .nav a.active .nav-icon,
-    .nav a:hover .nav-icon{
-      background:rgba(7,17,31,.12);
-    }
-
-    .side-card{
-      margin-top:28px;
-      padding:18px;
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:22px;
-      background:rgba(255,255,255,.08);
-      backdrop-filter:blur(16px);
-    }
-
-    .side-card h3{
-      font-size:1rem;
-      margin-bottom:8px;
-    }
-
-    .side-card p{
-      color:rgba(255,255,255,.66);
-      font-size:.86rem;
-      line-height:1.5;
-    }
-
-    .side-card button{
-      width:100%;
-      height:44px;
-      margin-top:14px;
-      border:0;
-      border-radius:999px;
-      color:var(--dark);
-      background:white;
-      font-weight:900;
-    }
-
-    .main{
-      min-width:0;
-      padding:26px;
-    }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:18px;
-      margin-bottom:22px;
-    }
-
-    .title h2{
-      font-size:clamp(1.6rem,3vw,2.35rem);
-      font-weight:900;
-      letter-spacing:-.03em;
-    }
-
-    .title p{
-      margin-top:6px;
-      color:var(--muted);
-      font-weight:600;
-    }
-
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .search{
-      width:min(360px,100%);
-      height:48px;
-      padding:0 18px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      background:white;
-      outline:none;
-      font-weight:700;
-      box-shadow:0 8px 18px rgba(16,24,40,.04);
-    }
-
-    .btn{
-      height:48px;
-      padding:0 18px;
-      border:0;
-      border-radius:999px;
-      font-weight:900;
-      transition:.2s ease;
-    }
-
-    .btn:hover{transform:translateY(-2px)}
-
-    .btn-dark{
-      color:white;
-      background:var(--dark);
-    }
-
-    .btn-gold{
-      color:var(--dark);
-      background:linear-gradient(135deg,var(--gold2),var(--gold));
-      box-shadow:0 12px 28px rgba(232,185,63,.22);
-    }
-
-    .hero{
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:18px;
-      margin-bottom:18px;
-    }
-
-    .hero-card{
-      position:relative;
-      min-height:260px;
-      overflow:hidden;
-      padding:30px;
-      color:white;
-      border-radius:var(--radius);
-      background:
-        radial-gradient(circle at 80% 15%, rgba(247,214,107,.32), transparent 31%),
-        linear-gradient(135deg,#07111f,#0d2a49);
-      box-shadow:var(--shadow);
-    }
-
-    .hero-card::after{
-      content:"";
-      position:absolute;
-      right:-80px;
-      bottom:-110px;
-      width:310px;
-      height:310px;
-      border-radius:50%;
-      background:rgba(255,255,255,.08);
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 13px;
-      border:1px solid rgba(247,214,107,.22);
-      border-radius:999px;
-      background:rgba(255,255,255,.08);
-      color:var(--gold2);
-      font-size:.75rem;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.04em;
-    }
-
-    .dot{
-      width:8px;
-      height:8px;
-      border-radius:99px;
-      background:var(--gold);
-      box-shadow:0 0 0 6px rgba(232,185,63,.15);
-    }
-
-    .hero-card h3{
-      max-width:680px;
-      margin:22px 0 12px;
-      font-size:clamp(1.9rem,4vw,3.2rem);
-      line-height:1;
-      letter-spacing:-.05em;
-    }
-
-    .hero-card p{
-      max-width:650px;
-      color:rgba(255,255,255,.72);
-      line-height:1.65;
-      font-size:1rem;
-    }
-
-    .mini-stats{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:12px;
-      margin-top:24px;
-      position:relative;
-      z-index:1;
-    }
-
-    .mini{
-      padding:14px;
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:18px;
-      background:rgba(255,255,255,.08);
-    }
-
-    .mini strong{
-      display:block;
-      color:var(--gold2);
-      font-size:1.55rem;
-      font-weight:900;
-    }
-
-    .mini span{
-      color:rgba(255,255,255,.62);
-      font-size:.8rem;
-      font-weight:800;
-    }
-
-    .owner-card{
-      padding:24px;
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      background:white;
-      box-shadow:var(--shadow);
-    }
-
-    .owner-head{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin-bottom:18px;
-    }
-
-    .avatar{
-      width:58px;
-      height:58px;
-      display:grid;
-      place-items:center;
-      border-radius:20px;
-      color:var(--gold2);
-      background:var(--dark);
-      font-weight:900;
-    }
-
-    .owner-head h3{font-size:1.1rem}
-    .owner-head p{
-      color:var(--muted);
-      font-size:.86rem;
-      font-weight:700;
-    }
-
-    .progress{
-      padding:18px;
-      margin-top:14px;
-      border:1px solid var(--line);
-      border-radius:18px;
-      background:var(--soft);
-    }
-
-    .progress-row{
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:10px;
-      font-weight:900;
-    }
-
-    .bar{
-      height:10px;
-      border-radius:999px;
-      background:#e8edf5;
-      overflow:hidden;
-    }
-
-    .bar span{
-      display:block;
-      height:100%;
-      border-radius:999px;
-      background:linear-gradient(90deg,var(--gold),var(--green));
-    }
-
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:16px;
-      margin-bottom:18px;
-    }
-
-    .stat{
-      padding:20px;
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      background:white;
-      box-shadow:0 12px 30px rgba(16,24,40,.05);
-    }
-
-    .stat-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:18px;
-    }
-
-    .stat small{
-      color:var(--muted);
-      font-size:.74rem;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-    }
-
-    .stat-icon{
-      width:42px;
-      height:42px;
-      display:grid;
-      place-items:center;
-      border-radius:15px;
-      background:var(--soft);
-      font-weight:900;
-    }
-
-    .stat strong{
-      display:block;
-      font-size:2rem;
-      font-weight:900;
-      letter-spacing:-.04em;
-    }
-
-    .trend{
-      display:block;
-      margin-top:8px;
-      color:var(--green);
-      font-size:.82rem;
-      font-weight:900;
-    }
-
-    .content{
-      display:grid;
-      grid-template-columns:1fr 360px;
-      gap:18px;
-    }
-
-    .panel,.quick-card{
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      background:white;
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-
-    .panel-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      padding:20px;
-      border-bottom:1px solid var(--line);
-    }
-
-    .panel-head h3{
-      font-size:1.2rem;
-      font-weight:900;
-    }
-
-    .panel-head p{
-      margin-top:4px;
-      color:var(--muted);
-      font-size:.9rem;
-      font-weight:700;
-    }
-
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .tab{
-      padding:9px 13px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      color:var(--muted);
-      background:white;
-      font-size:.8rem;
-      font-weight:900;
-    }
-
-    .tab.active{
-      color:white;
-      background:var(--dark);
-      border-color:var(--dark);
-    }
-
-    .table-wrap{overflow:auto}
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      min-width:820px;
-    }
-
-    th,td{
-      padding:16px 20px;
-      text-align:left;
-      border-bottom:1px solid var(--line);
-      white-space:nowrap;
-    }
-
-    th{
-      color:var(--muted);
-      font-size:.72rem;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-    }
-
-    td{
-      color:#344054;
-      font-weight:700;
-    }
-
-    .client{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-
-    .client-initial{
-      width:40px;
-      height:40px;
-      display:grid;
-      place-items:center;
-      border-radius:15px;
-      color:var(--dark);
-      background:#f2f4f7;
-      font-weight:900;
-    }
-
-    .client small{
-      display:block;
-      margin-top:2px;
-      color:var(--muted);
-      font-weight:700;
-    }
-
-    .status{
-      display:inline-flex;
-      align-items:center;
-      min-height:30px;
-      padding:0 11px;
-      border-radius:999px;
-      font-size:.76rem;
-      font-weight:900;
-    }
-
-    .pending{color:#9a6500;background:#fff7dd}
-    .accepted{color:#166534;background:#dcfce7}
-    .review{color:#3730a3;background:#e0e7ff}
-
-    .table-btn{
-      border:0;
-      border-radius:999px;
-      padding:9px 12px;
-      color:white;
-      background:var(--dark);
-      font-weight:900;
-    }
-
-    .right{
-      display:grid;
-      gap:18px;
-      align-content:start;
-    }
-
-    .quick-card{
-      padding:20px;
-    }
-
-    .quick-card h3{
-      margin-bottom:14px;
-      font-size:1.1rem;
-      font-weight:900;
-    }
-
-    .task{
-      display:flex;
-      gap:12px;
-      padding:14px 0;
-      border-bottom:1px solid var(--line);
-    }
-
-    .task:last-child{border-bottom:0}
-
-    .check{
-      width:28px;
-      height:28px;
-      flex:0 0 auto;
-      display:grid;
-      place-items:center;
-      border-radius:10px;
-      color:#166534;
-      background:#dcfce7;
-      font-weight:900;
-    }
-
-    .task p{font-weight:900}
-    .task span{
-      display:block;
-      margin-top:4px;
-      color:var(--muted);
-      font-size:.82rem;
-      line-height:1.4;
-      font-weight:700;
-    }
-
-    .score{
-      display:grid;
-      place-items:center;
-      text-align:center;
-      padding:24px;
-      color:white;
-      border-radius:22px;
-      background:linear-gradient(135deg,#07111f,#0d2a49);
-    }
-
-    .ring{
-      width:138px;
-      height:138px;
-      display:grid;
-      place-items:center;
-      margin-bottom:14px;
-      border-radius:50%;
-      background:conic-gradient(var(--gold) 0 78%, rgba(255,255,255,.14) 78% 100%);
-    }
-
-    .ring-inner{
-      width:104px;
-      height:104px;
-      display:grid;
-      place-items:center;
-      border-radius:50%;
-      background:#07111f;
-      color:var(--gold2);
-      font-size:2rem;
-      font-weight:900;
-    }
-
-    .score p{
-      margin-top:8px;
-      color:rgba(255,255,255,.66);
-      line-height:1.5;
-      font-weight:600;
-    }
-
-    .modal{
-      position:fixed;
-      inset:0;
-      display:none;
-      place-items:center;
-      padding:18px;
-      background:rgba(7,17,31,.68);
-      backdrop-filter:blur(16px);
-      z-index:20;
-    }
-
-    .modal.open{display:grid}
-
-    .modal-card{
-      width:min(620px,100%);
-      padding:24px;
-      border:1px solid rgba(247,214,107,.22);
-      border-radius:28px;
-      color:white;
-      background:
-        radial-gradient(circle at top right, rgba(232,185,63,.2), transparent 30%),
-        linear-gradient(145deg,#07111f,#0d1f36);
-      box-shadow:0 30px 90px rgba(0,0,0,.35);
-    }
-
-    .modal-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:14px;
-      margin-bottom:18px;
-    }
-
-    .modal-top h3{font-size:1.5rem}
-    .modal-top p{
-      margin-top:6px;
-      color:rgba(255,255,255,.66);
-      line-height:1.5;
-    }
-
-    .close{
-      width:42px;
-      height:42px;
-      border:1px solid rgba(255,255,255,.15);
-      border-radius:999px;
-      color:white;
-      background:rgba(255,255,255,.08);
-      font-size:1.2rem;
-    }
-
-    .profile-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:10px;
-      margin-bottom:18px;
-    }
-
-    .profile-item{
-      padding:13px;
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:16px;
-      background:rgba(255,255,255,.07);
-    }
-
-    .profile-item span{
-      display:block;
-      color:var(--gold2);
-      font-size:.72rem;
-      font-weight:900;
-      text-transform:uppercase;
-    }
-
-    .profile-item p{
-      margin-top:5px;
-      color:rgba(255,255,255,.82);
-      font-weight:700;
-    }
-
-    .modal-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    @media(max-width:1120px){
-      .app{grid-template-columns:1fr}
-      .sidebar{position:relative;height:auto}
-      .hero,.content{grid-template-columns:1fr}
-      .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-    }
-
-    @media(max-width:680px){
-      .main{padding:18px}
-      .topbar,.panel-head{align-items:flex-start;flex-direction:column}
-      .actions,.search{width:100%}
-      .btn{width:100%}
-      .hero-card{padding:22px}
-      .mini-stats,.cards,.profile-grid{grid-template-columns:1fr}
-      .sidebar{padding:20px}
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>OLON Society Academy | Dashboard Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080f;
+  --bg2:#0c1120;
+  --bg3:#111827;
+  --card:#111827;
+  --card2:#1a2234;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.12);
+  --text:#f0f4ff;
+  --muted:#8899b4;
+  --soft:#1e2d47;
+  --gold:#f0c040;
+  --gold2:#fad96b;
+  --gold3:rgba(240,192,64,.15);
+  --green:#34d399;
+  --green2:rgba(52,211,153,.15);
+  --red:#f87171;
+  --red2:rgba(248,113,113,.15);
+  --blue:#60a5fa;
+  --blue2:rgba(96,165,250,.15);
+  --purple:#a78bfa;
+  --r:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+button,input,select{font-family:inherit}
+button{cursor:pointer;border:none;background:none}
+
+/* LAYOUT */
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  position:sticky;top:0;height:100vh;
+  padding:24px 18px;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:32px;padding:0 6px}
+.brand-mark{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  display:grid;place-items:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:#06080f;
+  box-shadow:0 8px 24px rgba(240,192,64,.3);
+  flex-shrink:0;
+}
+.brand-text h1{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;line-height:1.1}
+.brand-text p{color:var(--gold);font-size:.72rem;font-weight:600;margin-top:3px;letter-spacing:.06em;text-transform:uppercase}
+
+.nav-section{margin-bottom:6px}
+.nav-label{
+  padding:6px 10px;margin:14px 0 6px;
+  color:rgba(255,255,255,.28);font-size:.67rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.14em;
+}
+.nav a{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;margin-bottom:2px;
+  border-radius:12px;color:var(--muted);
+  text-decoration:none;font-size:.88rem;font-weight:600;
+  transition:.2s;
+}
+.nav a:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.nav a.active{
+  color:var(--bg);background:var(--gold);
+  box-shadow:0 6px 20px rgba(240,192,64,.25);
+  font-weight:700;
+}
+.nav-ic{
+  width:24px;height:24px;border-radius:8px;
+  display:grid;place-items:center;font-size:.8rem;
+  background:rgba(255,255,255,.06);flex-shrink:0;
+}
+.nav a.active .nav-ic{background:rgba(6,8,15,.15)}
+
+.sidebar-bottom{margin-top:auto;padding-top:20px;border-top:1px solid var(--border)}
+.profile-mini{display:flex;align-items:center;gap:10px;padding:10px}
+.ava{
+  width:38px;height:38px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  display:grid;place-items:center;font-family:'Syne',sans-serif;
+  font-weight:800;font-size:.85rem;color:#06080f;
+}
+.profile-mini h4{font-size:.88rem;font-weight:700}
+.profile-mini p{font-size:.75rem;color:var(--muted)}
+
+/* MAIN */
+.main{min-width:0;background:var(--bg);display:flex;flex-direction:column}
+
+/* TOPBAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:20px 28px;border-bottom:1px solid var(--border);
+  background:var(--bg);position:sticky;top:0;z-index:10;
+}
+.topbar-left h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+.topbar-left p{color:var(--muted);font-size:.84rem;margin-top:3px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.search{
+  height:40px;padding:0 16px;
+  border:1px solid var(--border2);border-radius:999px;
+  background:var(--bg2);color:var(--text);
+  font-size:.85rem;font-weight:500;outline:none;width:240px;
+  transition:.2s;
+}
+.search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,192,64,.1)}
+.search::placeholder{color:var(--muted)}
+.btn{
+  height:40px;padding:0 18px;border-radius:999px;
+  font-size:.84rem;font-weight:700;transition:.2s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn-outline{border:1px solid var(--border2);color:var(--text);background:var(--bg2)}
+.btn-gold{background:var(--gold);color:#06080f;box-shadow:0 6px 18px rgba(240,192,64,.2)}
+
+/* CONTENT */
+.content{padding:24px 28px;flex:1}
+
+/* MONTH SELECTOR */
+.period-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;flex-wrap:wrap;gap:12px;
+}
+.period-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.ptab{
+  padding:8px 16px;border-radius:999px;font-size:.82rem;font-weight:700;
+  border:1px solid var(--border2);color:var(--muted);
+  transition:.2s;
+}
+.ptab:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
+.ptab.active{background:var(--gold);color:#06080f;border-color:var(--gold);box-shadow:0 4px 14px rgba(240,192,64,.2)}
+.year-sel{
+  height:38px;padding:0 14px;border-radius:10px;
+  border:1px solid var(--border2);background:var(--bg2);
+  color:var(--text);font-size:.84rem;font-weight:600;outline:none;
+}
+
+/* KPI STRIP */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+.kpi{
+  padding:18px;border-radius:var(--r);
+  border:1px solid var(--border);background:var(--card);
+  position:relative;overflow:hidden;
+  transition:.2s;
+}
+.kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--kpi-color,var(--gold));
+  border-radius:var(--r) var(--r) 0 0;
+}
+.kpi:hover{transform:translateY(-2px);border-color:var(--border2)}
+.kpi-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px}
+.kpi-val{font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.kpi-sub{font-size:.76rem;font-weight:600;margin-top:6px;color:var(--muted)}
+.kpi-sub.up{color:var(--green)}
+.kpi-sub.down{color:var(--red)}
+
+/* CHART AREA */
+.grid-2{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-bottom:24px}
+.chart-card{
+  border-radius:var(--r);border:1px solid var(--border);
+  background:var(--card);overflow:hidden;
+}
+.card-head{
+  padding:18px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+}
+.card-head h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800}
+.card-head p{font-size:.8rem;color:var(--muted);margin-top:3px}
+
+/* SVG CHART */
+.chart-wrap{padding:20px}
+.chart-svg{width:100%;overflow:visible}
+.bar-col{cursor:pointer;transition:.2s}
+.bar-col:hover .bar-rect{filter:brightness(1.2)}
+.bar-rect{transition:.3s}
+.axis-text{font-family:'DM Sans',sans-serif;font-size:11px;fill:var(--muted)}
+.chart-tooltip{
+  position:absolute;padding:8px 12px;
+  background:var(--card2);border:1px solid var(--border2);
+  border-radius:10px;font-size:.78rem;font-weight:700;
+  pointer-events:none;display:none;
+  box-shadow:0 8px 20px rgba(0,0,0,.4);
+  white-space:nowrap;z-index:99;
+}
+
+/* DONUT */
+.donut-wrap{padding:20px;display:flex;flex-direction:column;align-items:center}
+.donut-svg{width:170px;height:170px;margin:10px auto}
+.donut-legend{width:100%;margin-top:16px}
+.legend-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.legend-item:last-child{border-bottom:0}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-label{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600}
+.legend-val{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem}
+
+/* MONTHLY TABLE */
+.monthly-card{border-radius:var(--r);border:1px solid var(--border);background:var(--card);margin-bottom:24px;overflow:hidden}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:780px}
+th{
+  padding:12px 16px;text-align:left;
+  color:var(--muted);font-size:.7rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+}
+td{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  font-size:.85rem;font-weight:600;
+}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+.month-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;
+}
+.month-dot{width:8px;height:8px;border-radius:50%}
+.rev-val{font-family:'Syne',sans-serif;font-weight:800;color:var(--gold)}
+.pill{
+  display:inline-flex;align-items:center;
+  padding:4px 10px;border-radius:999px;
+  font-size:.72rem;font-weight:700;
+}
+.pill-green{background:var(--green2);color:var(--green)}
+.pill-gold{background:var(--gold3);color:var(--gold)}
+.pill-red{background:var(--red2);color:var(--red)}
+.pill-blue{background:var(--blue2);color:var(--blue)}
+.sparkline{display:inline-flex;align-items:flex-end;gap:2px;height:24px}
+.spark-bar{width:5px;border-radius:3px;background:var(--gold);opacity:.5}
+.spark-bar:last-child{opacity:1}
+
+/* STUDENTS SECTION */
+.grid-students{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+.student-card{
+  border-radius:var(--r);border:1px solid var(--border);background:var(--card);overflow:hidden;
+}
+.student-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  transition:.15s;cursor:pointer;
+}
+.student-row:last-child{border-bottom:0}
+.student-row:hover{background:rgba(255,255,255,.03)}
+.ava-sm{
+  width:36px;height:36px;border-radius:11px;
+  display:grid;place-items:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.8rem;
+  color:#06080f;flex-shrink:0;
+}
+.student-info{flex:1}
+.student-info h4{font-size:.87rem;font-weight:700;line-height:1.2}
+.student-info p{font-size:.75rem;color:var(--muted);margin-top:1px}
+.student-meta{text-align:right}
+.student-meta strong{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--gold);display:block}
+.student-meta span{font-size:.72rem;color:var(--muted)}
+
+/* PROGRESS GOAL */
+.goal-card{
+  border-radius:var(--r);border:1px solid var(--border);
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  padding:24px;margin-bottom:24px;
+  display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:center;
+}
+.goal-text h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:6px}
+.goal-text p{color:var(--muted);font-size:.84rem;line-height:1.6}
+.goal-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.goal-num{padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.goal-num span{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.goal-num strong{display:block;font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;margin-top:4px}
+.goal-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.goal-ring-wrap p{font-size:.8rem;color:var(--muted);font-weight:600;text-align:center}
+
+/* MODAL */
+.modal{
+  position:fixed;inset:0;display:none;place-items:center;
+  padding:18px;background:rgba(6,8,15,.8);backdrop-filter:blur(20px);z-index:50;
+}
+.modal.open{display:grid}
+.modal-card{
+  width:min(580px,100%);
+  border-radius:28px;border:1px solid var(--border2);
+  background:var(--card2);
+  box-shadow:0 40px 100px rgba(0,0,0,.6);
+  overflow:hidden;
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{
+  padding:22px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  background:linear-gradient(135deg,rgba(240,192,64,.08),transparent);
+}
+.modal-head h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800}
+.modal-head p{color:var(--muted);font-size:.83rem;margin-top:4px}
+.modal-close{
+  width:36px;height:36px;border-radius:999px;
+  border:1px solid var(--border2);color:var(--text);
+  background:rgba(255,255,255,.06);font-size:1.1rem;
+  display:grid;place-items:center;
+}
+.modal-body{padding:22px 24px}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.pfield{padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.pfield span{font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);display:block;margin-bottom:4px}
+.pfield p{font-size:.88rem;font-weight:700;color:var(--text)}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-sm{height:38px;padding:0 16px;border-radius:999px;font-size:.82rem;font-weight:700;transition:.2s}
+.btn-sm:hover{transform:translateY(-1px)}
+.btn-sm-gold{background:var(--gold);color:#06080f;box-shadow:0 6px 16px rgba(240,192,64,.2)}
+.btn-sm-outline{border:1px solid var(--border2);color:var(--text);background:var(--bg2)}
+
+/* RESPONSIVE */
+@media(max-width:1200px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .grid-2{grid-template-columns:1fr}
+  .grid-students{grid-template-columns:1fr}
+  .goal-card{grid-template-columns:1fr}
+  .goal-ring-wrap{flex-direction:row;align-items:center;justify-content:center}
+}
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{height:auto;position:relative}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .topbar{flex-direction:column;align-items:flex-start}
+  .topbar-right{width:100%}
+  .search{width:100%}
+  .content{padding:18px}
+}
+@media(max-width:480px){
+  .kpis{grid-template-columns:1fr}
+  .period-tabs{gap:4px}
+}
+</style>
 </head>
-
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark">OS</div>
-        <div>
-          <h1>Olon Society</h1>
-          <p>Academy Dashboard</p>
-        </div>
-      </div>
+<div class="chart-tooltip" id="tooltip"></div>
 
-      <div class="nav">
-        <div class="nav-label">Principal</div>
-        <a class="active" href="#"><span class="nav-icon">◆</span> Dashboard</a>
-        <a href="#"><span class="nav-icon">＋</span> Solicitudes</a>
-        <a href="#"><span class="nav-icon">✓</span> Aceptadas</a>
-        <a href="#"><span class="nav-icon">W</span> WhatsApp</a>
-
-        <div class="nav-label">Programas</div>
-        <a href="#"><span class="nav-icon">★</span> VIP Regular</a>
-        <a href="#"><span class="nav-icon">♛</span> VIP Premium</a>
-        <a href="#"><span class="nav-icon">◎</span> Mentoría 1/1</a>
-      </div>
-
-      <div class="side-card">
-        <h3>Panel privado</h3>
-        <p>Revisa perfiles, filtra prospectos y comparte acceso a WhatsApp desde una sola vista.</p>
-        <button>Nueva solicitud</button>
-      </div>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <div class="title">
-          <h2>Dashboard de Solicitudes</h2>
-          <p>Vista premium para gestionar estudiantes y accesos de Olon Society Academy.</p>
-        </div>
-
-        <div class="actions">
-          <input class="search" id="searchInput" type="search" placeholder="Buscar por nombre, país o interés..." />
-          <button class="btn btn-dark">Exportar</button>
-          <button class="btn btn-gold">+ Solicitud</button>
-        </div>
-      </header>
-
-      <section class="hero">
-        <div class="hero-card">
-          <span class="badge"><span class="dot"></span> Revisión privada</span>
-          <h3>Control profesional de leads, estudiantes y accesos.</h3>
-          <p>Convierte tu formulario en un panel tipo CRM para evaluar perfiles, identificar prospectos premium y enviar acceso directo por WhatsApp.</p>
-
-          <div class="mini-stats">
-            <div class="mini"><strong>24</strong><span>Solicitudes nuevas</span></div>
-            <div class="mini"><strong>78%</strong><span>Calidad promedio</span></div>
-            <div class="mini"><strong>12</strong><span>Aceptadas hoy</span></div>
-          </div>
-        </div>
-
-        <div class="owner-card">
-          <div class="owner-head">
-            <div class="avatar">OD</div>
-            <div>
-              <h3>Owner Panel</h3>
-              <p>infolonsocietyacademy@gmail.com</p>
-            </div>
-          </div>
-
-          <div class="progress">
-            <div class="progress-row"><span>Meta de cupos</span><strong>78%</strong></div>
-            <div class="bar"><span style="width:78%"></span></div>
-          </div>
-
-          <div class="progress">
-            <div class="progress-row"><span>Conversión WhatsApp</span><strong>64%</strong></div>
-            <div class="bar"><span style="width:64%"></span></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="cards">
-        <div class="stat">
-          <div class="stat-top"><small>Total</small><div class="stat-icon">Σ</div></div>
-          <strong>128</strong>
-          <span class="trend">+18 esta semana</span>
-        </div>
-
-        <div class="stat">
-          <div class="stat-top"><small>Pendientes</small><div class="stat-icon">⏱</div></div>
-          <strong>36</strong>
-          <span class="trend">Revisar primero</span>
-        </div>
-
-        <div class="stat">
-          <div class="stat-top"><small>Aceptadas</small><div class="stat-icon">✓</div></div>
-          <strong>72</strong>
-          <span class="trend">Listas para WhatsApp</span>
-        </div>
-
-        <div class="stat">
-          <div class="stat-top"><small>Premium Leads</small><div class="stat-icon">♛</div></div>
-          <strong>19</strong>
-          <span class="trend">Alta probabilidad</span>
-        </div>
-      </section>
-
-      <section class="content">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <h3>Solicitudes recientes</h3>
-              <p>Pendientes, aceptadas y prospectos en revisión.</p>
-            </div>
-
-            <div class="tabs">
-              <button class="tab active" data-filter="all">Todas</button>
-              <button class="tab" data-filter="pending">Pendientes</button>
-              <button class="tab" data-filter="accepted">Aceptadas</button>
-            </div>
-          </div>
-
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Estudiante</th>
-                  <th>WhatsApp</th>
-                  <th>Experiencia</th>
-                  <th>Capital</th>
-                  <th>Interés</th>
-                  <th>Estado</th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody id="leadsTable">
-                <tr data-status="pending">
-                  <td><div class="client"><div class="client-initial">JM</div><div>Juan Morales<small>Puerto Rico</small></div></div></td>
-                  <td>+1 787 000 0000</td>
-                  <td>Básica</td>
-                  <td>$500 - $1,000</td>
-                  <td>VIP Premium</td>
-                  <td><span class="status pending">Pendiente</span></td>
-                  <td><button class="table-btn" onclick="openModal('Juan Morales','Puerto Rico','VIP Premium','$500 - $1,000','Básica','Pendiente')">Ver</button></td>
-                </tr>
-
-                <tr data-status="accepted">
-                  <td><div class="client"><div class="client-initial">AR</div><div>Ana Rivera<small>Florida</small></div></div></td>
-                  <td>+1 407 000 0000</td>
-                  <td>Intermedia</td>
-                  <td>Más de $1,000</td>
-                  <td>Mentoría 1/1</td>
-                  <td><span class="status accepted">Aceptada</span></td>
-                  <td><button class="table-btn" onclick="openModal('Ana Rivera','Florida','Mentoría 1/1','Más de $1,000','Intermedia','Aceptada')">WhatsApp</button></td>
-                </tr>
-
-                <tr data-status="review">
-                  <td><div class="client"><div class="client-initial">LC</div><div>Luis Cruz<small>New York</small></div></div></td>
-                  <td>+1 929 000 0000</td>
-                  <td>Ninguna</td>
-                  <td>$100 - $500</td>
-                  <td>VIP Regular</td>
-                  <td><span class="status review">Revisión</span></td>
-                  <td><button class="table-btn" onclick="openModal('Luis Cruz','New York','VIP Regular','$100 - $500','Ninguna','Revisión')">Ver</button></td>
-                </tr>
-
-                <tr data-status="pending">
-                  <td><div class="client"><div class="client-initial">MS</div><div>María Santos<small>Rep. Dominicana</small></div></div></td>
-                  <td>+1 809 000 0000</td>
-                  <td>Avanzada</td>
-                  <td>Más de $1,000</td>
-                  <td>Indicador + VIP</td>
-                  <td><span class="status pending">Pendiente</span></td>
-                  <td><button class="table-btn" onclick="openModal('María Santos','Rep. Dominicana','Indicador + VIP','Más de $1,000','Avanzada','Pendiente')">Ver</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <aside class="right">
-          <div class="quick-card">
-            <h3>Acciones rápidas</h3>
-
-            <div class="task">
-              <div class="check">✓</div>
-              <div>
-                <p>Revisar perfil financiero</p>
-                <span>Capital, ingreso, tiempo disponible y mentalidad.</span>
-              </div>
-            </div>
-
-            <div class="task">
-              <div class="check">✓</div>
-              <div>
-                <p>Enviar acceso por WhatsApp</p>
-                <span>Mensaje listo para estudiantes aprobados.</span>
-              </div>
-            </div>
-
-            <div class="task">
-              <div class="check">✓</div>
-              <div>
-                <p>Exportar solicitudes</p>
-                <span>Organiza tus prospectos para seguimiento.</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="quick-card">
-            <div class="score">
-              <div class="ring">
-                <div class="ring-inner">78%</div>
-              </div>
-              <h3>Lead Quality</h3>
-              <p>Promedio de prospectos con buen capital, enfoque y compromiso.</p>
-            </div>
-          </div>
-        </aside>
-      </section>
-    </main>
-  </div>
-
-  <div class="modal" id="profileModal">
-    <div class="modal-card">
-      <div class="modal-top">
-        <div>
-          <h3 id="modalName">Perfil</h3>
-          <p>Vista rápida del prospecto seleccionado.</p>
-        </div>
-        <button class="close" onclick="closeModal()">×</button>
-      </div>
-
-      <div class="profile-grid">
-        <div class="profile-item"><span>Ubicación</span><p id="modalLocation"></p></div>
-        <div class="profile-item"><span>Interés</span><p id="modalInterest"></p></div>
-        <div class="profile-item"><span>Capital</span><p id="modalCapital"></p></div>
-        <div class="profile-item"><span>Experiencia</span><p id="modalExperience"></p></div>
-        <div class="profile-item"><span>Estado</span><p id="modalStatus"></p></div>
-        <div class="profile-item"><span>Recomendación</span><p>Dar seguimiento hoy</p></div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn btn-gold">Aceptar y enviar WhatsApp</button>
-        <button class="btn btn-dark" onclick="closeModal()">Cerrar</button>
-      </div>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">OS</div>
+    <div class="brand-text">
+      <h1>Olon Society</h1>
+      <p>Academy Pro</p>
     </div>
   </div>
 
-  <script>
-    const tabs = document.querySelectorAll(".tab");
-    const rows = document.querySelectorAll("#leadsTable tr");
-    const searchInput = document.getElementById("searchInput");
+  <nav class="nav">
+    <div class="nav-label">Principal</div>
+    <a class="active" href="#"><span class="nav-ic">◆</span> Dashboard</a>
+    <a href="#"><span class="nav-ic">📊</span> Ingresos</a>
+    <a href="#"><span class="nav-ic">👥</span> Estudiantes</a>
+    <a href="#"><span class="nav-ic">＋</span> Solicitudes</a>
+    <a href="#"><span class="nav-ic">✓</span> Aceptadas</a>
+    <a href="#"><span class="nav-ic">💬</span> WhatsApp</a>
 
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
+    <div class="nav-label">Programas</div>
+    <a href="#"><span class="nav-ic">★</span> VIP Regular</a>
+    <a href="#"><span class="nav-ic">♛</span> VIP Premium</a>
+    <a href="#"><span class="nav-ic">◎</span> Mentoría 1/1</a>
 
-        const filter = tab.dataset.filter;
+    <div class="nav-label">Reportes</div>
+    <a href="#"><span class="nav-ic">📅</span> Mensual</a>
+    <a href="#"><span class="nav-ic">📈</span> Anual</a>
+    <a href="#"><span class="nav-ic">⬇</span> Exportar</a>
+  </nav>
 
-        rows.forEach(row => {
-          if(filter === "all"){
-            row.style.display = "";
-          } else {
-            row.style.display = row.dataset.status === filter ? "" : "none";
-          }
-        });
-      });
-    });
+  <div class="sidebar-bottom">
+    <div class="profile-mini">
+      <div class="ava">OD</div>
+      <div>
+        <h4>Owner</h4>
+        <p>Olon Society Academy</p>
+      </div>
+    </div>
+  </div>
+</aside>
 
-    searchInput.addEventListener("input", () => {
-      const value = searchInput.value.toLowerCase();
+<!-- MAIN -->
+<main class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h2>Dashboard de Crecimiento</h2>
+      <p>Registro de estudiantes e ingresos generados mes a mes</p>
+    </div>
+    <div class="topbar-right">
+      <input class="search" id="searchInput" type="search" placeholder="Buscar estudiante, país..."/>
+      <button class="btn btn-outline">Exportar CSV</button>
+      <button class="btn btn-gold" onclick="openModal('','','','','','')">+ Nuevo</button>
+    </div>
+  </header>
 
-      rows.forEach(row => {
-        row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
-      });
-    });
+  <div class="content">
+    <!-- PERIOD SELECTOR -->
+    <div class="period-bar">
+      <div class="period-tabs" id="periodTabs">
+        <button class="ptab" data-m="all">Todo el año</button>
+        <button class="ptab" data-m="1">Ene</button>
+        <button class="ptab" data-m="2">Feb</button>
+        <button class="ptab" data-m="3">Mar</button>
+        <button class="ptab" data-m="4">Abr</button>
+        <button class="ptab" data-m="5">May</button>
+        <button class="ptab" data-m="6">Jun</button>
+        <button class="ptab" data-m="7">Jul</button>
+        <button class="ptab" data-m="8">Ago</button>
+        <button class="ptab" data-m="9">Sep</button>
+        <button class="ptab" data-m="10">Oct</button>
+        <button class="ptab" data-m="11">Nov</button>
+        <button class="ptab active" data-m="12">Dic</button>
+      </div>
+      <select class="year-sel" id="yearSel">
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+      </select>
+    </div>
 
-    function openModal(name, location, interest, capital, experience, status){
-      document.getElementById("modalName").textContent = name;
-      document.getElementById("modalLocation").textContent = location;
-      document.getElementById("modalInterest").textContent = interest;
-      document.getElementById("modalCapital").textContent = capital;
-      document.getElementById("modalExperience").textContent = experience;
-      document.getElementById("modalStatus").textContent = status;
-      document.getElementById("profileModal").classList.add("open");
+    <!-- KPIs -->
+    <div class="kpis" id="kpis">
+      <div class="kpi" style="--kpi-color:var(--gold)">
+        <div class="kpi-label">Ingresos del mes</div>
+        <div class="kpi-val" id="kRevMes">$12,400</div>
+        <div class="kpi-sub up" id="kRevDelta">▲ +18% vs mes anterior</div>
+      </div>
+      <div class="kpi" style="--kpi-color:var(--green)">
+        <div class="kpi-label">Ingresos acumulados</div>
+        <div class="kpi-val" id="kRevTotal">$94,800</div>
+        <div class="kpi-sub up">▲ Total 2025</div>
+      </div>
+      <div class="kpi" style="--kpi-color:var(--blue)">
+        <div class="kpi-label">Estudiantes activos</div>
+        <div class="kpi-val" id="kStudents">143</div>
+        <div class="kpi-sub up">▲ +12 este mes</div>
+      </div>
+      <div class="kpi" style="--kpi-color:var(--purple)">
+        <div class="kpi-label">Tasa de conversión</div>
+        <div class="kpi-val">67%</div>
+        <div class="kpi-sub up">▲ +4% vs anterior</div>
+      </div>
+      <div class="kpi" style="--kpi-color:var(--red)">
+        <div class="kpi-label">Solicitudes nuevas</div>
+        <div class="kpi-val">38</div>
+        <div class="kpi-sub">Este mes</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="grid-2">
+      <!-- BAR CHART -->
+      <div class="chart-card">
+        <div class="card-head">
+          <div>
+            <h3>Ingresos mensuales 2025</h3>
+            <p>Total generado por mes en todos los programas</p>
+          </div>
+          <select class="year-sel" style="height:34px;font-size:.78rem">
+            <option>2025</option><option>2024</option>
+          </select>
+        </div>
+        <div class="chart-wrap">
+          <svg class="chart-svg" viewBox="0 0 700 220" id="barChart">
+            <!-- rendered by JS -->
+          </svg>
+        </div>
+      </div>
+
+      <!-- DONUT -->
+      <div class="chart-card">
+        <div class="card-head">
+          <div>
+            <h3>Por programa</h3>
+            <p>Distribución de ingresos</p>
+          </div>
+        </div>
+        <div class="donut-wrap">
+          <svg class="donut-svg" viewBox="0 0 170 170" id="donutChart"></svg>
+          <div class="donut-legend" id="donutLegend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOAL -->
+    <div class="goal-card">
+      <div>
+        <div class="goal-text">
+          <h3>Meta anual 2025 — $140,000</h3>
+          <p>Progreso acumulado hacia la meta de ingresos del año. Basado en los datos registrados mes a mes en todos los programas de la academia.</p>
+        </div>
+        <div class="goal-nums">
+          <div class="goal-num">
+            <span>Generado</span>
+            <strong style="color:var(--gold)">$94,800</strong>
+          </div>
+          <div class="goal-num">
+            <span>Restante</span>
+            <strong style="color:var(--muted)">$45,200</strong>
+          </div>
+          <div class="goal-num">
+            <span>Promedio/mes</span>
+            <strong style="color:var(--green)">$7,900</strong>
+          </div>
+          <div class="goal-num">
+            <span>Proyección</span>
+            <strong style="color:var(--blue)">$126k</strong>
+          </div>
+        </div>
+      </div>
+      <div class="goal-ring-wrap">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="72" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="16"/>
+          <circle cx="90" cy="90" r="72" fill="none" stroke="url(#goalGrad)" stroke-width="16"
+            stroke-dasharray="452" stroke-dashoffset="99" stroke-linecap="round"
+            transform="rotate(-90 90 90)"/>
+          <defs>
+            <linearGradient id="goalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#fad96b"/>
+              <stop offset="100%" stop-color="#f0c040"/>
+            </linearGradient>
+          </defs>
+          <text x="90" y="84" text-anchor="middle" font-family="Syne,sans-serif" font-size="26" font-weight="800" fill="#f0c040">68%</text>
+          <text x="90" y="104" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#8899b4" font-weight="600">de la meta</text>
+        </svg>
+        <p>Meta anual 2025</p>
+      </div>
+    </div>
+
+    <!-- MONTHLY TABLE -->
+    <div class="monthly-card">
+      <div class="card-head">
+        <div>
+          <h3>Historial mes a mes</h3>
+          <p>Detalle de estudiantes, ingresos y rendimiento por programa</p>
+        </div>
+        <button class="btn btn-outline" style="height:36px;font-size:.78rem">Ver todo</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mes</th>
+              <th>Estudiantes nuevos</th>
+              <th>Ingresos</th>
+              <th>Crecimiento</th>
+              <th>Programa líder</th>
+              <th>Conversión</th>
+              <th>Tendencia</th>
+            </tr>
+          </thead>
+          <tbody id="monthlyTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STUDENTS GRID -->
+    <div class="grid-students">
+      <!-- ACTIVE STUDENTS -->
+      <div class="student-card">
+        <div class="card-head">
+          <div><h3>Estudiantes activos</h3><p>Últimos incorporados</p></div>
+          <span class="pill pill-green">143 activos</span>
+        </div>
+        <div id="studentList"></div>
+      </div>
+
+      <!-- TOP STUDENTS -->
+      <div class="student-card">
+        <div class="card-head">
+          <div><h3>Premium leads</h3><p>Mayor capital y compromiso</p></div>
+          <span class="pill pill-gold">19 premium</span>
+        </div>
+        <div id="premiumList"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+</div><!-- /app -->
+
+<!-- MODAL -->
+<div class="modal" id="profileModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="modalName">Perfil del estudiante</h3>
+        <p id="modalSub">Vista rápida del prospecto seleccionado</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="profile-grid">
+        <div class="pfield"><span>Ubicación</span><p id="mLoc">—</p></div>
+        <div class="pfield"><span>Interés</span><p id="mInt">—</p></div>
+        <div class="pfield"><span>Capital</span><p id="mCap">—</p></div>
+        <div class="pfield"><span>Experiencia</span><p id="mExp">—</p></div>
+        <div class="pfield"><span>Estado</span><p id="mStat">—</p></div>
+        <div class="pfield"><span>Recomendación</span><p style="color:var(--green)">Dar seguimiento hoy</p></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-sm btn-sm-gold">Aceptar y enviar WhatsApp</button>
+        <button class="btn-sm btn-sm-outline" onclick="closeModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────
+const monthlyData = [
+  {m:'Enero',   rev:4200,  students:8,  prog:'VIP Regular',  conv:58, trend:[2,3,3,4,5,6,8]},
+  {m:'Febrero', rev:5800,  students:11, prog:'VIP Premium',  conv:61, trend:[4,5,6,7,8,9,11]},
+  {m:'Marzo',   rev:7100,  students:14, prog:'VIP Premium',  conv:63, trend:[6,7,8,9,10,12,14]},
+  {m:'Abril',   rev:6400,  students:12, prog:'VIP Regular',  conv:60, trend:[5,6,7,8,9,10,12]},
+  {m:'Mayo',    rev:8300,  students:16, prog:'Mentoría 1/1', conv:65, trend:[7,9,10,11,12,14,16]},
+  {m:'Junio',   rev:7900,  students:15, prog:'VIP Premium',  conv:64, trend:[7,8,9,10,11,13,15]},
+  {m:'Julio',   rev:9200,  students:18, prog:'VIP Premium',  conv:68, trend:[9,10,11,13,14,16,18]},
+  {m:'Agosto',  rev:8600,  students:16, prog:'Mentoría 1/1', conv:66, trend:[8,9,10,11,12,14,16]},
+  {m:'Septiembre',rev:10100,students:20,prog:'VIP Premium',  conv:70, trend:[10,12,13,15,16,18,20]},
+  {m:'Octubre', rev:9400,  students:18, prog:'VIP Regular',  conv:67, trend:[9,10,12,13,14,16,18]},
+  {m:'Noviembre',rev:11300,students:22, prog:'VIP Premium',  conv:71, trend:[11,13,14,16,17,19,22]},
+  {m:'Diciembre',rev:12400,students:24, prog:'VIP Premium',  conv:74, trend:[12,14,16,18,19,21,24]},
+];
+
+const students = [
+  {n:'Juan Morales',    loc:'Puerto Rico',   prog:'VIP Premium',  cap:'$1,000+', exp:'Básica',    c:'#f0c040'},
+  {n:'Ana Rivera',      loc:'Florida',       prog:'Mentoría 1/1', cap:'$2,000+', exp:'Intermedia',c:'#60a5fa'},
+  {n:'Luis Cruz',       loc:'New York',      prog:'VIP Regular',  cap:'$500',    exp:'Ninguna',   c:'#a78bfa'},
+  {n:'María Santos',    loc:'Rep. Dominicana',prog:'VIP Premium', cap:'$1,500+', exp:'Avanzada',  c:'#34d399'},
+  {n:'Carlos Peña',     loc:'Colombia',      prog:'VIP Regular',  cap:'$300',    exp:'Básica',    c:'#f87171'},
+  {n:'Sofía Vargas',    loc:'México',        prog:'VIP Premium',  cap:'$2,500+', exp:'Avanzada',  c:'#fad96b'},
+];
+
+const premiumStudents = [
+  {n:'Sofía Vargas',    loc:'México',        prog:'VIP Premium',  cap:'$2,500+', rev:'$3,200',    c:'#fad96b'},
+  {n:'Ana Rivera',      loc:'Florida',       prog:'Mentoría 1/1', cap:'$2,000+', rev:'$2,800',    c:'#60a5fa'},
+  {n:'María Santos',    loc:'Rep. Dominicana',prog:'VIP Premium', cap:'$1,500+', rev:'$2,100',    c:'#34d399'},
+  {n:'Juan Morales',    loc:'Puerto Rico',   prog:'VIP Premium',  cap:'$1,000+', rev:'$1,600',    c:'#f0c040'},
+  {n:'Roberto Lima',    loc:'Perú',          prog:'VIP Premium',  cap:'$3,000+', rev:'$3,800',    c:'#a78bfa'},
+];
+
+// ─── CHARTS ───────────────────────────────────────────────────
+function renderBarChart(){
+  const svg = document.getElementById('barChart');
+  const W=700, H=220, pad={l:50,r:20,t:20,b:40};
+  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const maxRev = Math.max(...monthlyData.map(d=>d.rev))*1.15;
+  const bW = cW/monthlyData.length;
+  const bPad = bW*.22;
+  const months=['E','F','M','A','M','J','J','A','S','O','N','D'];
+  const colors=['#f0c040','#fad96b','#f0c040','#fad96b','#60a5fa','#fad96b','#f0c040','#60a5fa','#f0c040','#fad96b','#f0c040','#fad96b'];
+
+  let html='';
+  monthlyData.forEach((d,i)=>{
+    const x=pad.l + i*bW + bPad/2;
+    const bh=(d.rev/maxRev)*cH;
+    const y=pad.t+cH-bh;
+    const bwActual=bW-bPad;
+    html+=`<g class="bar-col" onmouseenter="showTip(event,'${d.m}: $${d.rev.toLocaleString()}')" onmouseleave="hideTip()">
+      <rect class="bar-rect" x="${x}" y="${y}" width="${bwActual}" height="${bh}" rx="6"
+        fill="${colors[i]}" opacity="${i===11?'1':'.72'}"/>
+      ${i===11?`<rect x="${x}" y="${y-3}" width="${bwActual}" height="6" rx="3" fill="#fff" opacity=".15"/>` : ''}
+    </g>`;
+    html+=`<text class="axis-text" x="${x+bwActual/2}" y="${H-10}" text-anchor="middle">${months[i]}</text>`;
+    if(i===0||i===3||i===6||i===9||i===11){
+      html+=`<text class="axis-text" x="${pad.l-6}" y="${pad.t+cH-(d.rev/maxRev)*cH+4}" text-anchor="end">${(d.rev/1000).toFixed(0)}k</text>`;
     }
+  });
+  // grid lines
+  [0,.25,.5,.75,1].forEach(p=>{
+    const y=pad.t+cH*(1-p);
+    html=`<line x1="${pad.l}" x2="${W-pad.r}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.05)" stroke-width="1"/>` + html;
+  });
+  svg.innerHTML=html;
+}
 
-    function closeModal(){
-      document.getElementById("profileModal").classList.remove("open");
+function renderDonut(){
+  const programs=[
+    {label:'VIP Premium',   val:52400, color:'#f0c040'},
+    {label:'VIP Regular',   val:24800, color:'#60a5fa'},
+    {label:'Mentoría 1/1',  val:17600, color:'#34d399'},
+  ];
+  const total=programs.reduce((s,p)=>s+p.val,0);
+  const cx=85,cy=85,r=62,stroke=20;
+  const circum=2*Math.PI*r;
+  let offset=0;
+  let arcs='';
+  programs.forEach(p=>{
+    const dash=(p.val/total)*circum;
+    arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${p.color}" stroke-width="${stroke}"
+      stroke-dasharray="${dash} ${circum}" stroke-dashoffset="${-offset}" opacity=".9"
+      transform="rotate(-90 ${cx} ${cy})"/>`;
+    offset+=dash;
+  });
+  document.getElementById('donutChart').innerHTML=
+    arcs +
+    `<text x="${cx}" y="${cy-6}" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="#f0c040">$94.8k</text>
+     <text x="${cx}" y="${cy+12}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8899b4" font-weight="600">Total 2025</text>`;
+  
+  document.getElementById('donutLegend').innerHTML=programs.map(p=>`
+    <div class="legend-item">
+      <div class="legend-label">
+        <div class="legend-dot" style="background:${p.color}"></div>
+        ${p.label}
+      </div>
+      <div class="legend-val" style="color:${p.color}">$${(p.val/1000).toFixed(0)}k</div>
+    </div>
+  `).join('');
+}
+
+function renderMonthlyTable(){
+  const tb=document.getElementById('monthlyTable');
+  tb.innerHTML=monthlyData.slice().reverse().map((d,i,arr)=>{
+    const prev=arr[i+1];
+    const delta=prev?((d.rev-prev.rev)/prev.rev*100).toFixed(0):null;
+    const sparkBars=d.trend.map((v,j)=>{
+      const h=Math.round((v/Math.max(...d.trend))*20)+4;
+      return `<div class="spark-bar" style="height:${h}px"></div>`;
+    }).join('');
+    const convColor=d.conv>=70?'pill-green':d.conv>=60?'pill-gold':'pill-red';
+    const deltaColor=delta>0?'pill-green':delta<0?'pill-red':'pill-gold';
+    const monthColors=['#fad96b','#f0c040','#60a5fa','#34d399','#a78bfa','#f87171','#fad96b','#f0c040','#34d399','#60a5fa','#f0c040','#fad96b'];
+    const mIdx=monthlyData.indexOf(d);
+    return `<tr>
+      <td><div class="month-badge"><div class="month-dot" style="background:${monthColors[mIdx]}"></div>${d.m} 2025</div></td>
+      <td><strong>+${d.students}</strong></td>
+      <td><span class="rev-val">$${d.rev.toLocaleString()}</span></td>
+      <td>${delta!==null?`<span class="pill ${deltaColor}">${delta>0?'▲':'▼'} ${Math.abs(delta)}%</span>`:'—'}</td>
+      <td>${d.prog}</td>
+      <td><span class="pill ${convColor}">${d.conv}%</span></td>
+      <td><div class="sparkline">${sparkBars}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStudents(){
+  document.getElementById('studentList').innerHTML=students.map(s=>`
+    <div class="student-row" onclick="openModal('${s.n}','${s.loc}','${s.prog}','${s.cap}','${s.exp}','Activo')">
+      <div class="ava-sm" style="background:${s.c}">${s.n.split(' ').map(w=>w[0]).join('')}</div>
+      <div class="student-info">
+        <h4>${s.n}</h4>
+        <p>${s.loc} · ${s.prog}</p>
+      </div>
+      <div class="student-meta">
+        <strong>${s.cap}</strong>
+        <span>${s.exp}</span>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('premiumList').innerHTML=premiumStudents.map(s=>`
+    <div class="student-row" onclick="openModal('${s.n}','${s.loc}','${s.prog}','${s.cap}','—','Premium')">
+      <div class="ava-sm" style="background:${s.c}">${s.n.split(' ').map(w=>w[0]).join('')}</div>
+      <div class="student-info">
+        <h4>${s.n}</h4>
+        <p>${s.loc} · ${s.prog}</p>
+      </div>
+      <div class="student-meta">
+        <strong>${s.rev}</strong>
+        <span>generado</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── PERIOD TABS ──────────────────────────────────────────────
+document.querySelectorAll('.ptab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const m=tab.dataset.m;
+    if(m==='all'){
+      document.getElementById('kRevMes').textContent='$94,800';
+      document.getElementById('kRevDelta').textContent='▲ Total acumulado';
+    } else {
+      const d=monthlyData[parseInt(m)-1];
+      document.getElementById('kRevMes').textContent='$'+d.rev.toLocaleString();
+      document.getElementById('kRevDelta').textContent=`+${d.students} estudiantes`;
     }
-  </script>
+  });
+});
+
+// ─── SEARCH ───────────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('input',e=>{
+  const v=e.target.value.toLowerCase();
+  document.querySelectorAll('.student-row').forEach(row=>{
+    row.style.display=row.innerText.toLowerCase().includes(v)?'':'none';
+  });
+});
+
+// ─── TOOLTIP ──────────────────────────────────────────────────
+function showTip(e,txt){
+  const t=document.getElementById('tooltip');
+  t.textContent=txt;t.style.display='block';
+  t.style.left=(e.clientX+12)+'px';t.style.top=(e.clientY-28)+'px';
+}
+function hideTip(){document.getElementById('tooltip').style.display='none'}
+
+// ─── MODAL ────────────────────────────────────────────────────
+function openModal(name,loc,interest,capital,exp,status){
+  if(name){
+    document.getElementById('modalName').textContent=name;
+    document.getElementById('mLoc').textContent=loc||'—';
+    document.getElementById('mInt').textContent=interest||'—';
+    document.getElementById('mCap').textContent=capital||'—';
+    document.getElementById('mExp').textContent=exp||'—';
+    document.getElementById('mStat').textContent=status||'—';
+    document.getElementById('modalSub').textContent='Vista rápida del prospecto seleccionado';
+  } else {
+    document.getElementById('modalName').textContent='Nueva solicitud';
+    document.getElementById('modalSub').textContent='Registra un nuevo estudiante o prospecto';
+    ['mLoc','mInt','mCap','mExp','mStat'].forEach(id=>document.getElementById(id).textContent='—');
+  }
+  document.getElementById('profileModal').classList.add('open');
+}
+function closeModal(){document.getElementById('profileModal').classList.remove('open')}
+document.getElementById('profileModal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget) closeModal();
+});
+
+// ─── INIT ─────────────────────────────────────────────────────
+renderBarChart();
+renderDonut();
+renderMonthlyTable();
+renderStudents();
+</script>
 </body>
 </html>
