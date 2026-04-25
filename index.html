@@ -1,234 +1,1067 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OLON Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OLON Society Academy | Pro Dashboard</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<style>
-:root{
---bg:#f5f7fb;
---sidebar:#07111f;
---card:#ffffff;
---text:#101828;
---muted:#667085;
---line:#e6ebf2;
---gold:#e8b93f;
---green:#16a34a;
---radius:20px;
---shadow:0 20px 40px rgba(0,0,0,.08);
-}
+  <style>
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --text:#101828;
+      --muted:#667085;
+      --soft:#f7f9fc;
+      --line:#e6ebf2;
+      --dark:#07111f;
+      --dark2:#0d1f36;
+      --gold:#e8b93f;
+      --gold2:#f7d66b;
+      --green:#16a34a;
+      --red:#ef4444;
+      --blue:#2563eb;
+      --purple:#7c3aed;
+      --shadow:0 20px 50px rgba(16,24,40,.08);
+      --radius:24px;
+    }
 
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-font-family:Outfit;
-background:var(--bg);
-color:var(--text);
-}
+    *{margin:0;padding:0;box-sizing:border-box}
 
-.app{
-display:grid;
-grid-template-columns:260px 1fr;
-min-height:100vh;
-}
+    body{
+      min-height:100vh;
+      font-family:Outfit,system-ui,sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(232,185,63,.15), transparent 28%),
+        var(--bg);
+      color:var(--text);
+    }
 
-/* SIDEBAR */
-.sidebar{
-background:linear-gradient(180deg,#07111f,#0d1f36);
-color:#fff;
-padding:20px;
-}
+    button,input,select{font-family:inherit}
+    button{cursor:pointer}
 
-.logo{
-font-weight:900;
-font-size:1.2rem;
-margin-bottom:30px;
-}
+    .app{
+      display:grid;
+      grid-template-columns:290px 1fr;
+      min-height:100vh;
+    }
 
-.menu a{
-display:block;
-padding:12px;
-border-radius:10px;
-margin-bottom:10px;
-text-decoration:none;
-color:#aaa;
-font-weight:700;
-}
+    .sidebar{
+      position:sticky;
+      top:0;
+      height:100vh;
+      padding:24px;
+      color:white;
+      background:
+        radial-gradient(circle at 25% 0%, rgba(247,214,107,.2), transparent 30%),
+        linear-gradient(180deg,var(--dark),var(--dark2));
+      overflow:auto;
+    }
 
-.menu a:hover{
-background:var(--gold);
-color:#000;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:34px;
+    }
 
-/* MAIN */
-.main{
-padding:25px;
-}
+    .brand-mark{
+      width:54px;
+      height:54px;
+      display:grid;
+      place-items:center;
+      border-radius:18px;
+      background:linear-gradient(135deg,var(--gold2),var(--gold));
+      color:var(--dark);
+      font-size:1.15rem;
+      font-weight:900;
+      box-shadow:0 14px 34px rgba(232,185,63,.26);
+    }
 
-.top{
-display:flex;
-justify-content:space-between;
-margin-bottom:20px;
-}
+    .brand h1{
+      font-size:1.08rem;
+      line-height:1.1;
+      font-weight:900;
+    }
 
-.search{
-padding:12px 16px;
-border-radius:999px;
-border:1px solid var(--line);
-width:250px;
-}
+    .brand p{
+      margin-top:4px;
+      color:var(--gold2);
+      font-size:.78rem;
+      font-weight:800;
+    }
 
-/* CARDS */
-.cards{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:15px;
-margin-bottom:20px;
-}
+    .nav-label{
+      margin:26px 0 10px;
+      color:rgba(255,255,255,.43);
+      font-size:.72rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.13em;
+    }
 
-.card{
-background:var(--card);
-padding:20px;
-border-radius:var(--radius);
-box-shadow:var(--shadow);
-}
+    .nav a{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-height:48px;
+      padding:0 14px;
+      margin-bottom:8px;
+      color:rgba(255,255,255,.72);
+      text-decoration:none;
+      font-size:.95rem;
+      font-weight:800;
+      border-radius:16px;
+      transition:.2s ease;
+    }
 
-.card h4{
-color:var(--muted);
-font-size:.8rem;
-}
+    .nav a:hover,.nav a.active{
+      color:var(--dark);
+      background:linear-gradient(135deg,var(--gold2),var(--gold));
+      box-shadow:0 12px 30px rgba(232,185,63,.2);
+    }
 
-.card strong{
-font-size:1.8rem;
-display:block;
-margin-top:5px;
-}
+    .nav-icon{
+      width:26px;
+      height:26px;
+      display:grid;
+      place-items:center;
+      border-radius:9px;
+      background:rgba(255,255,255,.08);
+    }
 
-/* TABLE */
-.table{
-background:#fff;
-border-radius:var(--radius);
-overflow:hidden;
-box-shadow:var(--shadow);
-}
+    .nav a.active .nav-icon,
+    .nav a:hover .nav-icon{
+      background:rgba(7,17,31,.12);
+    }
 
-table{
-width:100%;
-border-collapse:collapse;
-}
+    .side-card{
+      margin-top:28px;
+      padding:18px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:22px;
+      background:rgba(255,255,255,.08);
+      backdrop-filter:blur(16px);
+    }
 
-th,td{
-padding:15px;
-border-bottom:1px solid var(--line);
-text-align:left;
-}
+    .side-card h3{
+      font-size:1rem;
+      margin-bottom:8px;
+    }
 
-th{
-font-size:.7rem;
-text-transform:uppercase;
-color:var(--muted);
-}
+    .side-card p{
+      color:rgba(255,255,255,.66);
+      font-size:.86rem;
+      line-height:1.5;
+    }
 
-.status{
-padding:5px 10px;
-border-radius:999px;
-font-size:.7rem;
-font-weight:800;
-}
+    .side-card button{
+      width:100%;
+      height:44px;
+      margin-top:14px;
+      border:0;
+      border-radius:999px;
+      color:var(--dark);
+      background:white;
+      font-weight:900;
+    }
 
-.pending{background:#fff4cb;color:#8a6d00}
-.accepted{background:#dcfce7;color:#166534}
+    .main{
+      min-width:0;
+      padding:26px;
+    }
 
-.btn{
-padding:8px 12px;
-border:none;
-border-radius:999px;
-background:#07111f;
-color:#fff;
-font-weight:700;
-cursor:pointer;
-}
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:22px;
+    }
 
-@media(max-width:900px){
-.app{grid-template-columns:1fr}
-.cards{grid-template-columns:1fr}
-}
-</style>
+    .title h2{
+      font-size:clamp(1.6rem,3vw,2.35rem);
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .title p{
+      margin-top:6px;
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .search{
+      width:min(360px,100%);
+      height:48px;
+      padding:0 18px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:white;
+      outline:none;
+      font-weight:700;
+      box-shadow:0 8px 18px rgba(16,24,40,.04);
+    }
+
+    .btn{
+      height:48px;
+      padding:0 18px;
+      border:0;
+      border-radius:999px;
+      font-weight:900;
+      transition:.2s ease;
+    }
+
+    .btn:hover{transform:translateY(-2px)}
+
+    .btn-dark{
+      color:white;
+      background:var(--dark);
+    }
+
+    .btn-gold{
+      color:var(--dark);
+      background:linear-gradient(135deg,var(--gold2),var(--gold));
+      box-shadow:0 12px 28px rgba(232,185,63,.22);
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+
+    .hero-card{
+      position:relative;
+      min-height:260px;
+      overflow:hidden;
+      padding:30px;
+      color:white;
+      border-radius:var(--radius);
+      background:
+        radial-gradient(circle at 80% 15%, rgba(247,214,107,.32), transparent 31%),
+        linear-gradient(135deg,#07111f,#0d2a49);
+      box-shadow:var(--shadow);
+    }
+
+    .hero-card::after{
+      content:"";
+      position:absolute;
+      right:-80px;
+      bottom:-110px;
+      width:310px;
+      height:310px;
+      border-radius:50%;
+      background:rgba(255,255,255,.08);
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 13px;
+      border:1px solid rgba(247,214,107,.22);
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:var(--gold2);
+      font-size:.75rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:99px;
+      background:var(--gold);
+      box-shadow:0 0 0 6px rgba(232,185,63,.15);
+    }
+
+    .hero-card h3{
+      max-width:680px;
+      margin:22px 0 12px;
+      font-size:clamp(1.9rem,4vw,3.2rem);
+      line-height:1;
+      letter-spacing:-.05em;
+    }
+
+    .hero-card p{
+      max-width:650px;
+      color:rgba(255,255,255,.72);
+      line-height:1.65;
+      font-size:1rem;
+    }
+
+    .mini-stats{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+      margin-top:24px;
+      position:relative;
+      z-index:1;
+    }
+
+    .mini{
+      padding:14px;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:18px;
+      background:rgba(255,255,255,.08);
+    }
+
+    .mini strong{
+      display:block;
+      color:var(--gold2);
+      font-size:1.55rem;
+      font-weight:900;
+    }
+
+    .mini span{
+      color:rgba(255,255,255,.62);
+      font-size:.8rem;
+      font-weight:800;
+    }
+
+    .owner-card{
+      padding:24px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:white;
+      box-shadow:var(--shadow);
+    }
+
+    .owner-head{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .avatar{
+      width:58px;
+      height:58px;
+      display:grid;
+      place-items:center;
+      border-radius:20px;
+      color:var(--gold2);
+      background:var(--dark);
+      font-weight:900;
+    }
+
+    .owner-head h3{font-size:1.1rem}
+    .owner-head p{
+      color:var(--muted);
+      font-size:.86rem;
+      font-weight:700;
+    }
+
+    .progress{
+      padding:18px;
+      margin-top:14px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:var(--soft);
+    }
+
+    .progress-row{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:10px;
+      font-weight:900;
+    }
+
+    .bar{
+      height:10px;
+      border-radius:999px;
+      background:#e8edf5;
+      overflow:hidden;
+    }
+
+    .bar span{
+      display:block;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--gold),var(--green));
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .stat{
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:white;
+      box-shadow:0 12px 30px rgba(16,24,40,.05);
+    }
+
+    .stat-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+
+    .stat small{
+      color:var(--muted);
+      font-size:.74rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    .stat-icon{
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      border-radius:15px;
+      background:var(--soft);
+      font-weight:900;
+    }
+
+    .stat strong{
+      display:block;
+      font-size:2rem;
+      font-weight:900;
+      letter-spacing:-.04em;
+    }
+
+    .trend{
+      display:block;
+      margin-top:8px;
+      color:var(--green);
+      font-size:.82rem;
+      font-weight:900;
+    }
+
+    .content{
+      display:grid;
+      grid-template-columns:1fr 360px;
+      gap:18px;
+    }
+
+    .panel,.quick-card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:white;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .panel-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:20px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .panel-head h3{
+      font-size:1.2rem;
+      font-weight:900;
+    }
+
+    .panel-head p{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:.9rem;
+      font-weight:700;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .tab{
+      padding:9px 13px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      color:var(--muted);
+      background:white;
+      font-size:.8rem;
+      font-weight:900;
+    }
+
+    .tab.active{
+      color:white;
+      background:var(--dark);
+      border-color:var(--dark);
+    }
+
+    .table-wrap{overflow:auto}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:820px;
+    }
+
+    th,td{
+      padding:16px 20px;
+      text-align:left;
+      border-bottom:1px solid var(--line);
+      white-space:nowrap;
+    }
+
+    th{
+      color:var(--muted);
+      font-size:.72rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    td{
+      color:#344054;
+      font-weight:700;
+    }
+
+    .client{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .client-initial{
+      width:40px;
+      height:40px;
+      display:grid;
+      place-items:center;
+      border-radius:15px;
+      color:var(--dark);
+      background:#f2f4f7;
+      font-weight:900;
+    }
+
+    .client small{
+      display:block;
+      margin-top:2px;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;
+      padding:0 11px;
+      border-radius:999px;
+      font-size:.76rem;
+      font-weight:900;
+    }
+
+    .pending{color:#9a6500;background:#fff7dd}
+    .accepted{color:#166534;background:#dcfce7}
+    .review{color:#3730a3;background:#e0e7ff}
+
+    .table-btn{
+      border:0;
+      border-radius:999px;
+      padding:9px 12px;
+      color:white;
+      background:var(--dark);
+      font-weight:900;
+    }
+
+    .right{
+      display:grid;
+      gap:18px;
+      align-content:start;
+    }
+
+    .quick-card{
+      padding:20px;
+    }
+
+    .quick-card h3{
+      margin-bottom:14px;
+      font-size:1.1rem;
+      font-weight:900;
+    }
+
+    .task{
+      display:flex;
+      gap:12px;
+      padding:14px 0;
+      border-bottom:1px solid var(--line);
+    }
+
+    .task:last-child{border-bottom:0}
+
+    .check{
+      width:28px;
+      height:28px;
+      flex:0 0 auto;
+      display:grid;
+      place-items:center;
+      border-radius:10px;
+      color:#166534;
+      background:#dcfce7;
+      font-weight:900;
+    }
+
+    .task p{font-weight:900}
+    .task span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:.82rem;
+      line-height:1.4;
+      font-weight:700;
+    }
+
+    .score{
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:24px;
+      color:white;
+      border-radius:22px;
+      background:linear-gradient(135deg,#07111f,#0d2a49);
+    }
+
+    .ring{
+      width:138px;
+      height:138px;
+      display:grid;
+      place-items:center;
+      margin-bottom:14px;
+      border-radius:50%;
+      background:conic-gradient(var(--gold) 0 78%, rgba(255,255,255,.14) 78% 100%);
+    }
+
+    .ring-inner{
+      width:104px;
+      height:104px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:#07111f;
+      color:var(--gold2);
+      font-size:2rem;
+      font-weight:900;
+    }
+
+    .score p{
+      margin-top:8px;
+      color:rgba(255,255,255,.66);
+      line-height:1.5;
+      font-weight:600;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      padding:18px;
+      background:rgba(7,17,31,.68);
+      backdrop-filter:blur(16px);
+      z-index:20;
+    }
+
+    .modal.open{display:grid}
+
+    .modal-card{
+      width:min(620px,100%);
+      padding:24px;
+      border:1px solid rgba(247,214,107,.22);
+      border-radius:28px;
+      color:white;
+      background:
+        radial-gradient(circle at top right, rgba(232,185,63,.2), transparent 30%),
+        linear-gradient(145deg,#07111f,#0d1f36);
+      box-shadow:0 30px 90px rgba(0,0,0,.35);
+    }
+
+    .modal-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .modal-top h3{font-size:1.5rem}
+    .modal-top p{
+      margin-top:6px;
+      color:rgba(255,255,255,.66);
+      line-height:1.5;
+    }
+
+    .close{
+      width:42px;
+      height:42px;
+      border:1px solid rgba(255,255,255,.15);
+      border-radius:999px;
+      color:white;
+      background:rgba(255,255,255,.08);
+      font-size:1.2rem;
+    }
+
+    .profile-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .profile-item{
+      padding:13px;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:16px;
+      background:rgba(255,255,255,.07);
+    }
+
+    .profile-item span{
+      display:block;
+      color:var(--gold2);
+      font-size:.72rem;
+      font-weight:900;
+      text-transform:uppercase;
+    }
+
+    .profile-item p{
+      margin-top:5px;
+      color:rgba(255,255,255,.82);
+      font-weight:700;
+    }
+
+    .modal-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    @media(max-width:1120px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative;height:auto}
+      .hero,.content{grid-template-columns:1fr}
+      .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
+    @media(max-width:680px){
+      .main{padding:18px}
+      .topbar,.panel-head{align-items:flex-start;flex-direction:column}
+      .actions,.search{width:100%}
+      .btn{width:100%}
+      .hero-card{padding:22px}
+      .mini-stats,.cards,.profile-grid{grid-template-columns:1fr}
+      .sidebar{padding:20px}
+    }
+  </style>
 </head>
 
 <body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">OS</div>
+        <div>
+          <h1>Olon Society</h1>
+          <p>Academy Dashboard</p>
+        </div>
+      </div>
 
-<div class="app">
+      <div class="nav">
+        <div class="nav-label">Principal</div>
+        <a class="active" href="#"><span class="nav-icon">◆</span> Dashboard</a>
+        <a href="#"><span class="nav-icon">＋</span> Solicitudes</a>
+        <a href="#"><span class="nav-icon">✓</span> Aceptadas</a>
+        <a href="#"><span class="nav-icon">W</span> WhatsApp</a>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-<div class="logo">OLON DASHBOARD</div>
+        <div class="nav-label">Programas</div>
+        <a href="#"><span class="nav-icon">★</span> VIP Regular</a>
+        <a href="#"><span class="nav-icon">♛</span> VIP Premium</a>
+        <a href="#"><span class="nav-icon">◎</span> Mentoría 1/1</a>
+      </div>
 
-<div class="menu">
-<a href="#">Dashboard</a>
-<a href="#">Solicitudes</a>
-<a href="#">Aceptados</a>
-<a href="#">WhatsApp</a>
-</div>
-</div>
+      <div class="side-card">
+        <h3>Panel privado</h3>
+        <p>Revisa perfiles, filtra prospectos y comparte acceso a WhatsApp desde una sola vista.</p>
+        <button>Nueva solicitud</button>
+      </div>
+    </aside>
 
-<!-- MAIN -->
-<div class="main">
+    <main class="main">
+      <header class="topbar">
+        <div class="title">
+          <h2>Dashboard de Solicitudes</h2>
+          <p>Vista premium para gestionar estudiantes y accesos de Olon Society Academy.</p>
+        </div>
 
-<div class="top">
-<h2>Panel de Solicitudes</h2>
-<input class="search" placeholder="Buscar...">
-</div>
+        <div class="actions">
+          <input class="search" id="searchInput" type="search" placeholder="Buscar por nombre, país o interés..." />
+          <button class="btn btn-dark">Exportar</button>
+          <button class="btn btn-gold">+ Solicitud</button>
+        </div>
+      </header>
 
-<!-- STATS -->
-<div class="cards">
-<div class="card"><h4>Total</h4><strong>120</strong></div>
-<div class="card"><h4>Pendientes</h4><strong>32</strong></div>
-<div class="card"><h4>Aceptados</h4><strong>70</strong></div>
-<div class="card"><h4>VIP Leads</h4><strong>18</strong></div>
-</div>
+      <section class="hero">
+        <div class="hero-card">
+          <span class="badge"><span class="dot"></span> Revisión privada</span>
+          <h3>Control profesional de leads, estudiantes y accesos.</h3>
+          <p>Convierte tu formulario en un panel tipo CRM para evaluar perfiles, identificar prospectos premium y enviar acceso directo por WhatsApp.</p>
 
-<!-- TABLE -->
-<div class="table">
-<table>
-<thead>
-<tr>
-<th>Nombre</th>
-<th>WhatsApp</th>
-<th>Experiencia</th>
-<th>Capital</th>
-<th>Estado</th>
-<th></th>
-</tr>
-</thead>
+          <div class="mini-stats">
+            <div class="mini"><strong>24</strong><span>Solicitudes nuevas</span></div>
+            <div class="mini"><strong>78%</strong><span>Calidad promedio</span></div>
+            <div class="mini"><strong>12</strong><span>Aceptadas hoy</span></div>
+          </div>
+        </div>
 
-<tbody>
-<tr>
-<td>Juan Morales</td>
-<td>+1 787 000 0000</td>
-<td>Básica</td>
-<td>$500</td>
-<td><span class="status pending">Pendiente</span></td>
-<td><button class="btn">Ver</button></td>
-</tr>
+        <div class="owner-card">
+          <div class="owner-head">
+            <div class="avatar">OD</div>
+            <div>
+              <h3>Owner Panel</h3>
+              <p>infolonsocietyacademy@gmail.com</p>
+            </div>
+          </div>
 
-<tr>
-<td>Ana Rivera</td>
-<td>+1 407 000 0000</td>
-<td>Intermedia</td>
-<td>$1,000+</td>
-<td><span class="status accepted">Aceptado</span></td>
-<td><button class="btn">WhatsApp</button></td>
-</tr>
+          <div class="progress">
+            <div class="progress-row"><span>Meta de cupos</span><strong>78%</strong></div>
+            <div class="bar"><span style="width:78%"></span></div>
+          </div>
 
-</tbody>
-</table>
-</div>
+          <div class="progress">
+            <div class="progress-row"><span>Conversión WhatsApp</span><strong>64%</strong></div>
+            <div class="bar"><span style="width:64%"></span></div>
+          </div>
+        </div>
+      </section>
 
-</div>
-</div>
+      <section class="cards">
+        <div class="stat">
+          <div class="stat-top"><small>Total</small><div class="stat-icon">Σ</div></div>
+          <strong>128</strong>
+          <span class="trend">+18 esta semana</span>
+        </div>
 
+        <div class="stat">
+          <div class="stat-top"><small>Pendientes</small><div class="stat-icon">⏱</div></div>
+          <strong>36</strong>
+          <span class="trend">Revisar primero</span>
+        </div>
+
+        <div class="stat">
+          <div class="stat-top"><small>Aceptadas</small><div class="stat-icon">✓</div></div>
+          <strong>72</strong>
+          <span class="trend">Listas para WhatsApp</span>
+        </div>
+
+        <div class="stat">
+          <div class="stat-top"><small>Premium Leads</small><div class="stat-icon">♛</div></div>
+          <strong>19</strong>
+          <span class="trend">Alta probabilidad</span>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Solicitudes recientes</h3>
+              <p>Pendientes, aceptadas y prospectos en revisión.</p>
+            </div>
+
+            <div class="tabs">
+              <button class="tab active" data-filter="all">Todas</button>
+              <button class="tab" data-filter="pending">Pendientes</button>
+              <button class="tab" data-filter="accepted">Aceptadas</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Estudiante</th>
+                  <th>WhatsApp</th>
+                  <th>Experiencia</th>
+                  <th>Capital</th>
+                  <th>Interés</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody id="leadsTable">
+                <tr data-status="pending">
+                  <td><div class="client"><div class="client-initial">JM</div><div>Juan Morales<small>Puerto Rico</small></div></div></td>
+                  <td>+1 787 000 0000</td>
+                  <td>Básica</td>
+                  <td>$500 - $1,000</td>
+                  <td>VIP Premium</td>
+                  <td><span class="status pending">Pendiente</span></td>
+                  <td><button class="table-btn" onclick="openModal('Juan Morales','Puerto Rico','VIP Premium','$500 - $1,000','Básica','Pendiente')">Ver</button></td>
+                </tr>
+
+                <tr data-status="accepted">
+                  <td><div class="client"><div class="client-initial">AR</div><div>Ana Rivera<small>Florida</small></div></div></td>
+                  <td>+1 407 000 0000</td>
+                  <td>Intermedia</td>
+                  <td>Más de $1,000</td>
+                  <td>Mentoría 1/1</td>
+                  <td><span class="status accepted">Aceptada</span></td>
+                  <td><button class="table-btn" onclick="openModal('Ana Rivera','Florida','Mentoría 1/1','Más de $1,000','Intermedia','Aceptada')">WhatsApp</button></td>
+                </tr>
+
+                <tr data-status="review">
+                  <td><div class="client"><div class="client-initial">LC</div><div>Luis Cruz<small>New York</small></div></div></td>
+                  <td>+1 929 000 0000</td>
+                  <td>Ninguna</td>
+                  <td>$100 - $500</td>
+                  <td>VIP Regular</td>
+                  <td><span class="status review">Revisión</span></td>
+                  <td><button class="table-btn" onclick="openModal('Luis Cruz','New York','VIP Regular','$100 - $500','Ninguna','Revisión')">Ver</button></td>
+                </tr>
+
+                <tr data-status="pending">
+                  <td><div class="client"><div class="client-initial">MS</div><div>María Santos<small>Rep. Dominicana</small></div></div></td>
+                  <td>+1 809 000 0000</td>
+                  <td>Avanzada</td>
+                  <td>Más de $1,000</td>
+                  <td>Indicador + VIP</td>
+                  <td><span class="status pending">Pendiente</span></td>
+                  <td><button class="table-btn" onclick="openModal('María Santos','Rep. Dominicana','Indicador + VIP','Más de $1,000','Avanzada','Pendiente')">Ver</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside class="right">
+          <div class="quick-card">
+            <h3>Acciones rápidas</h3>
+
+            <div class="task">
+              <div class="check">✓</div>
+              <div>
+                <p>Revisar perfil financiero</p>
+                <span>Capital, ingreso, tiempo disponible y mentalidad.</span>
+              </div>
+            </div>
+
+            <div class="task">
+              <div class="check">✓</div>
+              <div>
+                <p>Enviar acceso por WhatsApp</p>
+                <span>Mensaje listo para estudiantes aprobados.</span>
+              </div>
+            </div>
+
+            <div class="task">
+              <div class="check">✓</div>
+              <div>
+                <p>Exportar solicitudes</p>
+                <span>Organiza tus prospectos para seguimiento.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-card">
+            <div class="score">
+              <div class="ring">
+                <div class="ring-inner">78%</div>
+              </div>
+              <h3>Lead Quality</h3>
+              <p>Promedio de prospectos con buen capital, enfoque y compromiso.</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="profileModal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div>
+          <h3 id="modalName">Perfil</h3>
+          <p>Vista rápida del prospecto seleccionado.</p>
+        </div>
+        <button class="close" onclick="closeModal()">×</button>
+      </div>
+
+      <div class="profile-grid">
+        <div class="profile-item"><span>Ubicación</span><p id="modalLocation"></p></div>
+        <div class="profile-item"><span>Interés</span><p id="modalInterest"></p></div>
+        <div class="profile-item"><span>Capital</span><p id="modalCapital"></p></div>
+        <div class="profile-item"><span>Experiencia</span><p id="modalExperience"></p></div>
+        <div class="profile-item"><span>Estado</span><p id="modalStatus"></p></div>
+        <div class="profile-item"><span>Recomendación</span><p>Dar seguimiento hoy</p></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-gold">Aceptar y enviar WhatsApp</button>
+        <button class="btn btn-dark" onclick="closeModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const rows = document.querySelectorAll("#leadsTable tr");
+    const searchInput = document.getElementById("searchInput");
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        const filter = tab.dataset.filter;
+
+        rows.forEach(row => {
+          if(filter === "all"){
+            row.style.display = "";
+          } else {
+            row.style.display = row.dataset.status === filter ? "" : "none";
+          }
+        });
+      });
+    });
+
+    searchInput.addEventListener("input", () => {
+      const value = searchInput.value.toLowerCase();
+
+      rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+      });
+    });
+
+    function openModal(name, location, interest, capital, experience, status){
+      document.getElementById("modalName").textContent = name;
+      document.getElementById("modalLocation").textContent = location;
+      document.getElementById("modalInterest").textContent = interest;
+      document.getElementById("modalCapital").textContent = capital;
+      document.getElementById("modalExperience").textContent = experience;
+      document.getElementById("modalStatus").textContent = status;
+      document.getElementById("profileModal").classList.add("open");
+    }
+
+    function closeModal(){
+      document.getElementById("profileModal").classList.remove("open");
+    }
+  </script>
 </body>
 </html>
