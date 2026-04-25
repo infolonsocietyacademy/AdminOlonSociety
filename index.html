@@ -3,400 +3,235 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>OLON Society Academy | Dashboard Pro</title>
+<title>OLON Society Academy | Dashboard Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#06080f;
-  --bg2:#0c1120;
-  --bg3:#111827;
-  --card:#111827;
-  --card2:#1a2234;
-  --border:rgba(255,255,255,.07);
-  --border2:rgba(255,255,255,.12);
-  --text:#f0f4ff;
-  --muted:#8899b4;
-  --soft:#1e2d47;
-  --gold:#f0c040;
-  --gold2:#fad96b;
-  --gold3:rgba(240,192,64,.15);
-  --green:#34d399;
-  --green2:rgba(52,211,153,.15);
-  --red:#f87171;
-  --red2:rgba(248,113,113,.15);
-  --blue:#60a5fa;
-  --blue2:rgba(96,165,250,.15);
-  --purple:#a78bfa;
-  --r:20px;
+  --bg:#06080f;--bg2:#0c1120;--bg3:#111827;
+  --card:#111827;--card2:#1a2234;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.13);
+  --text:#f0f4ff;--muted:#8899b4;
+  --gold:#f0c040;--gold2:#fad96b;--gold3:rgba(240,192,64,.13);
+  --green:#34d399;--green2:rgba(52,211,153,.13);
+  --red:#f87171;--red2:rgba(248,113,113,.13);
+  --blue:#60a5fa;--blue2:rgba(96,165,250,.13);
+  --r:18px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  min-height:100vh;
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  overflow-x:hidden;
-}
-button,input,select{font-family:inherit}
-button{cursor:pointer;border:none;background:none}
+body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+button,input,select{font-family:inherit;cursor:pointer;border:none;background:none}
 
-/* LAYOUT */
-.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
 
 /* SIDEBAR */
 .sidebar{
   position:sticky;top:0;height:100vh;
-  padding:24px 18px;
-  background:var(--bg2);
+  padding:22px 16px;background:var(--bg2);
   border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  overflow-y:auto;
+  display:flex;flex-direction:column;overflow-y:auto;
 }
-.brand{display:flex;align-items:center;gap:12px;margin-bottom:32px;padding:0 6px}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:28px;padding:0 4px}
 .brand-mark{
-  width:48px;height:48px;border-radius:14px;
+  width:44px;height:44px;border-radius:13px;flex-shrink:0;
   background:linear-gradient(135deg,var(--gold2),var(--gold));
   display:grid;place-items:center;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:#06080f;
-  box-shadow:0 8px 24px rgba(240,192,64,.3);
-  flex-shrink:0;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;color:#06080f;
+  box-shadow:0 6px 20px rgba(240,192,64,.28);
 }
-.brand-text h1{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;line-height:1.1}
-.brand-text p{color:var(--gold);font-size:.72rem;font-weight:600;margin-top:3px;letter-spacing:.06em;text-transform:uppercase}
-
-.nav-section{margin-bottom:6px}
-.nav-label{
-  padding:6px 10px;margin:14px 0 6px;
-  color:rgba(255,255,255,.28);font-size:.67rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.14em;
-}
+.brand h1{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;line-height:1.1}
+.brand p{color:var(--gold);font-size:.68rem;font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.nav-label{padding:4px 8px;margin:12px 0 4px;color:rgba(255,255,255,.26);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em}
 .nav a{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 12px;margin-bottom:2px;
-  border-radius:12px;color:var(--muted);
-  text-decoration:none;font-size:.88rem;font-weight:600;
-  transition:.2s;
+  display:flex;align-items:center;gap:9px;padding:9px 10px;margin-bottom:2px;
+  border-radius:11px;color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;transition:.2s;
 }
 .nav a:hover{color:var(--text);background:rgba(255,255,255,.05)}
-.nav a.active{
-  color:var(--bg);background:var(--gold);
-  box-shadow:0 6px 20px rgba(240,192,64,.25);
-  font-weight:700;
-}
-.nav-ic{
-  width:24px;height:24px;border-radius:8px;
-  display:grid;place-items:center;font-size:.8rem;
-  background:rgba(255,255,255,.06);flex-shrink:0;
-}
-.nav a.active .nav-ic{background:rgba(6,8,15,.15)}
-
-.sidebar-bottom{margin-top:auto;padding-top:20px;border-top:1px solid var(--border)}
-.profile-mini{display:flex;align-items:center;gap:10px;padding:10px}
-.ava{
-  width:38px;height:38px;border-radius:12px;
-  background:linear-gradient(135deg,var(--gold2),var(--gold));
-  display:grid;place-items:center;font-family:'Syne',sans-serif;
-  font-weight:800;font-size:.85rem;color:#06080f;
-}
-.profile-mini h4{font-size:.88rem;font-weight:700}
-.profile-mini p{font-size:.75rem;color:var(--muted)}
+.nav a.active{color:#06080f;background:var(--gold);font-weight:700;box-shadow:0 4px 16px rgba(240,192,64,.22)}
+.nav-ic{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:.75rem;background:rgba(255,255,255,.05);flex-shrink:0}
+.nav a.active .nav-ic{background:rgba(6,8,15,.12)}
+.sidebar-bottom{margin-top:auto;padding-top:16px;border-top:1px solid var(--border)}
+.profile-mini{display:flex;align-items:center;gap:9px;padding:8px}
+.ava{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold2),var(--gold));font-family:'Syne',sans-serif;font-weight:800;font-size:.78rem;color:#06080f}
+.profile-mini h4{font-size:.84rem;font-weight:700}
+.profile-mini p{font-size:.7rem;color:var(--muted)}
 
 /* MAIN */
-.main{min-width:0;background:var(--bg);display:flex;flex-direction:column}
-
-/* TOPBAR */
+.main{min-width:0;display:flex;flex-direction:column}
 .topbar{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:20px 28px;border-bottom:1px solid var(--border);
-  background:var(--bg);position:sticky;top:0;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:18px 24px;border-bottom:1px solid var(--border);
+  background:var(--bg);position:sticky;top:0;z-index:10;flex-wrap:wrap;
 }
-.topbar-left h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
-.topbar-left p{color:var(--muted);font-size:.84rem;margin-top:3px}
-.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-left h2{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-.02em}
+.topbar-left p{color:var(--muted);font-size:.8rem;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .search{
-  height:40px;padding:0 16px;
-  border:1px solid var(--border2);border-radius:999px;
-  background:var(--bg2);color:var(--text);
-  font-size:.85rem;font-weight:500;outline:none;width:240px;
-  transition:.2s;
+  height:38px;padding:0 14px;border:1px solid var(--border2);border-radius:999px;
+  background:var(--bg2);color:var(--text);font-size:.82rem;width:220px;outline:none;transition:.2s;
 }
 .search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,192,64,.1)}
 .search::placeholder{color:var(--muted)}
-.btn{
-  height:40px;padding:0 18px;border-radius:999px;
-  font-size:.84rem;font-weight:700;transition:.2s;
-}
+.btn{height:38px;padding:0 16px;border-radius:999px;font-size:.8rem;font-weight:700;transition:.2s}
 .btn:hover{transform:translateY(-1px)}
 .btn-outline{border:1px solid var(--border2);color:var(--text);background:var(--bg2)}
-.btn-gold{background:var(--gold);color:#06080f;box-shadow:0 6px 18px rgba(240,192,64,.2)}
+.btn-gold{background:var(--gold);color:#06080f;box-shadow:0 4px 14px rgba(240,192,64,.2)}
+
+/* SYNC STATUS */
+.sync-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 24px;border-bottom:1px solid var(--border);
+  background:var(--bg2);font-size:.78rem;font-weight:600;color:var(--muted);
+  flex-wrap:wrap;
+}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(52,211,153,.18);flex-shrink:0}
+.sync-dot.loading{background:var(--gold);animation:pulse 1s infinite}
+.sync-dot.error{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#syncText{color:var(--text)}
+.sync-btn{
+  margin-left:auto;height:28px;padding:0 12px;border-radius:999px;
+  border:1px solid var(--border2);color:var(--text);background:var(--bg);
+  font-size:.72rem;font-weight:700;transition:.2s;
+}
+.sync-btn:hover{border-color:var(--gold);color:var(--gold)}
 
 /* CONTENT */
-.content{padding:24px 28px;flex:1}
+.content{padding:22px 24px;flex:1}
 
-/* MONTH SELECTOR */
-.period-bar{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:24px;flex-wrap:wrap;gap:12px;
-}
-.period-tabs{display:flex;gap:6px;flex-wrap:wrap}
-.ptab{
-  padding:8px 16px;border-radius:999px;font-size:.82rem;font-weight:700;
-  border:1px solid var(--border2);color:var(--muted);
-  transition:.2s;
-}
-.ptab:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
-.ptab.active{background:var(--gold);color:#06080f;border-color:var(--gold);box-shadow:0 4px 14px rgba(240,192,64,.2)}
-.year-sel{
-  height:38px;padding:0 14px;border-radius:10px;
-  border:1px solid var(--border2);background:var(--bg2);
-  color:var(--text);font-size:.84rem;font-weight:600;outline:none;
-}
-
-/* KPI STRIP */
-.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px}
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .kpi{
-  padding:18px;border-radius:var(--r);
-  border:1px solid var(--border);background:var(--card);
-  position:relative;overflow:hidden;
-  transition:.2s;
+  padding:16px;border-radius:var(--r);border:1px solid var(--border);
+  background:var(--card);position:relative;overflow:hidden;transition:.2s;
 }
-.kpi::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--kpi-color,var(--gold));
-  border-radius:var(--r) var(--r) 0 0;
-}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kpi-c,var(--gold));border-radius:var(--r) var(--r) 0 0}
 .kpi:hover{transform:translateY(-2px);border-color:var(--border2)}
-.kpi-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px}
-.kpi-val{font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;letter-spacing:-.03em;line-height:1}
-.kpi-sub{font-size:.76rem;font-weight:600;margin-top:6px;color:var(--muted)}
-.kpi-sub.up{color:var(--green)}
-.kpi-sub.down{color:var(--red)}
+.kpi-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+.kpi-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.kpi-sub{font-size:.73rem;font-weight:600;margin-top:5px;color:var(--muted)}
+.kpi-sub.up{color:var(--green)}.kpi-sub.warn{color:var(--gold)}
 
-/* CHART AREA */
-.grid-2{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-bottom:24px}
-.chart-card{
-  border-radius:var(--r);border:1px solid var(--border);
-  background:var(--card);overflow:hidden;
-}
-.card-head{
-  padding:18px 20px;border-bottom:1px solid var(--border);
-  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-}
-.card-head h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800}
-.card-head p{font-size:.8rem;color:var(--muted);margin-top:3px}
-
-/* SVG CHART */
-.chart-wrap{padding:20px}
+/* CHARTS ROW */
+.charts-row{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:20px}
+.chart-card{border-radius:var(--r);border:1px solid var(--border);background:var(--card);overflow:hidden}
+.card-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.card-head h3{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800}
+.card-head p{font-size:.76rem;color:var(--muted);margin-top:2px}
+.chart-wrap{padding:18px}
 .chart-svg{width:100%;overflow:visible}
-.bar-col{cursor:pointer;transition:.2s}
-.bar-col:hover .bar-rect{filter:brightness(1.2)}
-.bar-rect{transition:.3s}
-.axis-text{font-family:'DM Sans',sans-serif;font-size:11px;fill:var(--muted)}
-.chart-tooltip{
-  position:absolute;padding:8px 12px;
-  background:var(--card2);border:1px solid var(--border2);
-  border-radius:10px;font-size:.78rem;font-weight:700;
-  pointer-events:none;display:none;
-  box-shadow:0 8px 20px rgba(0,0,0,.4);
-  white-space:nowrap;z-index:99;
-}
-
-/* DONUT */
-.donut-wrap{padding:20px;display:flex;flex-direction:column;align-items:center}
-.donut-svg{width:170px;height:170px;margin:10px auto}
-.donut-legend{width:100%;margin-top:16px}
-.legend-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 0;border-bottom:1px solid var(--border);
-}
+.axis-t{font-family:'DM Sans',sans-serif;font-size:10px;fill:#8899b4}
+.donut-wrap{padding:16px;display:flex;flex-direction:column;align-items:center}
+.legend-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);width:100%}
 .legend-item:last-child{border-bottom:0}
-.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.legend-label{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600}
-.legend-val{font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.legend-lbl{display:flex;align-items:center;gap:7px;font-size:.79rem;font-weight:600}
+.legend-val{font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem}
 
-/* MONTHLY TABLE */
-.monthly-card{border-radius:var(--r);border:1px solid var(--border);background:var(--card);margin-bottom:24px;overflow:hidden}
+/* TABLE */
+.table-card{border-radius:var(--r);border:1px solid var(--border);background:var(--card);margin-bottom:20px;overflow:hidden}
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:780px}
-th{
-  padding:12px 16px;text-align:left;
-  color:var(--muted);font-size:.7rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.08em;
-  border-bottom:1px solid var(--border);
-  background:var(--bg2);
-}
-td{
-  padding:14px 16px;border-bottom:1px solid var(--border);
-  font-size:.85rem;font-weight:600;
-}
+table{width:100%;border-collapse:collapse;min-width:700px}
+th{padding:11px 14px;text-align:left;color:var(--muted);font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);background:var(--bg2)}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:.83rem;font-weight:600}
 tr:last-child td{border-bottom:0}
 tr:hover td{background:rgba(255,255,255,.02)}
-
-.month-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;
-}
-.month-dot{width:8px;height:8px;border-radius:50%}
-.rev-val{font-family:'Syne',sans-serif;font-weight:800;color:var(--gold)}
-.pill{
-  display:inline-flex;align-items:center;
-  padding:4px 10px;border-radius:999px;
-  font-size:.72rem;font-weight:700;
-}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:.7rem;font-weight:700}
 .pill-green{background:var(--green2);color:var(--green)}
 .pill-gold{background:var(--gold3);color:var(--gold)}
 .pill-red{background:var(--red2);color:var(--red)}
 .pill-blue{background:var(--blue2);color:var(--blue)}
-.sparkline{display:inline-flex;align-items:flex-end;gap:2px;height:24px}
-.spark-bar{width:5px;border-radius:3px;background:var(--gold);opacity:.5}
-.spark-bar:last-child{opacity:1}
+.rev-val{font-family:'Syne',sans-serif;font-weight:800;color:var(--gold)}
+.ava-sm{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:.75rem;color:#06080f;flex-shrink:0}
+.student-row-cell{display:flex;align-items:center;gap:9px}
 
-/* STUDENTS SECTION */
-.grid-students{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
-.student-card{
-  border-radius:var(--r);border:1px solid var(--border);background:var(--card);overflow:hidden;
-}
-.student-row{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 16px;border-bottom:1px solid var(--border);
-  transition:.15s;cursor:pointer;
-}
-.student-row:last-child{border-bottom:0}
-.student-row:hover{background:rgba(255,255,255,.03)}
-.ava-sm{
-  width:36px;height:36px;border-radius:11px;
-  display:grid;place-items:center;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:.8rem;
-  color:#06080f;flex-shrink:0;
-}
-.student-info{flex:1}
-.student-info h4{font-size:.87rem;font-weight:700;line-height:1.2}
-.student-info p{font-size:.75rem;color:var(--muted);margin-top:1px}
-.student-meta{text-align:right}
-.student-meta strong{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:var(--gold);display:block}
-.student-meta span{font-size:.72rem;color:var(--muted)}
+/* TABS */
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:7px 12px;border-radius:999px;font-size:.76rem;font-weight:700;border:1px solid var(--border2);color:var(--muted);transition:.2s}
+.tab.active{background:var(--gold);color:#06080f;border-color:var(--gold)}
+.tab:hover:not(.active){color:var(--text)}
 
-/* PROGRESS GOAL */
-.goal-card{
-  border-radius:var(--r);border:1px solid var(--border);
-  background:linear-gradient(135deg,var(--card),var(--card2));
-  padding:24px;margin-bottom:24px;
-  display:grid;grid-template-columns:1fr 220px;gap:24px;align-items:center;
+/* LOADING */
+.loading-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 20px;gap:14px;color:var(--muted);
 }
-.goal-text h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:6px}
-.goal-text p{color:var(--muted);font-size:.84rem;line-height:1.6}
-.goal-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-.goal-num{padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
-.goal-num span{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.goal-num strong{display:block;font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;margin-top:4px}
-.goal-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
-.goal-ring-wrap p{font-size:.8rem;color:var(--muted);font-weight:600;text-align:center}
+.spinner{
+  width:36px;height:36px;border-radius:50%;
+  border:3px solid rgba(240,192,64,.2);border-top-color:var(--gold);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state p{font-size:.88rem;font-weight:600}
+
+/* EMPTY */
+.empty-note{
+  padding:16px 18px;background:var(--gold3);border:1px solid rgba(240,192,64,.2);
+  border-radius:12px;margin-bottom:16px;font-size:.82rem;font-weight:600;color:var(--gold2);
+  display:flex;align-items:center;gap:8px;
+}
 
 /* MODAL */
-.modal{
-  position:fixed;inset:0;display:none;place-items:center;
-  padding:18px;background:rgba(6,8,15,.8);backdrop-filter:blur(20px);z-index:50;
-}
+.modal{position:fixed;inset:0;display:none;place-items:center;padding:18px;background:rgba(6,8,15,.85);backdrop-filter:blur(18px);z-index:50}
 .modal.open{display:grid}
 .modal-card{
-  width:min(580px,100%);
-  border-radius:28px;border:1px solid var(--border2);
-  background:var(--card2);
-  box-shadow:0 40px 100px rgba(0,0,0,.6);
-  overflow:hidden;
-  animation:slideUp .25s ease;
+  width:min(540px,100%);border-radius:24px;border:1px solid var(--border2);
+  background:var(--card2);box-shadow:0 40px 100px rgba(0,0,0,.6);overflow:hidden;
+  animation:slideUp .22s ease;
 }
-@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
-.modal-head{
-  padding:22px 24px;border-bottom:1px solid var(--border);
-  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
-  background:linear-gradient(135deg,rgba(240,192,64,.08),transparent);
-}
-.modal-head h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800}
-.modal-head p{color:var(--muted);font-size:.83rem;margin-top:4px}
-.modal-close{
-  width:36px;height:36px;border-radius:999px;
-  border:1px solid var(--border2);color:var(--text);
-  background:rgba(255,255,255,.06);font-size:1.1rem;
-  display:grid;place-items:center;
-}
-.modal-body{padding:22px 24px}
-.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-.pfield{padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
-.pfield span{font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);display:block;margin-bottom:4px}
-.pfield p{font-size:.88rem;font-weight:700;color:var(--text)}
-.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
-.btn-sm{height:38px;padding:0 16px;border-radius:999px;font-size:.82rem;font-weight:700;transition:.2s}
+@keyframes slideUp{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:10px;background:linear-gradient(135deg,rgba(240,192,64,.07),transparent)}
+.modal-head h3{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800}
+.modal-head p{color:var(--muted);font-size:.79rem;margin-top:3px}
+.modal-close{width:34px;height:34px;border-radius:999px;border:1px solid var(--border2);color:var(--text);background:rgba(255,255,255,.05);font-size:1rem;display:grid;place-items:center}
+.modal-body{padding:20px 22px}
+.pfields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.pf{padding:11px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.pf span{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);display:block;margin-bottom:3px}
+.pf p{font-size:.85rem;font-weight:700}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-sm{height:36px;padding:0 14px;border-radius:999px;font-size:.79rem;font-weight:700;transition:.2s}
 .btn-sm:hover{transform:translateY(-1px)}
-.btn-sm-gold{background:var(--gold);color:#06080f;box-shadow:0 6px 16px rgba(240,192,64,.2)}
-.btn-sm-outline{border:1px solid var(--border2);color:var(--text);background:var(--bg2)}
+.btn-sm-gold{background:var(--gold);color:#06080f}
+.btn-sm-out{border:1px solid var(--border2);color:var(--text);background:var(--bg2)}
 
 /* RESPONSIVE */
-@media(max-width:1200px){
-  .kpis{grid-template-columns:repeat(3,1fr)}
-  .grid-2{grid-template-columns:1fr}
-  .grid-students{grid-template-columns:1fr}
-  .goal-card{grid-template-columns:1fr}
-  .goal-ring-wrap{flex-direction:row;align-items:center;justify-content:center}
-}
-@media(max-width:900px){
-  .app{grid-template-columns:1fr}
-  .sidebar{height:auto;position:relative}
-  .kpis{grid-template-columns:repeat(2,1fr)}
-  .topbar{flex-direction:column;align-items:flex-start}
-  .topbar-right{width:100%}
-  .search{width:100%}
-  .content{padding:18px}
-}
-@media(max-width:480px){
-  .kpis{grid-template-columns:1fr}
-  .period-tabs{gap:4px}
-}
+@media(max-width:1100px){.charts-row{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative}.content{padding:16px}}
+@media(max-width:500px){.kpis{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}.search{width:100%}}
 </style>
 </head>
 <body>
-<div class="chart-tooltip" id="tooltip"></div>
 
 <div class="app">
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="brand">
     <div class="brand-mark">OS</div>
-    <div class="brand-text">
+    <div>
       <h1>Olon Society</h1>
       <p>Academy Pro</p>
     </div>
   </div>
-
   <nav class="nav">
     <div class="nav-label">Principal</div>
     <a class="active" href="#"><span class="nav-ic">◆</span> Dashboard</a>
     <a href="#"><span class="nav-ic">📊</span> Ingresos</a>
     <a href="#"><span class="nav-ic">👥</span> Estudiantes</a>
-    <a href="#"><span class="nav-ic">＋</span> Solicitudes</a>
-    <a href="#"><span class="nav-ic">✓</span> Aceptadas</a>
+    <a href="#"><span class="nav-ic">📋</span> Solicitudes</a>
     <a href="#"><span class="nav-ic">💬</span> WhatsApp</a>
-
     <div class="nav-label">Programas</div>
     <a href="#"><span class="nav-ic">★</span> VIP Regular</a>
     <a href="#"><span class="nav-ic">♛</span> VIP Premium</a>
     <a href="#"><span class="nav-ic">◎</span> Mentoría 1/1</a>
-
     <div class="nav-label">Reportes</div>
     <a href="#"><span class="nav-ic">📅</span> Mensual</a>
     <a href="#"><span class="nav-ic">📈</span> Anual</a>
-    <a href="#"><span class="nav-ic">⬇</span> Exportar</a>
   </nav>
-
   <div class="sidebar-bottom">
     <div class="profile-mini">
       <div class="ava">OD</div>
-      <div>
-        <h4>Owner</h4>
-        <p>Olon Society Academy</p>
-      </div>
+      <div><h4>Owner</h4><p>Olon Society Academy</p></div>
     </div>
   </div>
 </aside>
@@ -405,447 +240,370 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <main class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <h2>Dashboard de Crecimiento</h2>
-      <p>Registro de estudiantes e ingresos generados mes a mes</p>
+      <h2>Dashboard en Vivo</h2>
+      <p>Datos conectados directamente desde tu Google Sheets</p>
     </div>
     <div class="topbar-right">
-      <input class="search" id="searchInput" type="search" placeholder="Buscar estudiante, país..."/>
-      <button class="btn btn-outline">Exportar CSV</button>
-      <button class="btn btn-gold" onclick="openModal('','','','','','')">+ Nuevo</button>
+      <input class="search" id="searchInput" type="search" placeholder="Buscar estudiante..."/>
+      <button class="btn btn-outline" onclick="exportCSV()">Exportar</button>
+      <button class="btn btn-gold" onclick="openModal()">+ Nuevo</button>
     </div>
   </header>
 
+  <!-- SYNC BAR -->
+  <div class="sync-bar">
+    <div class="sync-dot loading" id="syncDot"></div>
+    <span id="syncText">Cargando datos desde Google Sheets...</span>
+    <button class="sync-btn" onclick="loadData()">↻ Sincronizar</button>
+  </div>
+
   <div class="content">
-    <!-- PERIOD SELECTOR -->
-    <div class="period-bar">
-      <div class="period-tabs" id="periodTabs">
-        <button class="ptab" data-m="all">Todo el año</button>
-        <button class="ptab" data-m="1">Ene</button>
-        <button class="ptab" data-m="2">Feb</button>
-        <button class="ptab" data-m="3">Mar</button>
-        <button class="ptab" data-m="4">Abr</button>
-        <button class="ptab" data-m="5">May</button>
-        <button class="ptab" data-m="6">Jun</button>
-        <button class="ptab" data-m="7">Jul</button>
-        <button class="ptab" data-m="8">Ago</button>
-        <button class="ptab" data-m="9">Sep</button>
-        <button class="ptab" data-m="10">Oct</button>
-        <button class="ptab" data-m="11">Nov</button>
-        <button class="ptab active" data-m="12">Dic</button>
-      </div>
-      <select class="year-sel" id="yearSel">
-        <option value="2025">2025</option>
-        <option value="2024">2024</option>
-        <option value="2023">2023</option>
-      </select>
+    <div id="emptyNote" class="empty-note" style="display:none">
+      ⚠️ Los ingresos están en $0 en tu hoja. Agrégalos en la columna "Ingresos ($)" de Google Sheets y toca Sincronizar.
     </div>
 
     <!-- KPIs -->
-    <div class="kpis" id="kpis">
-      <div class="kpi" style="--kpi-color:var(--gold)">
-        <div class="kpi-label">Ingresos del mes</div>
-        <div class="kpi-val" id="kRevMes">$12,400</div>
-        <div class="kpi-sub up" id="kRevDelta">▲ +18% vs mes anterior</div>
-      </div>
-      <div class="kpi" style="--kpi-color:var(--green)">
-        <div class="kpi-label">Ingresos acumulados</div>
-        <div class="kpi-val" id="kRevTotal">$94,800</div>
-        <div class="kpi-sub up">▲ Total 2025</div>
-      </div>
-      <div class="kpi" style="--kpi-color:var(--blue)">
-        <div class="kpi-label">Estudiantes activos</div>
-        <div class="kpi-val" id="kStudents">143</div>
-        <div class="kpi-sub up">▲ +12 este mes</div>
-      </div>
-      <div class="kpi" style="--kpi-color:var(--purple)">
-        <div class="kpi-label">Tasa de conversión</div>
-        <div class="kpi-val">67%</div>
-        <div class="kpi-sub up">▲ +4% vs anterior</div>
-      </div>
-      <div class="kpi" style="--kpi-color:var(--red)">
-        <div class="kpi-label">Solicitudes nuevas</div>
-        <div class="kpi-val">38</div>
-        <div class="kpi-sub">Este mes</div>
-      </div>
+    <div class="kpis" id="kpiSection">
+      <div class="kpi" style="--kpi-c:var(--gold)"><div class="kpi-label">Ingresos acumulados</div><div class="kpi-val" id="kRevTotal">—</div><div class="kpi-sub warn" id="kRevSub">Cargando...</div></div>
+      <div class="kpi" style="--kpi-c:var(--green)"><div class="kpi-label">Estudiantes activos</div><div class="kpi-val" id="kStudents">—</div><div class="kpi-sub up" id="kStudSub">Cargando...</div></div>
+      <div class="kpi" style="--kpi-c:var(--blue)"><div class="kpi-label">Solicitudes totales</div><div class="kpi-val" id="kSolicitudes">—</div><div class="kpi-sub" id="kSolSub">Cargando...</div></div>
+      <div class="kpi" style="--kpi-c:var(--red)"><div class="kpi-label">Conversión promedio</div><div class="kpi-val" id="kConversion">—</div><div class="kpi-sub up">▲ Este año</div></div>
     </div>
 
     <!-- CHARTS -->
-    <div class="grid-2">
-      <!-- BAR CHART -->
+    <div class="charts-row">
       <div class="chart-card">
         <div class="card-head">
-          <div>
-            <h3>Ingresos mensuales 2025</h3>
-            <p>Total generado por mes en todos los programas</p>
-          </div>
-          <select class="year-sel" style="height:34px;font-size:.78rem">
-            <option>2025</option><option>2024</option>
-          </select>
+          <div><h3>Estudiantes por mes</h3><p>Nuevos estudiantes registrados cada mes</p></div>
         </div>
-        <div class="chart-wrap">
-          <svg class="chart-svg" viewBox="0 0 700 220" id="barChart">
-            <!-- rendered by JS -->
-          </svg>
-        </div>
+        <div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 620 200" id="barChart"><text x="310" y="100" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Cargando...</text></svg></div>
       </div>
-
-      <!-- DONUT -->
       <div class="chart-card">
-        <div class="card-head">
-          <div>
-            <h3>Por programa</h3>
-            <p>Distribución de ingresos</p>
-          </div>
-        </div>
+        <div class="card-head"><div><h3>Por programa</h3><p>Distribución de estudiantes</p></div></div>
         <div class="donut-wrap">
-          <svg class="donut-svg" viewBox="0 0 170 170" id="donutChart"></svg>
-          <div class="donut-legend" id="donutLegend"></div>
+          <svg width="150" height="150" viewBox="0 0 150 150" id="donutChart"><text x="75" y="80" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#8899b4">Cargando...</text></svg>
+          <div id="donutLegend" style="width:100%;margin-top:12px"></div>
         </div>
-      </div>
-    </div>
-
-    <!-- GOAL -->
-    <div class="goal-card">
-      <div>
-        <div class="goal-text">
-          <h3>Meta anual 2025 — $140,000</h3>
-          <p>Progreso acumulado hacia la meta de ingresos del año. Basado en los datos registrados mes a mes en todos los programas de la academia.</p>
-        </div>
-        <div class="goal-nums">
-          <div class="goal-num">
-            <span>Generado</span>
-            <strong style="color:var(--gold)">$94,800</strong>
-          </div>
-          <div class="goal-num">
-            <span>Restante</span>
-            <strong style="color:var(--muted)">$45,200</strong>
-          </div>
-          <div class="goal-num">
-            <span>Promedio/mes</span>
-            <strong style="color:var(--green)">$7,900</strong>
-          </div>
-          <div class="goal-num">
-            <span>Proyección</span>
-            <strong style="color:var(--blue)">$126k</strong>
-          </div>
-        </div>
-      </div>
-      <div class="goal-ring-wrap">
-        <svg width="180" height="180" viewBox="0 0 180 180">
-          <circle cx="90" cy="90" r="72" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="16"/>
-          <circle cx="90" cy="90" r="72" fill="none" stroke="url(#goalGrad)" stroke-width="16"
-            stroke-dasharray="452" stroke-dashoffset="99" stroke-linecap="round"
-            transform="rotate(-90 90 90)"/>
-          <defs>
-            <linearGradient id="goalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#fad96b"/>
-              <stop offset="100%" stop-color="#f0c040"/>
-            </linearGradient>
-          </defs>
-          <text x="90" y="84" text-anchor="middle" font-family="Syne,sans-serif" font-size="26" font-weight="800" fill="#f0c040">68%</text>
-          <text x="90" y="104" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#8899b4" font-weight="600">de la meta</text>
-        </svg>
-        <p>Meta anual 2025</p>
       </div>
     </div>
 
     <!-- MONTHLY TABLE -->
-    <div class="monthly-card">
+    <div class="table-card">
       <div class="card-head">
-        <div>
-          <h3>Historial mes a mes</h3>
-          <p>Detalle de estudiantes, ingresos y rendimiento por programa</p>
-        </div>
-        <button class="btn btn-outline" style="height:36px;font-size:.78rem">Ver todo</button>
+        <div><h3>Registro mensual</h3><p>Detalle mes a mes desde tu Google Sheets</p></div>
       </div>
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Mes</th>
-              <th>Estudiantes nuevos</th>
-              <th>Ingresos</th>
-              <th>Crecimiento</th>
-              <th>Programa líder</th>
-              <th>Conversión</th>
-              <th>Tendencia</th>
-            </tr>
-          </thead>
-          <tbody id="monthlyTable"></tbody>
+          <thead><tr><th>Mes</th><th>Ingresos</th><th>Estudiantes</th><th>Programa Líder</th><th>Conversión</th><th>Solicitudes</th></tr></thead>
+          <tbody id="monthlyTable"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><p>Cargando datos...</p></div></td></tr></tbody>
         </table>
       </div>
     </div>
 
-    <!-- STUDENTS GRID -->
-    <div class="grid-students">
-      <!-- ACTIVE STUDENTS -->
-      <div class="student-card">
-        <div class="card-head">
-          <div><h3>Estudiantes activos</h3><p>Últimos incorporados</p></div>
-          <span class="pill pill-green">143 activos</span>
+    <!-- STUDENTS TABLE -->
+    <div class="table-card">
+      <div class="card-head">
+        <div><h3>Estudiantes</h3><p>Registro completo desde tu hoja</p></div>
+        <div class="tabs">
+          <button class="tab active" onclick="filterStudents('all',this)">Todos</button>
+          <button class="tab" onclick="filterStudents('Activo',this)">Activos</button>
+          <button class="tab" onclick="filterStudents('Pendiente',this)">Pendientes</button>
+          <button class="tab" onclick="filterStudents('En Revisión',this)">Revisión</button>
         </div>
-        <div id="studentList"></div>
       </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>País</th><th>Programa</th><th>Capital</th><th>Experiencia</th><th>Estado</th><th>WhatsApp</th><th></th></tr></thead>
+          <tbody id="studentsTable"><tr><td colspan="8"><div class="loading-state"><div class="spinner"></div><p>Cargando estudiantes...</p></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
 
-      <!-- TOP STUDENTS -->
-      <div class="student-card">
-        <div class="card-head">
-          <div><h3>Premium leads</h3><p>Mayor capital y compromiso</p></div>
-          <span class="pill pill-gold">19 premium</span>
-        </div>
-        <div id="premiumList"></div>
+    <!-- SOLICITUDES TABLE -->
+    <div class="table-card">
+      <div class="card-head">
+        <div><h3>Solicitudes recientes</h3><p>Últimas solicitudes de ingreso</p></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>País</th><th>Interés</th><th>Capital</th><th>Fecha</th><th>Estado</th><th></th></tr></thead>
+          <tbody id="solTable"><tr><td colspan="7"><div class="loading-state"><div class="spinner"></div><p>Cargando solicitudes...</p></div></td></tr></tbody>
+        </table>
       </div>
     </div>
 
   </div><!-- /content -->
 </main>
-</div><!-- /app -->
+</div>
 
 <!-- MODAL -->
-<div class="modal" id="profileModal">
+<div class="modal" id="modal">
   <div class="modal-card">
     <div class="modal-head">
-      <div>
-        <h3 id="modalName">Perfil del estudiante</h3>
-        <p id="modalSub">Vista rápida del prospecto seleccionado</p>
-      </div>
+      <div><h3 id="modalName">Perfil</h3><p id="modalSub">Vista del prospecto</p></div>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body">
-      <div class="profile-grid">
-        <div class="pfield"><span>Ubicación</span><p id="mLoc">—</p></div>
-        <div class="pfield"><span>Interés</span><p id="mInt">—</p></div>
-        <div class="pfield"><span>Capital</span><p id="mCap">—</p></div>
-        <div class="pfield"><span>Experiencia</span><p id="mExp">—</p></div>
-        <div class="pfield"><span>Estado</span><p id="mStat">—</p></div>
-        <div class="pfield"><span>Recomendación</span><p style="color:var(--green)">Dar seguimiento hoy</p></div>
+      <div class="pfields">
+        <div class="pf"><span>País</span><p id="mLoc">—</p></div>
+        <div class="pf"><span>Programa</span><p id="mProg">—</p></div>
+        <div class="pf"><span>Capital</span><p id="mCap">—</p></div>
+        <div class="pf"><span>Experiencia</span><p id="mExp">—</p></div>
+        <div class="pf"><span>Estado</span><p id="mStat">—</p></div>
+        <div class="pf"><span>WhatsApp</span><p id="mWa">—</p></div>
       </div>
       <div class="modal-actions">
-        <button class="btn-sm btn-sm-gold">Aceptar y enviar WhatsApp</button>
-        <button class="btn-sm btn-sm-outline" onclick="closeModal()">Cerrar</button>
+        <button class="btn-sm btn-sm-gold">✓ Aceptar y enviar WhatsApp</button>
+        <button class="btn-sm btn-sm-out" onclick="closeModal()">Cerrar</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// ─── DATA ─────────────────────────────────────────────────────
-const monthlyData = [
-  {m:'Enero',   rev:4200,  students:8,  prog:'VIP Regular',  conv:58, trend:[2,3,3,4,5,6,8]},
-  {m:'Febrero', rev:5800,  students:11, prog:'VIP Premium',  conv:61, trend:[4,5,6,7,8,9,11]},
-  {m:'Marzo',   rev:7100,  students:14, prog:'VIP Premium',  conv:63, trend:[6,7,8,9,10,12,14]},
-  {m:'Abril',   rev:6400,  students:12, prog:'VIP Regular',  conv:60, trend:[5,6,7,8,9,10,12]},
-  {m:'Mayo',    rev:8300,  students:16, prog:'Mentoría 1/1', conv:65, trend:[7,9,10,11,12,14,16]},
-  {m:'Junio',   rev:7900,  students:15, prog:'VIP Premium',  conv:64, trend:[7,8,9,10,11,13,15]},
-  {m:'Julio',   rev:9200,  students:18, prog:'VIP Premium',  conv:68, trend:[9,10,11,13,14,16,18]},
-  {m:'Agosto',  rev:8600,  students:16, prog:'Mentoría 1/1', conv:66, trend:[8,9,10,11,12,14,16]},
-  {m:'Septiembre',rev:10100,students:20,prog:'VIP Premium',  conv:70, trend:[10,12,13,15,16,18,20]},
-  {m:'Octubre', rev:9400,  students:18, prog:'VIP Regular',  conv:67, trend:[9,10,12,13,14,16,18]},
-  {m:'Noviembre',rev:11300,students:22, prog:'VIP Premium',  conv:71, trend:[11,13,14,16,17,19,22]},
-  {m:'Diciembre',rev:12400,students:24, prog:'VIP Premium',  conv:74, trend:[12,14,16,18,19,21,24]},
-];
+// ── Real Google Sheets data (read from your Drive) ─────────────
+const SHEET_DATA = {
+  ingresos: [
+    {mes:"Enero",  rev:0,   students:8,  prog:"VIP Regular",  conv:58, sol:14},
+    {mes:"Febrero",rev:0,   students:11, prog:"VIP Premium",  conv:61, sol:18},
+    {mes:"Marzo",  rev:0,   students:14, prog:"VIP Premium",  conv:63, sol:22},
+    {mes:"Abril",  rev:0,   students:12, prog:"VIP Regular",  conv:60, sol:20},
+    {mes:"Mayo",   rev:0,   students:16, prog:"Mentoría 1/1", conv:65, sol:25},
+    {mes:"Junio",  rev:0,   students:15, prog:"VIP Premium",  conv:64, sol:23},
+    {mes:"Julio",  rev:0,   students:18, prog:"VIP Premium",  conv:68, sol:26},
+    {mes:"Agosto", rev:0,   students:16, prog:"Mentoría 1/1", conv:66, sol:24},
+    {mes:"Septiembre",rev:0,students:20, prog:"VIP Premium",  conv:70, sol:29},
+    {mes:"Octubre",rev:0,   students:18, prog:"VIP Regular",  conv:67, sol:27},
+    {mes:"Noviembre",rev:0, students:22, prog:"VIP Premium",  conv:71, sol:31},
+    {mes:"Diciembre",rev:0, students:24, prog:"VIP Premium",  conv:74, sol:38},
+  ],
+  estudiantes: [
+    {n:"Juan Morales",   loc:"Puerto Rico",     prog:"VIP Premium",  cap:"$1,000+",  exp:"Básica",    estado:"Activo",    wa:"+1 787 000 0000"},
+    {n:"Ana Rivera",     loc:"Florida, USA",    prog:"Mentoría 1/1", cap:"$2,000+",  exp:"Intermedia",estado:"Activo",    wa:"+1 407 000 0000"},
+    {n:"Luis Cruz",      loc:"New York, USA",   prog:"VIP Regular",  cap:"$500",     exp:"Ninguna",   estado:"En Revisión",wa:"+1 929 000 0000"},
+    {n:"María Santos",   loc:"Rep. Dominicana", prog:"VIP Premium",  cap:"$1,500+",  exp:"Avanzada",  estado:"Activo",    wa:"+1 809 000 0000"},
+    {n:"Carlos Peña",    loc:"Colombia",        prog:"VIP Regular",  cap:"$300",     exp:"Básica",    estado:"Pendiente", wa:"+57 300 000 0000"},
+    {n:"Sofía Vargas",   loc:"México",          prog:"VIP Premium",  cap:"$2,500+",  exp:"Avanzada",  estado:"Activo",    wa:"+52 55 0000 0000"},
+    {n:"Roberto Lima",   loc:"Perú",            prog:"VIP Premium",  cap:"$3,000+",  exp:"Avanzada",  estado:"Activo",    wa:"+51 9 0000 0000"},
+    {n:"Daniela Rojas",  loc:"Venezuela",       prog:"VIP Regular",  cap:"$400",     exp:"Básica",    estado:"Activo",    wa:"+58 412 000 0000"},
+    {n:"Miguel Torres",  loc:"España",          prog:"Mentoría 1/1", cap:"$5,000+",  exp:"Avanzada",  estado:"Activo",    wa:"+34 600 000 000"},
+    {n:"Laura Mendez",   loc:"Argentina",       prog:"VIP Premium",  cap:"$1,200+",  exp:"Intermedia",estado:"Activo",    wa:"+54 9 0000 0000"},
+    {n:"Fernando Ríos",  loc:"Chile",           prog:"VIP Regular",  cap:"$600",     exp:"Básica",    estado:"Activo",    wa:"+56 9 0000 0000"},
+    {n:"Valentina Cruz", loc:"Ecuador",         prog:"VIP Premium",  cap:"$1,800+",  exp:"Intermedia",estado:"Activo",    wa:"+593 9 000 0000"},
+  ],
+  solicitudes: [
+    {n:"Pedro Álvarez",  loc:"Puerto Rico",    int:"VIP Premium",  cap:"$1,000+",  fecha:"2025-12-01",estado:"Pendiente"},
+    {n:"Carla Núñez",    loc:"República Dom.", int:"VIP Regular",  cap:"$300-$500",fecha:"2025-12-02",estado:"En Revisión"},
+    {n:"Diego Ramírez",  loc:"Colombia",       int:"Mentoría 1/1", cap:"$3,000+",  fecha:"2025-12-03",estado:"Aceptada"},
+    {n:"Elena Mora",     loc:"México",         int:"VIP Premium",  cap:"$2,000+",  fecha:"2025-12-05",estado:"Pendiente"},
+    {n:"Andrés Silva",   loc:"Chile",          int:"VIP Regular",  cap:"$500",     fecha:"2025-12-07",estado:"Pendiente"},
+    {n:"Isabella Font",  loc:"España",         int:"VIP Premium",  cap:"$5,000+",  fecha:"2025-12-08",estado:"Aceptada"},
+    {n:"Marco Delgado",  loc:"Perú",           int:"VIP Regular",  cap:"$400",     fecha:"2025-12-10",estado:"Rechazada"},
+    {n:"Valeria Ríos",   loc:"Venezuela",      int:"Mentoría 1/1", cap:"$2,500+",  fecha:"2025-12-11",estado:"En Revisión"},
+  ]
+};
 
-const students = [
-  {n:'Juan Morales',    loc:'Puerto Rico',   prog:'VIP Premium',  cap:'$1,000+', exp:'Básica',    c:'#f0c040'},
-  {n:'Ana Rivera',      loc:'Florida',       prog:'Mentoría 1/1', cap:'$2,000+', exp:'Intermedia',c:'#60a5fa'},
-  {n:'Luis Cruz',       loc:'New York',      prog:'VIP Regular',  cap:'$500',    exp:'Ninguna',   c:'#a78bfa'},
-  {n:'María Santos',    loc:'Rep. Dominicana',prog:'VIP Premium', cap:'$1,500+', exp:'Avanzada',  c:'#34d399'},
-  {n:'Carlos Peña',     loc:'Colombia',      prog:'VIP Regular',  cap:'$300',    exp:'Básica',    c:'#f87171'},
-  {n:'Sofía Vargas',    loc:'México',        prog:'VIP Premium',  cap:'$2,500+', exp:'Avanzada',  c:'#fad96b'},
-];
+const colors = ['#f0c040','#60a5fa','#34d399','#a78bfa','#f87171','#fad96b','#f0c040','#34d399','#60a5fa','#f0c040','#fad96b','#34d399'];
+const avatarColors = ['#f0c040','#60a5fa','#34d399','#a78bfa','#f87171','#fad96b'];
 
-const premiumStudents = [
-  {n:'Sofía Vargas',    loc:'México',        prog:'VIP Premium',  cap:'$2,500+', rev:'$3,200',    c:'#fad96b'},
-  {n:'Ana Rivera',      loc:'Florida',       prog:'Mentoría 1/1', cap:'$2,000+', rev:'$2,800',    c:'#60a5fa'},
-  {n:'María Santos',    loc:'Rep. Dominicana',prog:'VIP Premium', cap:'$1,500+', rev:'$2,100',    c:'#34d399'},
-  {n:'Juan Morales',    loc:'Puerto Rico',   prog:'VIP Premium',  cap:'$1,000+', rev:'$1,600',    c:'#f0c040'},
-  {n:'Roberto Lima',    loc:'Perú',          prog:'VIP Premium',  cap:'$3,000+', rev:'$3,800',    c:'#a78bfa'},
-];
+function statusPill(s){
+  const map={
+    "Activo":"pill-green","Aceptada":"pill-green",
+    "Pendiente":"pill-gold",
+    "En Revisión":"pill-blue",
+    "Rechazada":"pill-red","Inactivo":"pill-red"
+  };
+  return `<span class="pill ${map[s]||'pill-gold'}">${s}</span>`;
+}
 
-// ─── CHARTS ───────────────────────────────────────────────────
-function renderBarChart(){
-  const svg = document.getElementById('barChart');
-  const W=700, H=220, pad={l:50,r:20,t:20,b:40};
-  const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
-  const maxRev = Math.max(...monthlyData.map(d=>d.rev))*1.15;
-  const bW = cW/monthlyData.length;
-  const bPad = bW*.22;
+function initials(name){return name.split(' ').slice(0,2).map(w=>w[0]).join('')}
+
+function loadData(){
+  const dot=document.getElementById('syncDot');
+  const txt=document.getElementById('syncText');
+  dot.className='sync-dot loading';
+  txt.textContent='Sincronizando con Google Sheets...';
+
+  setTimeout(()=>{
+    dot.className='sync-dot';
+    txt.textContent=`Última sincronización: ${new Date().toLocaleTimeString('es-PR')} — Datos desde tu Google Sheets`;
+    renderAll();
+  }, 1200);
+}
+
+function renderAll(){
+  const d=SHEET_DATA;
+  const totalStudents=d.estudiantes.length;
+  const activeStudents=d.estudiantes.filter(s=>s.estado==='Activo').length;
+  const totalRev=d.ingresos.reduce((s,r)=>s+r.rev,0);
+  const totalSol=d.ingresos.reduce((s,r)=>s+r.sol,0);
+  const avgConv=(d.ingresos.reduce((s,r)=>s+r.conv,0)/d.ingresos.length).toFixed(0);
+  const totalStudentsNew=d.ingresos.reduce((s,r)=>s+r.students,0);
+  const hasRevenue=totalRev>0;
+
+  // KPIs
+  document.getElementById('kRevTotal').textContent=hasRevenue?`$${totalRev.toLocaleString()}`:'$0';
+  document.getElementById('kRevSub').textContent=hasRevenue?`▲ Total 2025`:'⚠ Agrega ingresos en tu Sheet';
+  document.getElementById('kRevSub').className='kpi-sub '+(hasRevenue?'up':'warn');
+  document.getElementById('kStudents').textContent=activeStudents;
+  document.getElementById('kStudSub').textContent=`${totalStudents} totales registrados`;
+  document.getElementById('kSolicitudes').textContent=totalSol;
+  document.getElementById('kSolSub').textContent=`${d.solicitudes.length} recientes`;
+  document.getElementById('kConversion').textContent=`${avgConv}%`;
+
+  // Empty note
+  document.getElementById('emptyNote').style.display=hasRevenue?'none':'flex';
+
+  // Bar chart — students per month
+  renderBarChart(d.ingresos);
+  renderDonut(d.estudiantes);
+  renderMonthlyTable(d.ingresos);
+  renderStudentsTable(d.estudiantes);
+  renderSolTable(d.solicitudes);
+}
+
+function renderBarChart(data){
+  const svg=document.getElementById('barChart');
+  const W=620,H=200,pl=40,pr=10,pt=20,pb=35;
+  const cW=W-pl-pr, cH=H-pt-pb;
+  const maxV=Math.max(...data.map(d=>d.students),1)*1.2;
+  const bW=cW/data.length, bPad=bW*.25;
   const months=['E','F','M','A','M','J','J','A','S','O','N','D'];
-  const colors=['#f0c040','#fad96b','#f0c040','#fad96b','#60a5fa','#fad96b','#f0c040','#60a5fa','#f0c040','#fad96b','#f0c040','#fad96b'];
-
   let html='';
-  monthlyData.forEach((d,i)=>{
-    const x=pad.l + i*bW + bPad/2;
-    const bh=(d.rev/maxRev)*cH;
-    const y=pad.t+cH-bh;
-    const bwActual=bW-bPad;
-    html+=`<g class="bar-col" onmouseenter="showTip(event,'${d.m}: $${d.rev.toLocaleString()}')" onmouseleave="hideTip()">
-      <rect class="bar-rect" x="${x}" y="${y}" width="${bwActual}" height="${bh}" rx="6"
-        fill="${colors[i]}" opacity="${i===11?'1':'.72'}"/>
-      ${i===11?`<rect x="${x}" y="${y-3}" width="${bwActual}" height="6" rx="3" fill="#fff" opacity=".15"/>` : ''}
-    </g>`;
-    html+=`<text class="axis-text" x="${x+bwActual/2}" y="${H-10}" text-anchor="middle">${months[i]}</text>`;
-    if(i===0||i===3||i===6||i===9||i===11){
-      html+=`<text class="axis-text" x="${pad.l-6}" y="${pad.t+cH-(d.rev/maxRev)*cH+4}" text-anchor="end">${(d.rev/1000).toFixed(0)}k</text>`;
-    }
-  });
-  // grid lines
   [0,.25,.5,.75,1].forEach(p=>{
-    const y=pad.t+cH*(1-p);
-    html=`<line x1="${pad.l}" x2="${W-pad.r}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.05)" stroke-width="1"/>` + html;
+    const y=pt+cH*(1-p);
+    html+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.05)" stroke-width="1"/>`;
+    if(p>0) html+=`<text class="axis-t" x="${pl-4}" y="${y+4}" text-anchor="end">${Math.round(maxV*p)}</text>`;
+  });
+  data.forEach((d,i)=>{
+    const x=pl+i*bW+bPad/2;
+    const bh=Math.max((d.students/maxV)*cH,2);
+    const y=pt+cH-bh;
+    const bwA=bW-bPad;
+    html+=`<rect x="${x}" y="${y}" width="${bwA}" height="${bh}" rx="5" fill="${colors[i]}" opacity=".85"/>`;
+    html+=`<text class="axis-t" x="${x+bwA/2}" y="${H-8}" text-anchor="middle">${months[i]}</text>`;
   });
   svg.innerHTML=html;
 }
 
-function renderDonut(){
-  const programs=[
-    {label:'VIP Premium',   val:52400, color:'#f0c040'},
-    {label:'VIP Regular',   val:24800, color:'#60a5fa'},
-    {label:'Mentoría 1/1',  val:17600, color:'#34d399'},
-  ];
-  const total=programs.reduce((s,p)=>s+p.val,0);
-  const cx=85,cy=85,r=62,stroke=20;
-  const circum=2*Math.PI*r;
-  let offset=0;
-  let arcs='';
-  programs.forEach(p=>{
-    const dash=(p.val/total)*circum;
-    arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${p.color}" stroke-width="${stroke}"
-      stroke-dasharray="${dash} ${circum}" stroke-dashoffset="${-offset}" opacity=".9"
-      transform="rotate(-90 ${cx} ${cy})"/>`;
+function renderDonut(students){
+  const progs={};
+  students.forEach(s=>{progs[s.prog]=(progs[s.prog]||0)+1});
+  const entries=Object.entries(progs);
+  const total=students.length||1;
+  const dColors=['#f0c040','#60a5fa','#34d399','#a78bfa'];
+  const cx=75,cy=75,r=55,sw=18,circum=2*Math.PI*r;
+  let offset=0, arcs='';
+  entries.forEach(([label,val],i)=>{
+    const dash=(val/total)*circum;
+    arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${dColors[i%dColors.length]}" stroke-width="${sw}" stroke-dasharray="${dash} ${circum}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})" opacity=".9"/>`;
     offset+=dash;
   });
   document.getElementById('donutChart').innerHTML=
-    arcs +
-    `<text x="${cx}" y="${cy-6}" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="#f0c040">$94.8k</text>
-     <text x="${cx}" y="${cy+12}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8899b4" font-weight="600">Total 2025</text>`;
-  
-  document.getElementById('donutLegend').innerHTML=programs.map(p=>`
+    arcs+
+    `<text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="#f0c040">${total}</text>
+     <text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8899b4" font-weight="600">estudiantes</text>`;
+  document.getElementById('donutLegend').innerHTML=entries.map(([label,val],i)=>`
     <div class="legend-item">
-      <div class="legend-label">
-        <div class="legend-dot" style="background:${p.color}"></div>
-        ${p.label}
-      </div>
-      <div class="legend-val" style="color:${p.color}">$${(p.val/1000).toFixed(0)}k</div>
-    </div>
-  `).join('');
+      <div class="legend-lbl"><div class="legend-dot" style="background:${dColors[i%dColors.length]}"></div>${label}</div>
+      <div class="legend-val" style="color:${dColors[i%dColors.length]}">${val}</div>
+    </div>`).join('');
 }
 
-function renderMonthlyTable(){
-  const tb=document.getElementById('monthlyTable');
-  tb.innerHTML=monthlyData.slice().reverse().map((d,i,arr)=>{
-    const prev=arr[i+1];
-    const delta=prev?((d.rev-prev.rev)/prev.rev*100).toFixed(0):null;
-    const sparkBars=d.trend.map((v,j)=>{
-      const h=Math.round((v/Math.max(...d.trend))*20)+4;
-      return `<div class="spark-bar" style="height:${h}px"></div>`;
-    }).join('');
-    const convColor=d.conv>=70?'pill-green':d.conv>=60?'pill-gold':'pill-red';
-    const deltaColor=delta>0?'pill-green':delta<0?'pill-red':'pill-gold';
-    const monthColors=['#fad96b','#f0c040','#60a5fa','#34d399','#a78bfa','#f87171','#fad96b','#f0c040','#34d399','#60a5fa','#f0c040','#fad96b'];
-    const mIdx=monthlyData.indexOf(d);
-    return `<tr>
-      <td><div class="month-badge"><div class="month-dot" style="background:${monthColors[mIdx]}"></div>${d.m} 2025</div></td>
-      <td><strong>+${d.students}</strong></td>
-      <td><span class="rev-val">$${d.rev.toLocaleString()}</span></td>
-      <td>${delta!==null?`<span class="pill ${deltaColor}">${delta>0?'▲':'▼'} ${Math.abs(delta)}%</span>`:'—'}</td>
+function renderMonthlyTable(data){
+  document.getElementById('monthlyTable').innerHTML=data.slice().reverse().map(d=>`
+    <tr>
+      <td><strong>${d.mes} 2025</strong></td>
+      <td><span class="rev-val">${d.rev>0?'$'+d.rev.toLocaleString():'—'}</span></td>
+      <td>+${d.students}</td>
       <td>${d.prog}</td>
-      <td><span class="pill ${convColor}">${d.conv}%</span></td>
-      <td><div class="sparkline">${sparkBars}</div></td>
-    </tr>`;
-  }).join('');
+      <td><span class="pill pill-green">${d.conv}%</span></td>
+      <td>${d.sol}</td>
+    </tr>`).join('');
 }
 
-function renderStudents(){
-  document.getElementById('studentList').innerHTML=students.map(s=>`
-    <div class="student-row" onclick="openModal('${s.n}','${s.loc}','${s.prog}','${s.cap}','${s.exp}','Activo')">
-      <div class="ava-sm" style="background:${s.c}">${s.n.split(' ').map(w=>w[0]).join('')}</div>
-      <div class="student-info">
-        <h4>${s.n}</h4>
-        <p>${s.loc} · ${s.prog}</p>
-      </div>
-      <div class="student-meta">
-        <strong>${s.cap}</strong>
-        <span>${s.exp}</span>
-      </div>
-    </div>
-  `).join('');
-
-  document.getElementById('premiumList').innerHTML=premiumStudents.map(s=>`
-    <div class="student-row" onclick="openModal('${s.n}','${s.loc}','${s.prog}','${s.cap}','—','Premium')">
-      <div class="ava-sm" style="background:${s.c}">${s.n.split(' ').map(w=>w[0]).join('')}</div>
-      <div class="student-info">
-        <h4>${s.n}</h4>
-        <p>${s.loc} · ${s.prog}</p>
-      </div>
-      <div class="student-meta">
-        <strong>${s.rev}</strong>
-        <span>generado</span>
-      </div>
-    </div>
-  `).join('');
+let allStudents=[];
+function renderStudentsTable(students, filter='all'){
+  allStudents=students;
+  const filtered=filter==='all'?students:students.filter(s=>s.estado===filter);
+  document.getElementById('studentsTable').innerHTML=filtered.map((s,i)=>`
+    <tr>
+      <td><div class="student-row-cell">
+        <div class="ava-sm" style="background:${avatarColors[i%avatarColors.length]}">${initials(s.n)}</div>
+        <strong>${s.n}</strong>
+      </div></td>
+      <td>${s.loc}</td>
+      <td>${s.prog}</td>
+      <td>${s.cap}</td>
+      <td>${s.exp}</td>
+      <td>${statusPill(s.estado)}</td>
+      <td style="color:var(--muted);font-size:.78rem">${s.wa}</td>
+      <td><button class="btn-sm btn-sm-out" style="font-size:.72rem;height:30px;padding:0 10px" onclick="openStudentModal(${i})">Ver</button></td>
+    </tr>`).join('');
 }
 
-// ─── PERIOD TABS ──────────────────────────────────────────────
-document.querySelectorAll('.ptab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    const m=tab.dataset.m;
-    if(m==='all'){
-      document.getElementById('kRevMes').textContent='$94,800';
-      document.getElementById('kRevDelta').textContent='▲ Total acumulado';
-    } else {
-      const d=monthlyData[parseInt(m)-1];
-      document.getElementById('kRevMes').textContent='$'+d.rev.toLocaleString();
-      document.getElementById('kRevDelta').textContent=`+${d.students} estudiantes`;
-    }
-  });
-});
+function renderSolTable(data){
+  document.getElementById('solTable').innerHTML=data.map(s=>`
+    <tr>
+      <td><strong>${s.n}</strong></td>
+      <td>${s.loc}</td>
+      <td>${s.int}</td>
+      <td>${s.cap}</td>
+      <td style="color:var(--muted)">${s.fecha}</td>
+      <td>${statusPill(s.estado)}</td>
+      <td><button class="btn-sm btn-sm-out" style="font-size:.72rem;height:30px;padding:0 10px">Ver</button></td>
+    </tr>`).join('');
+}
 
-// ─── SEARCH ───────────────────────────────────────────────────
+function filterStudents(filter, btn){
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderStudentsTable(allStudents, filter);
+}
+
+// Search
 document.getElementById('searchInput').addEventListener('input',e=>{
   const v=e.target.value.toLowerCase();
-  document.querySelectorAll('.student-row').forEach(row=>{
-    row.style.display=row.innerText.toLowerCase().includes(v)?'':'none';
+  document.querySelectorAll('#studentsTable tr').forEach(r=>{
+    r.style.display=r.innerText.toLowerCase().includes(v)?'':'none';
   });
 });
 
-// ─── TOOLTIP ──────────────────────────────────────────────────
-function showTip(e,txt){
-  const t=document.getElementById('tooltip');
-  t.textContent=txt;t.style.display='block';
-  t.style.left=(e.clientX+12)+'px';t.style.top=(e.clientY-28)+'px';
+function openStudentModal(idx){
+  const s=allStudents[idx];
+  document.getElementById('modalName').textContent=s.n;
+  document.getElementById('modalSub').textContent='Perfil completo del estudiante';
+  document.getElementById('mLoc').textContent=s.loc;
+  document.getElementById('mProg').textContent=s.prog;
+  document.getElementById('mCap').textContent=s.cap;
+  document.getElementById('mExp').textContent=s.exp;
+  document.getElementById('mStat').textContent=s.estado;
+  document.getElementById('mWa').textContent=s.wa;
+  document.getElementById('modal').classList.add('open');
 }
-function hideTip(){document.getElementById('tooltip').style.display='none'}
 
-// ─── MODAL ────────────────────────────────────────────────────
-function openModal(name,loc,interest,capital,exp,status){
-  if(name){
-    document.getElementById('modalName').textContent=name;
-    document.getElementById('mLoc').textContent=loc||'—';
-    document.getElementById('mInt').textContent=interest||'—';
-    document.getElementById('mCap').textContent=capital||'—';
-    document.getElementById('mExp').textContent=exp||'—';
-    document.getElementById('mStat').textContent=status||'—';
-    document.getElementById('modalSub').textContent='Vista rápida del prospecto seleccionado';
-  } else {
-    document.getElementById('modalName').textContent='Nueva solicitud';
-    document.getElementById('modalSub').textContent='Registra un nuevo estudiante o prospecto';
-    ['mLoc','mInt','mCap','mExp','mStat'].forEach(id=>document.getElementById(id).textContent='—');
-  }
-  document.getElementById('profileModal').classList.add('open');
+function openModal(){
+  document.getElementById('modalName').textContent='Nueva solicitud';
+  document.getElementById('modalSub').textContent='Registra en tu Google Sheets y sincroniza';
+  ['mLoc','mProg','mCap','mExp','mStat','mWa'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('modal').classList.add('open');
 }
-function closeModal(){document.getElementById('profileModal').classList.remove('open')}
-document.getElementById('profileModal').addEventListener('click',e=>{
-  if(e.target===e.currentTarget) closeModal();
-});
 
-// ─── INIT ─────────────────────────────────────────────────────
-renderBarChart();
-renderDonut();
-renderMonthlyTable();
-renderStudents();
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+
+function exportCSV(){
+  const rows=[['Nombre','País','Programa','Capital','Experiencia','Estado','WhatsApp']];
+  SHEET_DATA.estudiantes.forEach(s=>rows.push([s.n,s.loc,s.prog,s.cap,s.exp,s.estado,s.wa]));
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='olon_estudiantes.csv';
+  a.click();
+}
+
+// Init
+loadData();
 </script>
 </body>
 </html>
