@@ -228,7 +228,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Nombre</th><th>País</th><th>Programa</th><th>Capital</th><th>Experiencia</th><th>Estado</th><th>WhatsApp</th><th></th></tr></thead>
+          <thead><tr><th>Nombre</th><th>WhatsApp</th><th>Email</th><th>Pago</th><th>Programa</th><th>País</th><th>Estado</th><th></th></tr></thead>
           <tbody id="studentsTable"><tr><td colspan="8"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
         </table>
       </div>
@@ -257,8 +257,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="pfields">
         <div class="pf"><span>País</span><p id="mLoc">—</p></div>
         <div class="pf"><span>Programa</span><p id="mProg">—</p></div>
-        <div class="pf"><span>Capital</span><p id="mCap">—</p></div>
-        <div class="pf"><span>Experiencia</span><p id="mExp">—</p></div>
+        <div class="pf"><span>Pago</span><p id="mCap">—</p></div>
+        <div class="pf"><span>Email</span><p id="mExp">—</p></div>
         <div class="pf"><span>Estado</span><p id="mStat">—</p></div>
         <div class="pf"><span>WhatsApp</span><p id="mWa">—</p></div>
       </div>
@@ -328,7 +328,7 @@ async function loadData(){
     parseCSV(r1).forEach(row=>{
       const n=row[1]||'';
       if(!n||n.includes('OLON')||n.includes('Nombre')||n.includes('TOTAL')) return;
-      allStudents.push({n,loc:row[2]||'—',prog:row[3]||'—',cap:row[4]||'—',exp:row[5]||'—',estado:row[6]||'—',fecha:row[7]||'—',wa:row[8]||'—'});
+      allStudents.push({n,wa:row[2]||'—',email:row[3]||'—',pago:row[4]||'',prog:row[5]||'—',loc:row[6]||'—',estado:row[7]||'—',notas:row[8]||''});
     });
 
     // Parse solicitudes
@@ -412,7 +412,16 @@ function renderMonthly(){
 
 function renderStudents(list){
   document.getElementById('studentsTable').innerHTML=list.length
-    ? list.map((s,i)=>`<tr><td><div class="row-name"><div class="ava-sm" style="background:${COLORS[i%COLORS.length]}">${initials(s.n)}</div><strong>${s.n}</strong></div></td><td>${s.loc}</td><td>${s.prog}</td><td>${s.cap}</td><td>${s.exp}</td><td>${statusPill(s.estado)}</td><td style="color:var(--muted);font-size:.78rem">${s.wa}</td><td><button class="btn-sm btn-sm-out" style="font-size:.72rem;height:28px;padding:0 10px" onclick="openSM(${i})">Ver</button></td></tr>`).join('')
+    ? list.map((s,i)=>`<tr>
+        <td><div class="row-name"><div class="ava-sm" style="background:${COLORS[i%COLORS.length]}">${initials(s.n)}</div><strong>${s.n}</strong></div></td>
+        <td style="color:var(--gold2);font-size:.8rem">${s.wa}</td>
+        <td style="color:var(--muted);font-size:.78rem">${s.email}</td>
+        <td><span class="rev-val">${s.pago&&s.pago!='0'&&s.pago!='—'?'$'+parseFloat(s.pago.replace(/[$,]/g,'')).toLocaleString():s.pago||'—'}</span></td>
+        <td>${s.prog}</td>
+        <td>${s.loc}</td>
+        <td>${statusPill(s.estado)}</td>
+        <td><button class="btn-sm btn-sm-out" style="font-size:.72rem;height:28px;padding:0 10px" onclick="openSM(${i})">Ver</button></td>
+      </tr>`).join('')
     : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No hay estudiantes registrados aún</td></tr>`;
 }
 
@@ -440,8 +449,8 @@ function openSM(i){
   document.getElementById('modalName').textContent=s.n;
   document.getElementById('mLoc').textContent=s.loc;
   document.getElementById('mProg').textContent=s.prog;
-  document.getElementById('mCap').textContent=s.cap;
-  document.getElementById('mExp').textContent=s.exp;
+  document.getElementById('mCap').textContent=s.pago?'$'+s.pago:'—';
+  document.getElementById('mExp').textContent=s.email;
   document.getElementById('mStat').textContent=s.estado;
   document.getElementById('mWa').textContent=s.wa;
   document.getElementById('modal').classList.add('open');
