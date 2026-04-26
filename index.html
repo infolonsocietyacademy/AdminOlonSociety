@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>OLON Society Academy | Dashboard Live</title>
+<title>OLON Society Academy | Dashboard Pro 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -20,6 +20,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
 button,input{font-family:inherit;cursor:pointer;border:none;background:none}
+.mobile-menu{display:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--border2);color:var(--text);background:var(--bg2);font-size:1.1rem}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:19}
 .app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
 .sidebar{position:sticky;top:0;height:100vh;padding:22px 16px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
 .brand{display:flex;align-items:center;gap:11px;margin-bottom:28px;padding:0 4px}
@@ -123,11 +125,12 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .btn-sm-gold{background:var(--gold);color:#06080f}
 .btn-sm-out{border:1px solid var(--border2);color:var(--text);background:var(--bg2)}
 @media(max-width:1100px){.charts-row{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:860px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative}.content{padding:16px}}
+@media(max-width:860px){.app{grid-template-columns:1fr}.mobile-menu{display:grid;place-items:center}.mobile-overlay.show{display:block}.sidebar{position:fixed;left:-280px;top:0;width:260px;height:100vh;z-index:20;transition:.25s ease;box-shadow:30px 0 80px rgba(0,0,0,.35)}.sidebar.open{left:0}.content{padding:16px}.topbar-left{display:flex;align-items:center;gap:10px}}
 @media(max-width:500px){.kpis{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}.search{width:100%}}
 </style>
 </head>
 <body>
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar(false)"></div>
 <div class="app">
 <aside class="sidebar">
   <div class="brand">
@@ -160,8 +163,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <main class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <h2>Dashboard en Vivo</h2>
-      <p>Se actualiza automáticamente desde tu Google Sheets</p>
+      <button class="mobile-menu" onclick="toggleSidebar(true)">☰</button>
+      <div><h2>Dashboard en Vivo</h2>
+      <p>Se actualiza automáticamente desde tu Google Sheets</p></div>
     </div>
     <div class="topbar-right">
       <input class="search" id="searchInput" type="search" placeholder="Buscar estudiante..."/>
@@ -190,6 +194,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="kpi" style="--kpi-c:var(--green)"><div class="kpi-label">Estudiantes activos</div><div class="kpi-val" id="kActivos">—</div><div class="kpi-sub up" id="kActivosSub">Cargando...</div></div>
       <div class="kpi" style="--kpi-c:var(--blue)"><div class="kpi-label">Total solicitudes</div><div class="kpi-val" id="kSol">—</div><div class="kpi-sub" id="kSolSub">Cargando...</div></div>
       <div class="kpi" style="--kpi-c:var(--red)"><div class="kpi-label">Conversión promedio</div><div class="kpi-val" id="kConv">—</div><div class="kpi-sub up">▲ Este año</div></div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi" style="--kpi-c:var(--gold2)"><div class="kpi-label">Ingreso del mes</div><div class="kpi-val" id="kMesRev">—</div><div class="kpi-sub" id="kMesRevSub">Mes más reciente</div></div>
+      <div class="kpi" style="--kpi-c:var(--green)"><div class="kpi-label">Promedio por estudiante</div><div class="kpi-val" id="kAvgPay">—</div><div class="kpi-sub">Basado en pagos registrados</div></div>
+      <div class="kpi" style="--kpi-c:var(--red)"><div class="kpi-label">Pendientes</div><div class="kpi-val" id="kPendientes">—</div><div class="kpi-sub warn">Requieren seguimiento</div></div>
+      <div class="kpi" style="--kpi-c:var(--blue)"><div class="kpi-label">Programa más vendido</div><div class="kpi-val" id="kTopProg">—</div><div class="kpi-sub">Según estudiantes</div></div>
     </div>
 
     <div class="charts-row">
@@ -263,7 +274,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="pf"><span>WhatsApp</span><p id="mWa">—</p></div>
       </div>
       <div class="modal-actions">
-        <button class="btn-sm btn-sm-gold">✓ Aceptar y enviar WhatsApp</button>
+        <button class="btn-sm btn-sm-gold" onclick="sendWhatsApp()">✓ Aceptar y enviar WhatsApp</button>
         <button class="btn-sm btn-sm-out" onclick="closeModal()">Cerrar</button>
       </div>
     </div>
@@ -275,6 +286,10 @@ const SHEET_ID = '1DHNUR9HGIx7sn1LLvw4SyqSWgvK6TjqZ';
 const COLORS = ['#f0c040','#60a5fa','#34d399','#a78bfa','#f87171','#fad96b'];
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 let allStudents=[], allSolicitudes=[], allIngresos=[];
+let selectedStudent=null;
+function toggleSidebar(open){document.querySelector('.sidebar').classList.toggle('open',open);document.getElementById('mobileOverlay').classList.toggle('show',open);}
+function moneyNumber(v){return parseFloat(String(v||'').replace(/[$,\s]/g,''))||0;}
+function cleanPhone(v){return String(v||'').replace(/\D/g,'');}
 
 function csvUrl(gid){ return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`; }
 
@@ -343,7 +358,7 @@ async function loadData(){
     renderAll();
   }catch(err){
     console.error(err);
-    setSyncState('error','⚠ No se pudo conectar. Verifica que la hoja esté compartida públicamente.');
+    setSyncState('error','⚠ No se pudo conectar. Verifica que el Google Sheet esté publicado/compartido y que los GID 0, 1 y 2 existan.');
   }
 }
 
@@ -356,13 +371,28 @@ function renderAll(){
   const hasRev=totalRev>0;
 
   document.getElementById('kRev').textContent=hasRev?'$'+totalRev.toLocaleString():'$0';
-  document.getElementById('kRevSub').textContent=hasRev?'▲ Total acumulado 2025':'⚠ Agrega ingresos en tu hoja';
+  document.getElementById('kRevSub').textContent=hasRev?'▲ Total acumulado 2026':'⚠ Agrega ingresos en tu hoja';
   document.getElementById('kRevSub').className='kpi-sub '+(hasRev?'up':'warn');
   document.getElementById('kActivos').textContent=activos;
   document.getElementById('kActivosSub').textContent=`${allStudents.length} registrados en total`;
   document.getElementById('kSol').textContent=totalSol||allSolicitudes.length;
   document.getElementById('kSolSub').textContent=`${allSolicitudes.length} solicitudes recientes`;
   document.getElementById('kConv').textContent=avgConv+(avgConv!=='—'?'%':'');
+
+  const lastMonth=allIngresos[allIngresos.length-1];
+  document.getElementById('kMesRev').textContent=lastMonth?'$'+lastMonth.rev.toLocaleString():'$0';
+  document.getElementById('kMesRevSub').textContent=lastMonth?lastMonth.mes+' 2026':'Sin mes registrado';
+
+  const paidStudents=allStudents.map(s=>moneyNumber(s.pago)).filter(n=>n>0);
+  const avgPay=paidStudents.length?Math.round(paidStudents.reduce((a,b)=>a+b,0)/paidStudents.length):0;
+  document.getElementById('kAvgPay').textContent=avgPay?'$'+avgPay.toLocaleString():'$0';
+
+  const pendientes=allStudents.filter(s=>['Pendiente','En Revisión'].includes(s.estado)).length;
+  document.getElementById('kPendientes').textContent=pendientes;
+
+  const progCount={}; allStudents.forEach(s=>{if(s.prog&&s.prog!=='—') progCount[s.prog]=(progCount[s.prog]||0)+1;});
+  const topProg=Object.entries(progCount).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('kTopProg').textContent=topProg?topProg[0]:'—';
 
   if(allStudents.length>0) document.getElementById('mainNotice').style.display='none';
   renderBar(); renderDonut(); renderMonthly(); renderStudents(allStudents); renderSol();
@@ -406,7 +436,7 @@ function renderDonut(){
 
 function renderMonthly(){
   document.getElementById('monthlyTable').innerHTML=allIngresos.length
-    ? allIngresos.slice().reverse().map(d=>`<tr><td><strong>${d.mes} 2025</strong></td><td><span class="rev-val">${d.rev>0?'$'+d.rev.toLocaleString():'—'}</span></td><td>+${d.students}</td><td>${d.prog}</td><td>${d.conv>0?`<span class="pill pill-green">${d.conv}%</span>`:'—'}</td><td>${d.sol||'—'}</td></tr>`).join('')
+    ? allIngresos.slice().reverse().map(d=>`<tr><td><strong>${d.mes} 2026</strong></td><td><span class="rev-val">${d.rev>0?'$'+d.rev.toLocaleString():'—'}</span></td><td>+${d.students}</td><td>${d.prog}</td><td>${d.conv>0?`<span class="pill pill-green">${d.conv}%</span>`:'—'}</td><td>${d.sol||'—'}</td></tr>`).join('')
     : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No hay datos aún</td></tr>`;
 }
 
@@ -420,7 +450,7 @@ function renderStudents(list){
         <td>${s.prog}</td>
         <td>${s.loc}</td>
         <td>${statusPill(s.estado)}</td>
-        <td><button class="btn-sm btn-sm-out" style="font-size:.72rem;height:28px;padding:0 10px" onclick="openSM(${i})">Ver</button></td>
+        <td><button class="btn-sm btn-sm-out" style="font-size:.72rem;height:28px;padding:0 10px" onclick="openSMByName('${encodeURIComponent(s.n)}')">Ver</button></td>
       </tr>`).join('')
     : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No hay estudiantes registrados aún</td></tr>`;
 }
@@ -442,28 +472,35 @@ document.getElementById('searchInput').addEventListener('input',e=>{
   renderStudents(allStudents.filter(s=>s.n.toLowerCase().includes(v)||s.loc.toLowerCase().includes(v)||s.prog.toLowerCase().includes(v)));
 });
 
-let currentStudents=[];
-function openSM(i){
-  const list=allStudents;
-  const s=list[i]; if(!s) return;
+function openSMByName(encodedName){
+  const name=decodeURIComponent(encodedName);
+  const s=allStudents.find(x=>x.n===name); if(!s) return;
+  selectedStudent=s;
   document.getElementById('modalName').textContent=s.n;
   document.getElementById('mLoc').textContent=s.loc;
   document.getElementById('mProg').textContent=s.prog;
-  document.getElementById('mCap').textContent=s.pago?'$'+s.pago:'—';
+  document.getElementById('mCap').textContent=s.pago?s.pago:'—';
   document.getElementById('mExp').textContent=s.email;
   document.getElementById('mStat').textContent=s.estado;
   document.getElementById('mWa').textContent=s.wa;
   document.getElementById('modal').classList.add('open');
 }
 function closeModal(){document.getElementById('modal').classList.remove('open')}
+function sendWhatsApp(){
+  if(!selectedStudent) return;
+  const phone=cleanPhone(selectedStudent.wa);
+  if(!phone){alert('Este estudiante no tiene WhatsApp registrado.');return;}
+  const msg=`Saludos ${selectedStudent.n}, te escribe OLON Society Academy. Tu solicitud para ${selectedStudent.prog} fue revisada. Responde este mensaje para continuar con el proceso.`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
 
 function exportCSV(){
   if(!allStudents.length){alert('Primero sincroniza los datos.');return;}
-  const rows=[['Nombre','País','Programa','Capital','Experiencia','Estado','WhatsApp']];
-  allStudents.forEach(s=>rows.push([s.n,s.loc,s.prog,s.cap,s.exp,s.estado,s.wa]));
-  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
-  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv); a.download='olon_estudiantes.csv'; a.click();
+  const rows=[['Nombre','WhatsApp','Email','Pago','Programa','País','Estado','Notas']];
+  allStudents.forEach(s=>rows.push([s.n,s.wa,s.email,s.pago,s.prog,s.loc,s.estado,s.notas]));
+  const csv=rows.map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv); a.download='olon_estudiantes_2026.csv'; a.click();
 }
 
 // Auto-refresh every 5 min
