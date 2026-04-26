@@ -60,6 +60,8 @@ button,input{font-family:inherit;cursor:pointer;border:none;background:none}
 .sync-btn{margin-left:auto;height:28px;padding:0 12px;border-radius:999px;border:1px solid var(--border2);color:var(--text);background:var(--bg);font-size:.72rem;font-weight:700;transition:.2s}
 .sync-btn:hover{border-color:var(--gold);color:var(--gold)}
 .content{padding:22px 24px;flex:1}
+.page{display:none}
+.page.active-page{display:block}
 .notice{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border-radius:14px;border:1px solid rgba(240,192,64,.25);background:var(--gold3);margin-bottom:18px;font-size:.82rem;line-height:1.6;color:var(--gold2)}
 .notice strong{display:block;margin-bottom:2px;font-size:.88rem}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
@@ -153,10 +155,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
   <nav class="nav">
     <div class="nav-label">Principal</div>
-    <a class="active" href="#" onclick="goSection('dashboard',this)"><span class="nav-ic">◆</span> Dashboard</a>
+    <a class="active" href="#" onclick="goSection('dashboardPage',this)"><span class="nav-ic">◆</span> Dashboard</a>
     <a href="#"><span class="nav-ic">📊</span> Ingresos</a>
-    <a href="#" onclick="goSection('studentsSection',this);openAddStudent()"><span class="nav-ic">👥</span> Estudiantes</a>
-    <a href="#" onclick="goSection('requestsSection',this)"><span class="nav-ic">📋</span> Solicitudes</a>
+    <a href="#" onclick="goSection('studentsPage',this)"><span class="nav-ic">👥</span> Estudiantes</a>
+    <a href="#" onclick="goSection('addStudentPage',this)"><span class="nav-ic">➕</span> Agregar Estudiante</a>
+    <a href="#" onclick="goSection('requestsPage',this)"><span class="nav-ic">📋</span> Solicitudes</a>
     <a href="#"><span class="nav-ic">💬</span> WhatsApp</a>
     <div class="nav-label">Programas</div>
     <a href="#"><span class="nav-ic">★</span> VIP Regular</a>
@@ -194,7 +197,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <button class="sync-btn" onclick="loadData()">↻ Sincronizar ahora</button>
   </div>
 
-  <div class="content" id="dashboard">
+  <div class="content page active-page" id="dashboardPage">
     <div class="notice" id="mainNotice">
       <span>💡</span>
       <div>
@@ -240,12 +243,49 @@ tr:hover td{background:rgba(255,255,255,.02)}
         </table>
       </div>
     </div>
+  </div>
 
-
-    <div class="add-card" id="addStudentCard">
+  <div class="content page" id="studentsPage">
+    <div class="table-card" id="studentsSection">
       <div class="card-head">
-        <div><h3>Agregar estudiante</h3><p>Regístralo rápido en el dashboard y copia la fila para tu Google Sheets.</p></div>
-        <button class="btn-sm btn-sm-out" onclick="closeAddStudent()">Cerrar</button>
+        <div><h3>Estudiantes</h3><p>Registro completo desde tu hoja</p></div>
+        <div class="tabs">
+          <button class="btn-sm btn-sm-gold" onclick="goSection('addStudentPage')">+ Agregar</button>
+          <button class="tab active" onclick="filterSt('all',this)">Todos</button>
+          <button class="tab" onclick="filterSt('Activo',this)">Activos</button>
+          <button class="tab" onclick="filterSt('Pendiente',this)">Pendientes</button>
+          <button class="tab" onclick="filterSt('En Revisión',this)">Revisión</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>WhatsApp</th><th>Email</th><th>Pago</th><th>Programa</th><th>País</th><th>Estado</th><th></th></tr></thead>
+          <tbody id="studentsTable"><tr><td colspan="8"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="content page" id="requestsPage">
+    <div class="table-card" id="requestsSection">
+      <div class="card-head"><div><h3>Solicitudes recientes</h3><p>Desde tu hoja de solicitudes</p></div></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nombre</th><th>País</th><th>Interés</th><th>Capital</th><th>Fecha</th><th>Estado</th></tr></thead>
+          <tbody id="solTable"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="content page" id="addStudentPage">
+    <div class="table-card">
+      <div class="card-head">
+        <div>
+          <h3>Agregar estudiante</h3>
+          <p>Pestaña independiente para registrar estudiantes y copiar la fila para Google Sheets.</p>
+        </div>
+        <button class="btn-sm btn-sm-out" onclick="goSection('studentsPage')">Ver estudiantes</button>
       </div>
       <div class="form-grid">
         <div class="form-field"><label>Nombre</label><input id="newName" placeholder="Nombre completo"></div>
@@ -260,37 +300,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="form-actions">
         <button class="btn-sm btn-sm-gold" onclick="addStudentLocal()">+ Agregar al dashboard</button>
         <button class="btn-sm btn-sm-out" onclick="copyStudentRow()">Copiar fila para Sheets</button>
+        <button class="btn-sm btn-sm-out" onclick="clearNewStudentForm()">Limpiar</button>
       </div>
       <div class="form-note"><strong>Nota:</strong> esto agrega el estudiante visualmente en el dashboard. Para que quede permanente en Google Sheets, pega la fila copiada en tu hoja o conectamos luego un Apps Script.</div>
-    </div>
-
-    <div class="table-card" id="studentsSection">
-      <div class="card-head">
-        <div><h3>Estudiantes</h3><p>Registro completo desde tu hoja</p></div>
-        <div class="tabs">
-          <button class="btn-sm btn-sm-gold" onclick="openAddStudent()">+ Agregar</button>
-          <button class="tab active" onclick="filterSt('all',this)">Todos</button>
-          <button class="tab" onclick="filterSt('Activo',this)">Activos</button>
-          <button class="tab" onclick="filterSt('Pendiente',this)">Pendientes</button>
-          <button class="tab" onclick="filterSt('En Revisión',this)">Revisión</button>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Nombre</th><th>WhatsApp</th><th>Email</th><th>Pago</th><th>Programa</th><th>País</th><th>Estado</th><th></th></tr></thead>
-          <tbody id="studentsTable"><tr><td colspan="8"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="table-card" id="requestsSection">
-      <div class="card-head"><div><h3>Solicitudes recientes</h3><p>Desde tu hoja de solicitudes</p></div></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Nombre</th><th>País</th><th>Interés</th><th>Capital</th><th>Fecha</th><th>Estado</th></tr></thead>
-          <tbody id="solTable"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
-        </table>
-      </div>
     </div>
   </div>
 </main>
@@ -328,15 +340,14 @@ let selectedStudent=null;
 
 function goSection(id,el){
   if(el){document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));el.classList.add('active');}
-  toggleSidebar(false);
+  document.querySelectorAll('.page').forEach(sec=>sec.classList.remove('active-page'));
   const sec=document.getElementById(id);
-  if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
+  if(sec) sec.classList.add('active-page');
+  window.scrollTo({top:0,behavior:'smooth'});
+  toggleSidebar(false);
 }
-function openAddStudent(){
-  const card=document.getElementById('addStudentCard');
-  if(card){card.classList.add('open'); setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),80);}
-}
-function closeAddStudent(){document.getElementById('addStudentCard')?.classList.remove('open');}
+function openAddStudent(){goSection('addStudentPage');}
+function closeAddStudent(){goSection('studentsPage');}
 function getNewStudent(){
   return {
     n:document.getElementById('newName').value.trim(),
@@ -355,8 +366,8 @@ function addStudentLocal(){
   if(!s.n){alert('Escribe el nombre del estudiante.');return;}
   allStudents.unshift(s);
   renderAll();
-  openAddStudent();
   clearNewStudentForm();
+  goSection('studentsPage');
   alert('Estudiante agregado al dashboard. Para guardarlo permanente, cópialo también a Google Sheets.');
 }
 function copyStudentRow(){
