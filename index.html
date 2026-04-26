@@ -124,6 +124,20 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .btn-sm:hover{transform:translateY(-1px)}
 .btn-sm-gold{background:var(--gold);color:#06080f}
 .btn-sm-out{border:1px solid var(--border2);color:var(--text);background:var(--bg2)}
+
+.add-card{border-radius:var(--r);border:1px solid rgba(240,192,64,.22);background:linear-gradient(135deg,rgba(240,192,64,.08),rgba(255,255,255,.03));margin-bottom:20px;overflow:hidden;display:none}
+.add-card.open{display:block}
+.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:18px}
+.form-field{display:flex;flex-direction:column;gap:6px}
+.form-field label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}
+.form-field input,.form-field select{height:42px;border-radius:12px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);padding:0 12px;outline:none;font-family:inherit}
+.form-field input:focus,.form-field select:focus{border-color:var(--gold)}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 18px}
+.form-note{padding:0 18px 16px;color:var(--muted);font-size:.78rem;line-height:1.5}
+.form-note strong{color:var(--gold2)}
+@media(max-width:900px){.form-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}}
+
 @media(max-width:1100px){.charts-row{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:860px){.app{grid-template-columns:1fr}.mobile-menu{display:grid;place-items:center}.mobile-overlay.show{display:block}.sidebar{position:fixed;left:-280px;top:0;width:260px;height:100vh;z-index:20;transition:.25s ease;box-shadow:30px 0 80px rgba(0,0,0,.35)}.sidebar.open{left:0}.content{padding:16px}.topbar-left{display:flex;align-items:center;gap:10px}}
 @media(max-width:500px){.kpis{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}.search{width:100%}}
@@ -139,10 +153,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
   <nav class="nav">
     <div class="nav-label">Principal</div>
-    <a class="active" href="#"><span class="nav-ic">◆</span> Dashboard</a>
+    <a class="active" href="#" onclick="goSection('dashboard',this)"><span class="nav-ic">◆</span> Dashboard</a>
     <a href="#"><span class="nav-ic">📊</span> Ingresos</a>
-    <a href="#"><span class="nav-ic">👥</span> Estudiantes</a>
-    <a href="#"><span class="nav-ic">📋</span> Solicitudes</a>
+    <a href="#" onclick="goSection('studentsSection',this);openAddStudent()"><span class="nav-ic">👥</span> Estudiantes</a>
+    <a href="#" onclick="goSection('requestsSection',this)"><span class="nav-ic">📋</span> Solicitudes</a>
     <a href="#"><span class="nav-ic">💬</span> WhatsApp</a>
     <div class="nav-label">Programas</div>
     <a href="#"><span class="nav-ic">★</span> VIP Regular</a>
@@ -180,7 +194,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <button class="sync-btn" onclick="loadData()">↻ Sincronizar ahora</button>
   </div>
 
-  <div class="content">
+  <div class="content" id="dashboard">
     <div class="notice" id="mainNotice">
       <span>💡</span>
       <div>
@@ -227,10 +241,34 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
     </div>
 
-    <div class="table-card">
+
+    <div class="add-card" id="addStudentCard">
+      <div class="card-head">
+        <div><h3>Agregar estudiante</h3><p>Regístralo rápido en el dashboard y copia la fila para tu Google Sheets.</p></div>
+        <button class="btn-sm btn-sm-out" onclick="closeAddStudent()">Cerrar</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-field"><label>Nombre</label><input id="newName" placeholder="Nombre completo"></div>
+        <div class="form-field"><label>WhatsApp</label><input id="newWa" placeholder="1787..."></div>
+        <div class="form-field"><label>Email</label><input id="newEmail" placeholder="correo@email.com"></div>
+        <div class="form-field"><label>Pago</label><input id="newPago" placeholder="125"></div>
+        <div class="form-field"><label>Programa</label><select id="newProg"><option>VIP Regular</option><option>VIP Premium</option><option>Mentoría 1/1</option><option>Indicador</option></select></div>
+        <div class="form-field"><label>País</label><input id="newLoc" placeholder="Puerto Rico"></div>
+        <div class="form-field"><label>Estado</label><select id="newEstado"><option>Activo</option><option>Pendiente</option><option>En Revisión</option><option>Inactivo</option></select></div>
+        <div class="form-field"><label>Notas</label><input id="newNotas" placeholder="Notas internas"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-sm btn-sm-gold" onclick="addStudentLocal()">+ Agregar al dashboard</button>
+        <button class="btn-sm btn-sm-out" onclick="copyStudentRow()">Copiar fila para Sheets</button>
+      </div>
+      <div class="form-note"><strong>Nota:</strong> esto agrega el estudiante visualmente en el dashboard. Para que quede permanente en Google Sheets, pega la fila copiada en tu hoja o conectamos luego un Apps Script.</div>
+    </div>
+
+    <div class="table-card" id="studentsSection">
       <div class="card-head">
         <div><h3>Estudiantes</h3><p>Registro completo desde tu hoja</p></div>
         <div class="tabs">
+          <button class="btn-sm btn-sm-gold" onclick="openAddStudent()">+ Agregar</button>
           <button class="tab active" onclick="filterSt('all',this)">Todos</button>
           <button class="tab" onclick="filterSt('Activo',this)">Activos</button>
           <button class="tab" onclick="filterSt('Pendiente',this)">Pendientes</button>
@@ -245,7 +283,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
     </div>
 
-    <div class="table-card">
+    <div class="table-card" id="requestsSection">
       <div class="card-head"><div><h3>Solicitudes recientes</h3><p>Desde tu hoja de solicitudes</p></div></div>
       <div class="table-wrap">
         <table>
@@ -287,6 +325,47 @@ const COLORS = ['#f0c040','#60a5fa','#34d399','#a78bfa','#f87171','#fad96b'];
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 let allStudents=[], allSolicitudes=[], allIngresos=[];
 let selectedStudent=null;
+
+function goSection(id,el){
+  if(el){document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));el.classList.add('active');}
+  toggleSidebar(false);
+  const sec=document.getElementById(id);
+  if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function openAddStudent(){
+  const card=document.getElementById('addStudentCard');
+  if(card){card.classList.add('open'); setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),80);}
+}
+function closeAddStudent(){document.getElementById('addStudentCard')?.classList.remove('open');}
+function getNewStudent(){
+  return {
+    n:document.getElementById('newName').value.trim(),
+    wa:document.getElementById('newWa').value.trim()||'—',
+    email:document.getElementById('newEmail').value.trim()||'—',
+    pago:document.getElementById('newPago').value.trim()||'0',
+    prog:document.getElementById('newProg').value,
+    loc:document.getElementById('newLoc').value.trim()||'—',
+    estado:document.getElementById('newEstado').value,
+    notas:document.getElementById('newNotas').value.trim()||''
+  };
+}
+function clearNewStudentForm(){['newName','newWa','newEmail','newPago','newLoc','newNotas'].forEach(id=>document.getElementById(id).value='');document.getElementById('newEstado').value='Activo';}
+function addStudentLocal(){
+  const s=getNewStudent();
+  if(!s.n){alert('Escribe el nombre del estudiante.');return;}
+  allStudents.unshift(s);
+  renderAll();
+  openAddStudent();
+  clearNewStudentForm();
+  alert('Estudiante agregado al dashboard. Para guardarlo permanente, cópialo también a Google Sheets.');
+}
+function copyStudentRow(){
+  const s=getNewStudent();
+  if(!s.n){alert('Escribe el nombre del estudiante.');return;}
+  const row=['',s.n,s.wa,s.email,s.pago,s.prog,s.loc,s.estado,s.notas].join('	');
+  navigator.clipboard.writeText(row).then(()=>alert('Fila copiada. Pégala en Google Sheets en la pestaña de estudiantes.')).catch(()=>alert(row));
+}
+
 function toggleSidebar(open){document.querySelector('.sidebar').classList.toggle('open',open);document.getElementById('mobileOverlay').classList.toggle('show',open);}
 function moneyNumber(v){return parseFloat(String(v||'').replace(/[$,\s]/g,''))||0;}
 function cleanPhone(v){return String(v||'').replace(/\D/g,'');}
