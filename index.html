@@ -126,6 +126,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .btn-sm:hover{transform:translateY(-1px)}
 .btn-sm-gold{background:var(--gold);color:#06080f}
 .btn-sm-out{border:1px solid var(--border2);color:var(--text);background:var(--bg2)}
+.btn-sm-red{border:1px solid rgba(248,113,113,.35);color:var(--red);background:var(--red2)}
 
 .add-card{border-radius:var(--r);border:1px solid rgba(240,192,64,.22);background:linear-gradient(135deg,rgba(240,192,64,.08),rgba(255,255,255,.03));margin-bottom:20px;overflow:hidden;display:none}
 .add-card.open{display:block}
@@ -337,6 +338,14 @@ const COLORS = ['#f0c040','#60a5fa','#34d399','#a78bfa','#f87171','#fad96b'];
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 let allStudents=[], allSolicitudes=[], allIngresos=[];
 let selectedStudent=null;
+let localStudents = JSON.parse(localStorage.getItem('olonLocalStudents') || '[]');
+let hiddenStudentKeys = JSON.parse(localStorage.getItem('olonHiddenStudentKeys') || '[]');
+
+function studentKey(s){
+  return String([s.n||'',s.wa||'',s.email||''].join('|')).toLowerCase();
+}
+function saveLocalStudents(){localStorage.setItem('olonLocalStudents', JSON.stringify(localStudents));}
+function saveHiddenStudentKeys(){localStorage.setItem('olonHiddenStudentKeys', JSON.stringify(hiddenStudentKeys));}
 
 function goSection(id,el){
   if(el){document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));el.classList.add('active');}
@@ -364,11 +373,15 @@ function clearNewStudentForm(){['newName','newWa','newEmail','newPago','newLoc',
 function addStudentLocal(){
   const s=getNewStudent();
   if(!s.n){alert('Escribe el nombre del estudiante.');return;}
+  s._source='local';
+  s._id=Date.now()+'_'+Math.random().toString(16).slice(2);
+  localStudents.unshift(s);
+  saveLocalStudents();
   allStudents.unshift(s);
   renderAll();
   clearNewStudentForm();
   goSection('studentsPage');
-  alert('Estudiante agregado al dashboard. Para guardarlo permanente, cópialo también a Google Sheets.');
+  alert('Estudiante agregado al dashboard. Ahora puedes eliminarlo con el botón Eliminar.');
 }
 function copyStudentRow(){
   const s=getNewStudent();
@@ -429,12 +442,15 @@ async function loadData(){
     });
 
     // Parse estudiantes — skip header/title rows
-    allStudents=[];
+    const sheetStudents=[];
     parseCSV(r1).forEach(row=>{
       const n=row[1]||'';
       if(!n||n.includes('OLON')||n.includes('Nombre')||n.includes('TOTAL')) return;
-      allStudents.push({n,wa:row[2]||'—',email:row[3]||'—',pago:row[4]||'',prog:row[5]||'—',loc:row[6]||'—',estado:row[7]||'—',notas:row[8]||''});
+      const s={n,wa:row[2]||'—',email:row[3]||'—',pago:row[4]||'',prog:row[5]||'—',loc:row[6]||'—',estado:row[7]||'—',notas:row[8]||'',_source:'sheet'};
+      if(!hiddenStudentKeys.includes(studentKey(s))) sheetStudents.push(s);
     });
+    localStudents = JSON.parse(localStorage.getItem('olonLocalStudents') || '[]');
+    allStudents=[...localStudents,...sheetStudents];
 
     // Parse solicitudes
     allSolicitudes=[];
@@ -532,17 +548,58 @@ function renderMonthly(){
 
 function renderStudents(list){
   document.getElementById('studentsTable').innerHTML=list.length
-    ? list.map((s,i)=>`<tr>
-        <td><div class="row-name"><div class="ava-sm" style="background:${COLORS[i%COLORS.length]}">${initials(s.n)}</div><strong>${s.n}</strong></div></td>
+    ? list.map((s,i)=>{
+        const key=encodeURIComponent(studentKey(s));
+        const tag=s._source==='local' ? '<span class="pill pill-blue" style="margin-left:8px">Manual</span>' : '<span class="pill pill-gold" style="margin-left:8px">Sheets</span>';
+        return `<tr>
+        <td><div class="row-name"><div class="ava-sm" style="background:${COLORS[i%COLORS.length]}">${initials(s.n)}</div><strong>${s.n}</strong>${tag}</div></td>
         <td style="color:var(--gold2);font-size:.8rem">${s.wa}</td>
         <td style="color:var(--muted);font-size:.78rem">${s.email}</td>
         <td><span class="rev-val">${s.pago&&s.pago!='0'&&s.pago!='—'?'$'+parseFloat(s.pago.replace(/[$,]/g,'')).toLocaleString():s.pago||'—'}</span></td>
         <td>${s.prog}</td>
         <td>${s.loc}</td>
         <td>${statusPill(s.estado)}</td>
-        <td><button class="btn-sm btn-sm-out" style="font-size:.72rem;height:28px;padding:0 10px" onclick="openSMByName('${encodeURIComponent(s.n)}')">Ver</button></td>
-      </tr>`).join('')
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-sm btn-sm-out" style="font-size:.72rem;height:28px;padding:0 10px" onclick="openSMByKey('${key}')">Ver</button>
+          <button class="btn-sm btn-sm-red" style="font-size:.72rem;height:28px;padding:0 10px" onclick="deleteStudent('${key}')">Eliminar</button>
+        </td>
+      </tr>`;
+      }).join('')
     : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No hay estudiantes registrados aún</td></tr>`;
+}
+
+function deleteStudent(encodedKey){
+  const key=decodeURIComponent(encodedKey);
+  const s=allStudents.find(x=>studentKey(x)===key);
+  if(!s) return;
+  const isLocal=s._source==='local';
+  const msg=isLocal
+    ? `¿Eliminar a ${s.n} del dashboard?`
+    : `Este estudiante viene de Google Sheets. Se ocultará del dashboard, pero para borrarlo permanente tienes que eliminarlo también de Google Sheets. ¿Continuar?`;
+  if(!confirm(msg)) return;
+  if(isLocal){
+    localStudents=localStudents.filter(x=>studentKey(x)!==key);
+    saveLocalStudents();
+  }else{
+    if(!hiddenStudentKeys.includes(key)) hiddenStudentKeys.push(key);
+    saveHiddenStudentKeys();
+  }
+  allStudents=allStudents.filter(x=>studentKey(x)!==key);
+  renderAll();
+}
+
+function openSMByKey(encodedKey){
+  const key=decodeURIComponent(encodedKey);
+  const s=allStudents.find(x=>studentKey(x)===key); if(!s) return;
+  selectedStudent=s;
+  document.getElementById('modalName').textContent=s.n;
+  document.getElementById('mLoc').textContent=s.loc;
+  document.getElementById('mProg').textContent=s.prog;
+  document.getElementById('mCap').textContent=s.pago?s.pago:'—';
+  document.getElementById('mExp').textContent=s.email;
+  document.getElementById('mStat').textContent=s.estado;
+  document.getElementById('mWa').textContent=s.wa;
+  document.getElementById('modal').classList.add('open');
 }
 
 function renderSol(){
@@ -565,16 +622,9 @@ document.getElementById('searchInput').addEventListener('input',e=>{
 function openSMByName(encodedName){
   const name=decodeURIComponent(encodedName);
   const s=allStudents.find(x=>x.n===name); if(!s) return;
-  selectedStudent=s;
-  document.getElementById('modalName').textContent=s.n;
-  document.getElementById('mLoc').textContent=s.loc;
-  document.getElementById('mProg').textContent=s.prog;
-  document.getElementById('mCap').textContent=s.pago?s.pago:'—';
-  document.getElementById('mExp').textContent=s.email;
-  document.getElementById('mStat').textContent=s.estado;
-  document.getElementById('mWa').textContent=s.wa;
-  document.getElementById('modal').classList.add('open');
+  openSMByKey(encodeURIComponent(studentKey(s)));
 }
+
 function closeModal(){document.getElementById('modal').classList.remove('open')}
 function sendWhatsApp(){
   if(!selectedStudent) return;
