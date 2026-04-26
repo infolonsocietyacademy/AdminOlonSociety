@@ -260,6 +260,21 @@ h1,h2,h3,h4,.brand h1,.topbar-left h2,.card-head h3,.kpi-val,.legend-val,.rev-va
   font-family: 'Syne', Arial, Helvetica, sans-serif;
 }
 
+
+/* =========================================================
+   OVERLAY FULL: PC + iPAD + MOBILE
+   Menú flotante igual en todos los tamaños
+   ========================================================= */
+.app,.app.sidebar-closed{display:block !important;grid-template-columns:1fr !important;min-height:100vh !important}
+.app.sidebar-closed .sidebar{transform:none !important;pointer-events:auto !important;padding:22px 16px !important;border-right:1px solid var(--border) !important;overflow-y:auto !important}
+.sidebar{position:fixed !important;left:-290px !important;top:0 !important;width:260px !important;height:100vh !important;z-index:20 !important;transition:.28s ease !important;box-shadow:30px 0 80px rgba(0,0,0,.45) !important;border-right:1px solid var(--border) !important;transform:none !important;pointer-events:auto !important;padding:22px 16px !important;overflow-y:auto !important}
+.sidebar.open{left:0 !important}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(6px);z-index:19}
+.mobile-overlay.show{display:block !important}
+.mobile-menu{display:flex !important}
+body.menu-open{overflow:hidden}
+@media(max-width:860px){.app,.app.sidebar-closed{display:block !important;grid-template-columns:1fr !important}.sidebar{position:fixed !important;left:-290px !important;width:260px !important}.sidebar.open{left:0 !important}}
+
 </style>
 </head>
 <body>
@@ -636,8 +651,28 @@ function copyStudentRow(){
   navigator.clipboard.writeText(row).then(()=>alert('Fila copiada. Pégala en Google Sheets en la pestaña de estudiantes.')).catch(()=>alert(row));
 }
 
-function toggleSidebar(force){const app=document.querySelector('.app');const sidebar=document.querySelector('.sidebar');const overlay=document.getElementById('mobileOverlay');const btn=document.getElementById('mobileMenuBtn');const isMobile=window.innerWidth<=860;if(isMobile){const open=typeof force==='boolean'?force:!sidebar.classList.contains('open');sidebar.classList.toggle('open',open);overlay.classList.toggle('show',open);if(btn){btn.classList.toggle('active',open);btn.setAttribute('aria-label',open?'Cerrar menú':'Abrir menú');}}else{const closed=typeof force==='boolean'?!force:!app.classList.contains('sidebar-closed');app.classList.toggle('sidebar-closed',closed);sidebar.classList.remove('open');overlay.classList.remove('show');if(btn){btn.classList.toggle('active',closed);btn.setAttribute('aria-label',closed?'Abrir menú':'Cerrar menú');}}}
-window.addEventListener('resize',()=>{const app=document.querySelector('.app');const sidebar=document.querySelector('.sidebar');const overlay=document.getElementById('mobileOverlay');const btn=document.getElementById('mobileMenuBtn');if(window.innerWidth>860){sidebar.classList.remove('open');overlay.classList.remove('show');if(btn)btn.classList.toggle('active',app.classList.contains('sidebar-closed'));}else{app.classList.remove('sidebar-closed');if(btn)btn.classList.toggle('active',sidebar.classList.contains('open'));}});
+function toggleSidebar(force){
+  const sidebar=document.querySelector(".sidebar");
+  const overlay=document.getElementById("mobileOverlay");
+  const btn=document.getElementById("mobileMenuBtn");
+  const open=typeof force==="boolean" ? force : !sidebar.classList.contains("open");
+  sidebar.classList.toggle("open",open);
+  overlay.classList.toggle("show",open);
+  document.body.classList.toggle("menu-open",open);
+  if(btn){
+    btn.classList.toggle("active",open);
+    btn.setAttribute("aria-label",open?"Cerrar menú":"Abrir menú");
+  }
+}
+window.addEventListener("resize",()=>{
+  const sidebar=document.querySelector(".sidebar");
+  const overlay=document.getElementById("mobileOverlay");
+  const btn=document.getElementById("mobileMenuBtn");
+  const open=sidebar.classList.contains("open");
+  overlay.classList.toggle("show",open);
+  document.body.classList.toggle("menu-open",open);
+  if(btn) btn.classList.toggle("active",open);
+});
 function moneyNumber(v){return parseFloat(String(v||'').replace(/[$,\s]/g,''))||0;}
 function cleanPhone(v){return String(v||'').replace(/\D/g,'');}
 
