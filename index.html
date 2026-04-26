@@ -571,6 +571,80 @@ tr:hover td{
   .kpis{grid-template-columns:1fr}
   .form-grid{grid-template-columns:1fr}
 }
+
+/* ================================
+   ESTUDIANTES INTERACTIVO / WHATSAPP
+   ================================ */
+.student-grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr .9fr .9fr .9fr .8fr auto;
+  gap:10px;
+  padding:18px;
+  border-bottom:1px solid var(--line);
+}
+.whatsapp-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:32px;
+  padding:0 11px;
+  border-radius:999px;
+  text-decoration:none;
+  background:rgba(52,211,153,.13);
+  color:var(--green);
+  border:1px solid rgba(52,211,153,.28);
+  font-size:.74rem;
+  font-weight:900;
+  white-space:nowrap;
+}
+.whatsapp-btn:hover{filter:brightness(1.12)}
+.small-btn{
+  height:32px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid var(--line2);
+  background:var(--bg2);
+  color:var(--text);
+  font-size:.72rem;
+  font-weight:900;
+  cursor:pointer;
+}
+.small-btn.red{
+  color:var(--red);
+  border-color:rgba(248,113,113,.28);
+  background:rgba(248,113,113,.12);
+}
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:.72rem;
+  font-weight:900;
+}
+.status-ok{background:rgba(52,211,153,.12);color:var(--green)}
+.status-soon{background:rgba(240,192,64,.12);color:var(--gold2)}
+.status-due{background:rgba(248,113,113,.12);color:var(--red)}
+.student-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.student-note{
+  padding:13px 18px;
+  color:var(--muted);
+  font-size:.78rem;
+  font-weight:800;
+  border-bottom:1px solid var(--line);
+}
+@media(max-width:1100px){
+  .student-grid{grid-template-columns:1fr 1fr}
+  .student-grid .add-btn{grid-column:1/-1}
+}
+@media(max-width:620px){
+  .student-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 
@@ -591,7 +665,7 @@ tr:hover td{
     <div class="nav-label">Panel</div>
     <nav class="nav">
       <a href="#" class="active"><span class="nav-ic">💰</span> Ingresos VIP</a>
-      <a href="#"><span class="nav-ic">👥</span> Estudiantes</a>
+      <a href="#estudiantes"><span class="nav-ic">👥</span> Estudiantes</a>
       <a href="#"><span class="nav-ic">📊</span> Reportes</a>
       <a href="#"><span class="nav-ic">⚙️</span> Ajustes</a>
     </nav>
@@ -678,6 +752,78 @@ tr:hover td{
         </div>
       </div>
 
+      
+      <div class="panel" id="estudiantes">
+        <div class="panel-head">
+          <div>
+            <h2>Estudiantes interactivo</h2>
+            <p>Registra estudiantes, próximo pago y envía recordatorios por WhatsApp.</p>
+          </div>
+          <div class="actions">
+            <button class="btn red" onclick="clearStudents()">Borrar estudiantes</button>
+          </div>
+        </div>
+
+        <div class="student-grid">
+          <div class="field">
+            <label>Nombre</label>
+            <input id="studentNameInput" placeholder="Ej: Luis Rivera">
+          </div>
+          <div class="field">
+            <label>WhatsApp</label>
+            <input id="studentPhoneInput" placeholder="Ej: 17871234567">
+          </div>
+          <div class="field">
+            <label>Plan</label>
+            <select id="studentPlanInput">
+              <option value="VIP Regular">VIP Regular</option>
+              <option value="VIP Premium">VIP Premium</option>
+              <option value="Mentoría">Mentoría</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tipo</label>
+            <select id="studentTypeInput">
+              <option value="Quincenal">Quincenal</option>
+              <option value="Mensual">Mensual</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Monto</label>
+            <input id="studentAmountInput" type="number" placeholder="Ej: 125">
+          </div>
+          <div class="field">
+            <label>Próximo pago</label>
+            <input id="studentNextPayInput" type="date">
+          </div>
+          <button class="add-btn" onclick="addStudent()">Añadir</button>
+        </div>
+
+        <div class="student-note">
+          El botón de WhatsApp abre un mensaje listo para enviar. Para envío automático real necesitas conectar WhatsApp Business API o Twilio.
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Estudiante</th>
+                <th>WhatsApp</th>
+                <th>Plan</th>
+                <th>Tipo</th>
+                <th>Monto</th>
+                <th>Próximo pago</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="studentRows"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="studentEmptyState" style="display:none">No hay estudiantes registrados.</div>
+      </div>
+
+
       <div class="panel">
         <div class="panel-head">
           <div>
@@ -756,6 +902,158 @@ tr:hover td{
 const STORAGE_KEY = "olon_vip_payments_v3";
 let mode = "mensual";
 let filter = "Todos";
+
+
+const STUDENTS_KEY = "olon_students_v1";
+
+function getStudents(){
+  const raw = localStorage.getItem(STUDENTS_KEY);
+  if(!raw) return [];
+  try{
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function saveStudents(students){
+  localStorage.setItem(STUDENTS_KEY, JSON.stringify(students));
+}
+
+function cleanPhone(phone){
+  return String(phone || "").replace(/\D/g,"");
+}
+
+function nextDateByType(dateStr, type){
+  const d = new Date(dateStr + "T00:00:00");
+  if(type === "Quincenal"){
+    d.setDate(d.getDate() + 15);
+  }else{
+    d.setMonth(d.getMonth() + 1);
+  }
+  return d.toISOString().slice(0,10);
+}
+
+function addStudent(){
+  const name = document.getElementById("studentNameInput").value.trim();
+  const phone = cleanPhone(document.getElementById("studentPhoneInput").value);
+  const plan = document.getElementById("studentPlanInput").value;
+  const type = document.getElementById("studentTypeInput").value;
+  const amount = Number(document.getElementById("studentAmountInput").value);
+  const nextPay = document.getElementById("studentNextPayInput").value;
+
+  if(!name || !phone || !amount || !nextPay){
+    alert("Completa nombre, WhatsApp, monto y próximo pago.");
+    return;
+  }
+
+  const students = getStudents();
+  students.push({
+    id: Date.now(),
+    name,
+    phone,
+    plan,
+    type,
+    amount,
+    nextPay
+  });
+
+  saveStudents(students);
+
+  document.getElementById("studentNameInput").value = "";
+  document.getElementById("studentPhoneInput").value = "";
+  document.getElementById("studentAmountInput").value = "";
+  document.getElementById("studentNextPayInput").valueAsDate = new Date();
+
+  renderStudents();
+}
+
+function paymentStatus(nextPay){
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const due = new Date(nextPay + "T00:00:00");
+  const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+
+  if(diffDays < 0) return {label:"Vencido", cls:"status-due", days:diffDays};
+  if(diffDays <= 3) return {label:"Por vencer", cls:"status-soon", days:diffDays};
+  return {label:"Al día", cls:"status-ok", days:diffDays};
+}
+
+function whatsappLink(student){
+  const status = paymentStatus(student.nextPay);
+  const msg = `Hola ${student.name}, te recordamos que tu próximo pago de ${student.plan} (${student.type}) por $${student.amount} vence el ${student.nextPay}. Recarga y mantente al día con las nuevas actualizaciones de OLON Society Academy.`;
+  return `https://wa.me/${student.phone}?text=${encodeURIComponent(msg)}`;
+}
+
+function renewStudent(id){
+  const students = getStudents();
+  const s = students.find(x => x.id === id);
+  if(!s) return;
+
+  // Create payment record automatically
+  const payments = getPayments();
+  payments.push({
+    date: new Date().toISOString().slice(0,10),
+    name: s.name,
+    plan: s.plan,
+    type: s.type,
+    amount: Number(s.amount || 0)
+  });
+  savePayments(payments);
+
+  s.nextPay = nextDateByType(s.nextPay, s.type);
+  saveStudents(students);
+
+  render();
+}
+
+function deleteStudent(id){
+  if(!confirm("¿Eliminar este estudiante?")) return;
+  const students = getStudents().filter(s => s.id !== id);
+  saveStudents(students);
+  renderStudents();
+}
+
+function clearStudents(){
+  if(confirm("¿Seguro que quieres borrar todos los estudiantes?")){
+    saveStudents([]);
+    renderStudents();
+  }
+}
+
+function renderStudents(){
+  const tbody = document.getElementById("studentRows");
+  const empty = document.getElementById("studentEmptyState");
+  if(!tbody) return;
+
+  const students = getStudents().sort((a,b)=>a.nextPay.localeCompare(b.nextPay));
+  tbody.innerHTML = "";
+  empty.style.display = students.length ? "none" : "block";
+
+  students.forEach(s=>{
+    const st = paymentStatus(s.nextPay);
+    tbody.innerHTML += `
+      <tr>
+        <td>${s.name}</td>
+        <td>${s.phone}</td>
+        <td><span class="pill vip">${s.plan}</span></td>
+        <td><span class="pill ${s.type === "Quincenal" ? "q" : "m"}">${s.type}</span></td>
+        <td class="money">${money(s.amount)}</td>
+        <td>${s.nextPay}</td>
+        <td><span class="status-pill ${st.cls}">${st.label}</span></td>
+        <td>
+          <div class="student-actions">
+            <a class="whatsapp-btn" href="${whatsappLink(s)}" target="_blank">WhatsApp</a>
+            <button class="small-btn" onclick="renewStudent(${s.id})">Pagó</button>
+            <button class="small-btn red" onclick="deleteStudent(${s.id})">Eliminar</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+}
+
 
 const demoData = [
   {date:"2026-01-05", name:"Luis Rivera", plan:"VIP Regular", type:"Quincenal", amount:50},
@@ -986,9 +1284,11 @@ function render(){
   renderKpis();
   renderChart();
   renderTable();
+  renderStudents();
 }
 
 document.getElementById("dateInput").valueAsDate = new Date();
+if(document.getElementById("studentNextPayInput")) document.getElementById("studentNextPayInput").valueAsDate = new Date();
 render();
 </script>
 </body>
