@@ -196,6 +196,28 @@ tr:hover td{background:rgba(255,255,255,.02)}
 @media(max-width:500px){.kpis{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}.search{width:100%}}
 
 
+
+/* ================================
+   15. REPORTE MENSUAL / ANUAL
+   ================================ */
+.report-card{border-radius:var(--r);border:1px solid rgba(240,192,64,.18);background:linear-gradient(135deg,rgba(240,192,64,.055),rgba(17,24,39,.96));margin-bottom:20px;overflow:hidden}
+.report-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.report-toggle{height:34px;padding:0 13px;border-radius:999px;border:1px solid var(--border2);color:var(--muted);background:var(--bg2);font-size:.76rem;font-weight:800;transition:.2s}
+.report-toggle:hover{color:var(--text);border-color:rgba(240,192,64,.35)}
+.report-toggle.active{background:var(--gold);border-color:var(--gold);color:#06080f}
+.report-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:0;border-top:1px solid var(--border)}
+.report-chart-box{padding:18px;border-right:1px solid var(--border)}
+.report-table-box{padding:0;overflow-x:auto}
+.report-svg{width:100%;min-height:260px;display:block;overflow:visible}
+.report-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 18px;border-top:1px solid var(--border);background:rgba(255,255,255,.025)}
+.report-mini{padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
+.report-mini span{display:block;color:var(--muted);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.report-mini strong{font-family:'Syne',sans-serif;font-size:1.08rem;color:var(--gold2)}
+.report-table{min-width:520px}
+.report-table td,.report-table th{padding:12px 13px}
+@media(max-width:1100px){.report-grid{grid-template-columns:1fr}.report-chart-box{border-right:0;border-bottom:1px solid var(--border)}}
+@media(max-width:650px){.report-summary{grid-template-columns:1fr}.report-actions{width:100%}.report-toggle{flex:1}}
+
 /* ================================
    15. LOGIN / AUTH
    ================================ */
@@ -349,6 +371,37 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
     </div>
 
+    <div class="report-card" id="financeReportSection">
+      <div class="card-head">
+        <div>
+          <h3>Reporte de ingresos mensual / anual</h3>
+          <p>Tabla + gráfico financiero para ver el crecimiento por mes o por año.</p>
+        </div>
+        <div class="report-actions">
+          <button class="report-toggle active" id="btnMonthlyReport" onclick="toggleReport('monthly')">Mensual</button>
+          <button class="report-toggle" id="btnAnnualReport" onclick="toggleReport('annual')">Anual</button>
+        </div>
+      </div>
+      <div class="report-grid">
+        <div class="report-chart-box">
+          <svg class="report-svg" viewBox="0 0 720 280" id="financeReportChart">
+            <text x="360" y="140" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Cargando reporte...</text>
+          </svg>
+        </div>
+        <div class="report-table-box">
+          <table class="report-table">
+            <thead id="financeReportHead"><tr><th>Mes</th><th>Ingresos</th><th>Estudiantes</th><th>Conversión</th></tr></thead>
+            <tbody id="financeReportTable"><tr><td colspan="4"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="report-summary">
+        <div class="report-mini"><span>Total visto</span><strong id="reportTotal">—</strong></div>
+        <div class="report-mini"><span>Promedio</span><strong id="reportAverage">—</strong></div>
+        <div class="report-mini"><span>Mejor periodo</span><strong id="reportBest">—</strong></div>
+      </div>
+    </div>
+
     <div class="table-card">
       <div class="card-head"><div><h3>Registro mensual de ingresos</h3><p>Desde tu hoja de Google Sheets</p></div></div>
       <div class="table-wrap">
@@ -458,6 +511,7 @@ const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 let allStudents=[], allSolicitudes=[], allIngresos=[];
 let selectedStudent=null;
 let currentAdmin=null;
+let reportMode='monthly';
 
 function showAuthError(msg){
   const box=document.getElementById('authError');
@@ -609,6 +663,7 @@ async function loadData(){
     parseCSV(r0).forEach(row=>{
       if(MESES.includes(row[1])){
         allIngresos.push({
+          year:parseInt(row[0])||2026,
           mes:row[1], rev:parseFloat((row[3]||'').replace(/[$,\s]/g,''))||0,
           students:parseInt(row[4])||0, prog:row[5]||'—',
           conv:parseFloat((row[6]||'').replace('%',''))||0, sol:parseInt(row[7])||0
@@ -676,7 +731,7 @@ function renderAll(){
   document.getElementById('kTopProg').textContent=topProg?topProg[0]:'—';
 
   if(allStudents.length>0) document.getElementById('mainNotice').style.display='none';
-  renderBar(); renderDonut(); renderMonthly(); renderStudents(allStudents); renderSol();
+  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderStudents(allStudents); renderSol();
 }
 
 function renderBar(){
@@ -713,6 +768,81 @@ function renderDonut(){
   });
   document.getElementById('donutChart').innerHTML=arcs+`<text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Syne,sans-serif" font-size="20" font-weight="800" fill="#f0c040">${total}</text><text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8899b4">estudiantes</text>`;
   document.getElementById('donutLegend').innerHTML=entries.map(([label,val],i)=>`<div class="legend-item"><div class="legend-lbl"><div class="legend-dot" style="background:${COLORS[i%COLORS.length]}"></div>${label}</div><div class="legend-val" style="color:${COLORS[i%COLORS.length]}">${val}</div></div>`).join('');
+}
+
+
+function toggleReport(mode){
+  reportMode=mode;
+  document.getElementById('btnMonthlyReport').classList.toggle('active',mode==='monthly');
+  document.getElementById('btnAnnualReport').classList.toggle('active',mode==='annual');
+  renderFinanceReport();
+}
+function getAnnualReportData(){
+  const grouped={};
+  allIngresos.forEach(d=>{
+    const y=d.year||2026;
+    if(!grouped[y]) grouped[y]={label:String(y),year:y,rev:0,students:0,sol:0,convSum:0,convCount:0};
+    grouped[y].rev+=d.rev||0;
+    grouped[y].students+=d.students||0;
+    grouped[y].sol+=d.sol||0;
+    if(d.conv>0){grouped[y].convSum+=d.conv;grouped[y].convCount++;}
+  });
+  return Object.values(grouped).sort((a,b)=>a.year-b.year).map(d=>({label:d.label,rev:d.rev,students:d.students,sol:d.sol,conv:d.convCount?Math.round(d.convSum/d.convCount):0}));
+}
+function getReportData(){
+  if(reportMode==='annual') return getAnnualReportData();
+  return allIngresos.map(d=>({label:d.mes.substring(0,3)+' '+(d.year||2026),fullLabel:d.mes+' '+(d.year||2026),rev:d.rev||0,students:d.students||0,sol:d.sol||0,conv:d.conv||0}));
+}
+function renderFinanceReport(){
+  const chart=document.getElementById('financeReportChart');
+  const table=document.getElementById('financeReportTable');
+  const head=document.getElementById('financeReportHead');
+  if(!chart||!table||!head) return;
+  const data=getReportData();
+  if(!data.length){
+    chart.innerHTML='<text x="360" y="140" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Sin datos para mostrar</text>';
+    table.innerHTML='<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted)">No hay ingresos registrados todavía</td></tr>';
+    document.getElementById('reportTotal').textContent='$0';
+    document.getElementById('reportAverage').textContent='$0';
+    document.getElementById('reportBest').textContent='—';
+    return;
+  }
+  const total=data.reduce((s,d)=>s+d.rev,0);
+  const avg=Math.round(total/data.length);
+  const best=data.slice().sort((a,b)=>b.rev-a.rev)[0];
+  document.getElementById('reportTotal').textContent='$'+total.toLocaleString();
+  document.getElementById('reportAverage').textContent='$'+avg.toLocaleString();
+  document.getElementById('reportBest').textContent=(best.fullLabel||best.label)+' · $'+best.rev.toLocaleString();
+  head.innerHTML=reportMode==='annual' ? '<tr><th>Año</th><th>Ingresos</th><th>Estudiantes</th><th>Conversión</th></tr>' : '<tr><th>Mes</th><th>Ingresos</th><th>Estudiantes</th><th>Conversión</th></tr>';
+  table.innerHTML=data.slice().reverse().map(d=>'<tr><td><strong>'+(d.fullLabel||d.label)+'</strong></td><td><span class="rev-val">$'+d.rev.toLocaleString()+'</span></td><td>'+d.students+'</td><td>'+(d.conv?'<span class="pill pill-green">'+d.conv+'%</span>':'—')+'</td></tr>').join('');
+  const W=720,H=280,pl=54,pr=24,pt=24,pb=54,cW=W-pl-pr,cH=H-pt-pb;
+  const maxRev=Math.max(...data.map(d=>d.rev),1)*1.18;
+  const maxStudents=Math.max(...data.map(d=>d.students),1)*1.25;
+  const barW=cW/data.length;
+  let html='';
+  [0,.25,.5,.75,1].forEach(p=>{
+    const y=pt+cH*(1-p);
+    html+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" stroke="rgba(255,255,255,.055)" stroke-width="1"/>';
+    html+='<text class="axis-t" x="'+(pl-8)+'" y="'+(y+4)+'" text-anchor="end">$'+Math.round(maxRev*p).toLocaleString()+'</text>';
+  });
+  const points=[];
+  data.forEach((d,i)=>{
+    const x=pl+i*barW+barW*.18;
+    const bw=Math.max(barW*.52,18);
+    const bh=Math.max((d.rev/maxRev)*cH,3);
+    const y=pt+cH-bh;
+    const cx=x+bw/2;
+    const sy=pt+cH-(d.students/maxStudents)*cH;
+    points.push([cx,sy]);
+    html+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="7" fill="url(#goldGrad)" opacity=".92"/>';
+    html+='<text class="axis-t" x="'+cx+'" y="'+(H-18)+'" text-anchor="middle">'+d.label+'</text>';
+  });
+  if(points.length>1){html+='<polyline points="'+points.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';}
+  points.forEach(p=>{html+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#34d399" stroke="#06080f" stroke-width="2"/>';});
+  html+='<defs><linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fad96b"/><stop offset="1" stop-color="#f0c040" stop-opacity=".42"/></linearGradient></defs>';
+  html+='<text x="'+(W-pr)+'" y="18" text-anchor="end" font-family="DM Sans" font-size="11" fill="#34d399">● Estudiantes</text>';
+  html+='<text x="'+(W-pr-98)+'" y="18" text-anchor="end" font-family="DM Sans" font-size="11" fill="#f0c040">■ Ingresos</text>';
+  chart.innerHTML=html;
 }
 
 function renderMonthly(){
