@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   OLON SOCIETY ACADEMY DASHBOARD — DIVIDIDO POR SECCIONES + FUENTE PRO
+   OLON SOCIETY ACADEMY DASHBOARD — DIVIDIDO POR SECCIONES
    Edita usando estos títulos grandes para encontrar cada bloque.
    ========================================================= */
 
@@ -30,7 +30,7 @@
    02. RESET GENERAL / BASE
    ================================ */
 *{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;font-family:Arial, Helvetica, sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
 button,input{font-family:inherit;cursor:pointer;border:none;background:none}
 .mobile-menu{display:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--border2);color:var(--text);background:var(--bg2);font-size:1.1rem}
 .mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:19}
@@ -120,7 +120,7 @@ button,input{font-family:inherit;cursor:pointer;border:none;background:none}
 .card-head p{font-size:.76rem;color:var(--muted);margin-top:2px}
 .chart-wrap{padding:18px}
 .chart-svg{width:100%;overflow:visible}
-.axis-t{font-family:Arial, Helvetica, sans-serif;font-size:10px;fill:#8899b4}
+.axis-t{font-family:'DM Sans',sans-serif;font-size:10px;fill:#8899b4}
 .donut-wrap{padding:16px;display:flex;flex-direction:column;align-items:center}
 .legend-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);width:100%}
 .legend-item:last-child{border-bottom:0}
@@ -244,18 +244,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .logout-btn:hover{transform:translateY(-1px);border-color:rgba(248,113,113,.45)}
 
 
-
 /* ================================
    16. TIPOGRAFÍA PRO
-   Cuerpo en Arial para lectura limpia.
-   Títulos y métricas en Syne para estilo premium.
    ================================ */
-body, button, input, select, table, td, th, p, span, a, label{
-  font-family: Arial, Helvetica, sans-serif;
-}
-h1,h2,h3,h4,.brand h1,.topbar-left h2,.card-head h3,.kpi-val,.legend-val,.rev-val,.ava,.ava-sm,.auth-head h1,.report-mini strong{
-  font-family: 'Syne', Arial, Helvetica, sans-serif;
-}
+body,button,input,select,textarea,table,td,th,p,span,a,div{font-family:Arial,Helvetica,sans-serif}
+h1,h2,h3,h4,.brand h1,.topbar-left h2,.card-head h3,.kpi-val,.legend-val,.rev-val,.ava,.ava-sm,.auth-head h1,.report-mini strong{font-family:'Syne',Arial,Helvetica,sans-serif}
 
 </style>
 </head>
@@ -358,28 +351,28 @@ h1,h2,h3,h4,.brand h1,.topbar-left h2,.card-head h3,.kpi-val,.legend-val,.rev-va
     </div>
 
     <div class="kpis">
-      <div class="kpi" style="--kpi-c:var(--gold)"><div class="kpi-label">Ingresos acumulados</div><div class="kpi-val" id="kRev">—</div><div class="kpi-sub warn" id="kRevSub">Cargando...</div></div>
+      <div class="kpi" style="--kpi-c:var(--gold)"><div class="kpi-label">Mensualidad VIP mensual</div><div class="kpi-val" id="kRev">—</div><div class="kpi-sub warn" id="kRevSub">Cargando...</div></div>
       <div class="kpi" style="--kpi-c:var(--green)"><div class="kpi-label">Estudiantes activos</div><div class="kpi-val" id="kActivos">—</div><div class="kpi-sub up" id="kActivosSub">Cargando...</div></div>
-      <div class="kpi" style="--kpi-c:var(--blue)"><div class="kpi-label">Total solicitudes</div><div class="kpi-val" id="kSol">—</div><div class="kpi-sub" id="kSolSub">Cargando...</div></div>
-      <div class="kpi" style="--kpi-c:var(--red)"><div class="kpi-label">Conversión promedio</div><div class="kpi-val" id="kConv">—</div><div class="kpi-sub up">▲ Este año</div></div>
+      <div class="kpi" style="--kpi-c:var(--blue)"><div class="kpi-label">VIP quincenal</div><div class="kpi-val" id="kSol">—</div><div class="kpi-sub" id="kSolSub">Cargando...</div></div>
+      <div class="kpi" style="--kpi-c:var(--red)"><div class="kpi-label">VIP anual</div><div class="kpi-val" id="kConv">—</div><div class="kpi-sub up">▲ Este año</div></div>
     </div>
 
     <div class="kpis">
-      <div class="kpi" style="--kpi-c:var(--gold2)"><div class="kpi-label">Ingreso del mes</div><div class="kpi-val" id="kMesRev">—</div><div class="kpi-sub" id="kMesRevSub">Mes más reciente</div></div>
-      <div class="kpi" style="--kpi-c:var(--green)"><div class="kpi-label">Promedio por estudiante</div><div class="kpi-val" id="kAvgPay">—</div><div class="kpi-sub">Basado en pagos registrados</div></div>
+      <div class="kpi" style="--kpi-c:var(--gold2)"><div class="kpi-label">VIP mensual</div><div class="kpi-val" id="kMesRev">—</div><div class="kpi-sub" id="kMesRevSub">Mes más reciente</div></div>
+      <div class="kpi" style="--kpi-c:var(--green)"><div class="kpi-label">Promedio por VIP</div><div class="kpi-val" id="kAvgPay">—</div><div class="kpi-sub">Basado en mensualidades VIP</div></div>
       <div class="kpi" style="--kpi-c:var(--red)"><div class="kpi-label">Pendientes</div><div class="kpi-val" id="kPendientes">—</div><div class="kpi-sub warn">Requieren seguimiento</div></div>
       <div class="kpi" style="--kpi-c:var(--blue)"><div class="kpi-label">Programa más vendido</div><div class="kpi-val" id="kTopProg">—</div><div class="kpi-sub">Según estudiantes</div></div>
     </div>
 
     <div class="charts-row">
       <div class="chart-card">
-        <div class="card-head"><div><h3>Estudiantes nuevos por mes</h3><p>Directo desde tu Google Sheets</p></div></div>
-        <div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 620 200" id="barChart"><text x="310" y="100" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Cargando...</text></svg></div>
+        <div class="card-head"><div><h3>Mensualidad VIP: quincenal vs mensual</h3><p>Suma automática según plan y frecuencia</p></div></div>
+        <div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 620 200" id="barChart"><text x="310" y="100" text-anchor="middle" font-family="Arial" font-size="13" fill="#8899b4">Cargando...</text></svg></div>
       </div>
       <div class="chart-card">
         <div class="card-head"><div><h3>Por programa</h3><p>Distribución real</p></div></div>
         <div class="donut-wrap">
-          <svg width="150" height="150" viewBox="0 0 150 150" id="donutChart"><text x="75" y="80" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#8899b4">Cargando...</text></svg>
+          <svg width="150" height="150" viewBox="0 0 150 150" id="donutChart"><text x="75" y="80" text-anchor="middle" font-family="Arial" font-size="11" fill="#8899b4">Cargando...</text></svg>
           <div id="donutLegend" style="width:100%;margin-top:12px"></div>
         </div>
       </div>
@@ -388,8 +381,8 @@ h1,h2,h3,h4,.brand h1,.topbar-left h2,.card-head h3,.kpi-val,.legend-val,.rev-va
     <div class="report-card" id="financeReportSection">
       <div class="card-head">
         <div>
-          <h3>Reporte de ingresos mensual / anual</h3>
-          <p>Tabla + gráfico financiero para ver el crecimiento por mes o por año.</p>
+          <h3>Reporte de mensualidades VIP</h3>
+          <p>Suma lo que genera el VIP quincenal y mensual. En anual multiplica la proyección mensual por 12.</p>
         </div>
         <div class="report-actions">
           <button class="report-toggle active" id="btnMonthlyReport" onclick="toggleReport('monthly')">Mensual</button>
@@ -399,28 +392,28 @@ h1,h2,h3,h4,.brand h1,.topbar-left h2,.card-head h3,.kpi-val,.legend-val,.rev-va
       <div class="report-grid">
         <div class="report-chart-box">
           <svg class="report-svg" viewBox="0 0 720 280" id="financeReportChart">
-            <text x="360" y="140" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Cargando reporte...</text>
+            <text x="360" y="140" text-anchor="middle" font-family="Arial" font-size="13" fill="#8899b4">Cargando reporte...</text>
           </svg>
         </div>
         <div class="report-table-box">
           <table class="report-table">
-            <thead id="financeReportHead"><tr><th>Mes</th><th>Ingresos</th><th>Estudiantes</th><th>Conversión</th></tr></thead>
+            <thead id="financeReportHead"><tr><th>Tipo</th><th>Estudiantes</th><th>Pago ciclo</th><th>Total mensual</th></tr></thead>
             <tbody id="financeReportTable"><tr><td colspan="4"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
           </table>
         </div>
       </div>
       <div class="report-summary">
-        <div class="report-mini"><span>Total visto</span><strong id="reportTotal">—</strong></div>
-        <div class="report-mini"><span>Promedio</span><strong id="reportAverage">—</strong></div>
-        <div class="report-mini"><span>Mejor periodo</span><strong id="reportBest">—</strong></div>
+        <div class="report-mini"><span>Total mensual</span><strong id="reportTotal">—</strong></div>
+        <div class="report-mini"><span>Total anual</span><strong id="reportAverage">—</strong></div>
+        <div class="report-mini"><span>Mayor fuente</span><strong id="reportBest">—</strong></div>
       </div>
     </div>
 
     <div class="table-card">
-      <div class="card-head"><div><h3>Registro mensual de ingresos</h3><p>Desde tu hoja de Google Sheets</p></div></div>
+      <div class="card-head"><div><h3>Resumen de mensualidades VIP</h3><p>Calculado desde los estudiantes activos del VIP</p></div></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Mes</th><th>Ingresos</th><th>Estudiantes nuevos</th><th>Programa líder</th><th>Conversión</th><th>Solicitudes</th></tr></thead>
+          <thead><tr><th>Tipo</th><th>Estudiantes</th><th>Pago por ciclo</th><th>Total mensual</th><th>Total anual</th><th>Detalle</th></tr></thead>
           <tbody id="monthlyTable"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
         </table>
       </div>
@@ -743,7 +736,7 @@ function renderAll(){
   const hasRev=totalRev>0;
 
   document.getElementById('kRev').textContent=hasRev?'$'+totalRev.toLocaleString():'$0';
-  document.getElementById('kRevSub').textContent=hasRev?'▲ Total acumulado 2026':'⚠ Agrega ingresos en tu hoja';
+  document.getElementById('kRevSub').textContent=hasRev?'▲ Proyección mensual actual':'⚠ Agrega ingresos en tu hoja';
   document.getElementById('kRevSub').className='kpi-sub '+(hasRev?'up':'warn');
   document.getElementById('kActivos').textContent=activos;
   document.getElementById('kActivosSub').textContent=`${allStudents.length} registrados en total`;
@@ -772,7 +765,7 @@ function renderAll(){
 
 function renderBar(){
   const svg=document.getElementById('barChart');
-  if(!allIngresos.length){svg.innerHTML=`<text x="310" y="100" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Sin datos aún</text>`;return;}
+  if(!allIngresos.length){svg.innerHTML=`<text x="310" y="100" text-anchor="middle" font-family="Arial" font-size="13" fill="#8899b4">Sin datos aún</text>`;return;}
   const W=620,H=200,pl=36,pr=10,pt=18,pb=32,cW=W-pl-pr,cH=H-pt-pb;
   const maxV=Math.max(...allIngresos.map(d=>d.students),1)*1.2;
   const bW=cW/allIngresos.length,bPad=bW*.28;
@@ -807,6 +800,54 @@ function renderDonut(){
 }
 
 
+function calculateVipRevenue(){
+  const inactiveWords=['cancelado','inactivo','rechazado','declined','eliminado','baja'];
+  const isInactive=s=>inactiveWords.some(w=>String(s.estado||'').toLowerCase().includes(w));
+  let quincenalCycle=0, quincenalMonthly=0, mensualMonthly=0, quincenalCount=0, mensualCount=0;
+  const vipStudents=[];
+
+  allStudents.forEach(s=>{
+    if(!s || isInactive(s)) return;
+    const txt=((s.prog||'')+' '+(s.pago||'')+' '+(s.notas||'')+' '+(s.estado||'')).toLowerCase();
+    const amount=moneyNumber(s.pago);
+    const looksVip=txt.includes('vip') || [50,100,125,225,350].includes(Math.round(amount));
+    if(!looksVip || amount<=0) return;
+
+    let freq='mensual';
+    if(txt.includes('quincenal') || txt.includes('quincena') || txt.includes('cada 15') || txt.includes('biweekly')) freq='quincenal';
+    else if([50,125].includes(Math.round(amount))) freq='quincenal';
+    else if([100,225,350].includes(Math.round(amount))) freq='mensual';
+
+    vipStudents.push({...s,_vipAmount:amount,_vipFreq:freq});
+    if(freq==='quincenal'){
+      quincenalCount++;
+      quincenalCycle+=amount;
+      quincenalMonthly+=amount*2;
+    }else{
+      mensualCount++;
+      mensualMonthly+=amount;
+    }
+  });
+
+  const monthlyTotal=quincenalMonthly+mensualMonthly;
+  return {
+    students:vipStudents,
+    totalVip:vipStudents.length,
+    quincenalCount,
+    mensualCount,
+    quincenalCycle,
+    quincenalMonthly,
+    mensualMonthly,
+    monthlyTotal,
+    annualTotal:monthlyTotal*12,
+    rows:[
+      {label:'VIP Quincenal', count:quincenalCount, cycle:quincenalCycle, monthly:quincenalMonthly, annual:quincenalMonthly*12, detail:'Pago quincenal x 2 al mes'},
+      {label:'VIP Mensual', count:mensualCount, cycle:mensualMonthly, monthly:mensualMonthly, annual:mensualMonthly*12, detail:'Pago mensual x 1 al mes'},
+      {label:'TOTAL VIP', count:vipStudents.length, cycle:quincenalCycle+mensualMonthly, monthly:monthlyTotal, annual:monthlyTotal*12, detail:'Proyección total actual'}
+    ]
+  };
+}
+
 function toggleReport(mode){
   reportMode=mode;
   document.getElementById('btnMonthlyReport').classList.toggle('active',mode==='monthly');
@@ -836,7 +877,7 @@ function renderFinanceReport(){
   if(!chart||!table||!head) return;
   const data=getReportData();
   if(!data.length){
-    chart.innerHTML='<text x="360" y="140" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Sin datos para mostrar</text>';
+    chart.innerHTML='<text x="360" y="140" text-anchor="middle" font-family="Arial" font-size="13" fill="#8899b4">Sin datos para mostrar</text>';
     table.innerHTML='<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted)">No hay ingresos registrados todavía</td></tr>';
     document.getElementById('reportTotal').textContent='$0';
     document.getElementById('reportAverage').textContent='$0';
@@ -849,7 +890,7 @@ function renderFinanceReport(){
   document.getElementById('reportTotal').textContent='$'+total.toLocaleString();
   document.getElementById('reportAverage').textContent='$'+avg.toLocaleString();
   document.getElementById('reportBest').textContent=(best.fullLabel||best.label)+' · $'+best.rev.toLocaleString();
-  head.innerHTML=reportMode==='annual' ? '<tr><th>Año</th><th>Ingresos</th><th>Estudiantes</th><th>Conversión</th></tr>' : '<tr><th>Mes</th><th>Ingresos</th><th>Estudiantes</th><th>Conversión</th></tr>';
+  head.innerHTML=reportMode==='annual' ? '<tr><th>Año</th><th>Ingresos</th><th>Estudiantes</th><th>Conversión</th></tr>' : '<tr><th>Tipo</th><th>Estudiantes</th><th>Pago ciclo</th><th>Total mensual</th></tr>';
   table.innerHTML=data.slice().reverse().map(d=>'<tr><td><strong>'+(d.fullLabel||d.label)+'</strong></td><td><span class="rev-val">$'+d.rev.toLocaleString()+'</span></td><td>'+d.students+'</td><td>'+(d.conv?'<span class="pill pill-green">'+d.conv+'%</span>':'—')+'</td></tr>').join('');
   const W=720,H=280,pl=54,pr=24,pt=24,pb=54,cW=W-pl-pr,cH=H-pt-pb;
   const maxRev=Math.max(...data.map(d=>d.rev),1)*1.18;
@@ -876,8 +917,8 @@ function renderFinanceReport(){
   if(points.length>1){html+='<polyline points="'+points.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';}
   points.forEach(p=>{html+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#34d399" stroke="#06080f" stroke-width="2"/>';});
   html+='<defs><linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fad96b"/><stop offset="1" stop-color="#f0c040" stop-opacity=".42"/></linearGradient></defs>';
-  html+='<text x="'+(W-pr)+'" y="18" text-anchor="end" font-family="DM Sans" font-size="11" fill="#34d399">● Estudiantes</text>';
-  html+='<text x="'+(W-pr-98)+'" y="18" text-anchor="end" font-family="DM Sans" font-size="11" fill="#f0c040">■ Ingresos</text>';
+  html+='<text x="'+(W-pr)+'" y="18" text-anchor="end" font-family="Arial" font-size="11" fill="#34d399">● Estudiantes</text>';
+  html+='<text x="'+(W-pr-98)+'" y="18" text-anchor="end" font-family="Arial" font-size="11" fill="#f0c040">■ Ingresos</text>';
   chart.innerHTML=html;
 }
 
