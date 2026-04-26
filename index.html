@@ -649,6 +649,27 @@ function statusPill(s){
 }
 function initials(n){ return (n||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase(); }
 
+function isBadText(v){
+  const t=String(v||'').trim();
+  if(!t) return true;
+  if(t.length>80) return true;
+  if(/^(undefined|null|nan)$/i.test(t)) return true;
+  if(/(data:image|base64|iVBOR|REFUG|<html|<script|DOCTYPE|function\s*\(|const\s|let\s|var\s)/i.test(t)) return true;
+  return false;
+}
+function isValidStudent(s){
+  if(!s || isBadText(s.n)) return false;
+  const name=String(s.n||'').trim();
+  if(/(OLON|Nombre|TOTAL|Email|WhatsApp|Programa|Estado|Registro|Dashboard)/i.test(name)) return false;
+  if(!/[a-záéíóúñü]/i.test(name)) return false;
+  return true;
+}
+function cleanLocalStudents(){
+  const before=localStudents.length;
+  localStudents=localStudents.filter(isValidStudent);
+  if(localStudents.length!==before) saveLocalStudents();
+}
+
 async function loadData(){
   setSyncState('loading','Conectando con tu Google Sheets...');
   try{
@@ -675,12 +696,13 @@ async function loadData(){
     const sheetStudents=[];
     parseCSV(r1).forEach(row=>{
       const n=row[1]||'';
-      if(!n||n.includes('OLON')||n.includes('Nombre')||n.includes('TOTAL')) return;
       const s={n,wa:row[2]||'—',email:row[3]||'—',pago:row[4]||'',prog:row[5]||'—',loc:row[6]||'—',estado:row[7]||'—',notas:row[8]||'',_source:'sheet'};
+      if(!isValidStudent(s)) return;
       if(!hiddenStudentKeys.includes(studentKey(s))) sheetStudents.push(s);
     });
     localStudents = JSON.parse(localStorage.getItem('olonLocalStudents') || '[]');
-    allStudents=[...localStudents,...sheetStudents];
+    cleanLocalStudents();
+    allStudents=[...localStudents,...sheetStudents].filter(isValidStudent);
 
     // Parse solicitudes
     allSolicitudes=[];
@@ -851,7 +873,17 @@ function renderMonthly(){
     : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No hay datos aún</td></tr>`;
 }
 
+function cleanBadStudentRows(){
+  const before=allStudents.length;
+  localStudents=localStudents.filter(isValidStudent);
+  saveLocalStudents();
+  allStudents=allStudents.filter(isValidStudent);
+  renderAll();
+  alert('Limpieza lista. Se eliminaron '+(before-allStudents.length)+' registros raros del dashboard.');
+}
+
 function renderStudents(list){
+  list=(list||[]).filter(isValidStudent);
   document.getElementById('studentsTable').innerHTML=list.length
     ? list.map((s,i)=>{
         const key=encodeURIComponent(studentKey(s));
