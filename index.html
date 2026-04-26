@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>OLON Society Academy | Dashboard Pro 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
-   OLON SOCIETY ACADEMY DASHBOARD — DIVIDIDO POR SECCIONES
+   OLON SOCIETY ACADEMY DASHBOARD — DIVIDIDO POR SECCIONES + FUENTE PRO
    Edita usando estos títulos grandes para encontrar cada bloque.
    ========================================================= */
 
@@ -30,7 +30,7 @@
    02. RESET GENERAL / BASE
    ================================ */
 *{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+body{min-height:100vh;font-family:Arial, Helvetica, sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
 button,input{font-family:inherit;cursor:pointer;border:none;background:none}
 .mobile-menu{display:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--border2);color:var(--text);background:var(--bg2);font-size:1.1rem}
 .mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:19}
@@ -120,7 +120,7 @@ button,input{font-family:inherit;cursor:pointer;border:none;background:none}
 .card-head p{font-size:.76rem;color:var(--muted);margin-top:2px}
 .chart-wrap{padding:18px}
 .chart-svg{width:100%;overflow:visible}
-.axis-t{font-family:'DM Sans',sans-serif;font-size:10px;fill:#8899b4}
+.axis-t{font-family:Arial, Helvetica, sans-serif;font-size:10px;fill:#8899b4}
 .donut-wrap{padding:16px;display:flex;flex-direction:column;align-items:center}
 .legend-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);width:100%}
 .legend-item:last-child{border-bottom:0}
@@ -242,6 +242,20 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .app.locked{display:none}
 .logout-btn{height:38px;padding:0 14px;border-radius:999px;border:1px solid rgba(248,113,113,.28);color:var(--red);background:var(--red2);font-size:.78rem;font-weight:800;transition:.2s}
 .logout-btn:hover{transform:translateY(-1px);border-color:rgba(248,113,113,.45)}
+
+
+
+/* ================================
+   16. TIPOGRAFÍA PRO
+   Cuerpo en Arial para lectura limpia.
+   Títulos y métricas en Syne para estilo premium.
+   ================================ */
+body, button, input, select, table, td, th, p, span, a, label{
+  font-family: Arial, Helvetica, sans-serif;
+}
+h1,h2,h3,h4,.brand h1,.topbar-left h2,.card-head h3,.kpi-val,.legend-val,.rev-val,.ava,.ava-sm,.auth-head h1,.report-mini strong{
+  font-family: 'Syne', Arial, Helvetica, sans-serif;
+}
 
 </style>
 </head>
