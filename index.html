@@ -826,7 +826,7 @@ tr:hover td{background:rgba(232,185,63,.06)}
   <nav class="nav">
     <div class="nav-label">Principal</div>
     <a class="active" href="#" onclick="goSection('dashboardPage',this)"><span class="nav-ic">◆</span> Dashboard</a>
-    <a href="#"><span class="nav-ic">📊</span> Ingresos</a>
+    <a href="#" onclick="goSection('dashboardPage',this)"><span class="nav-ic">📊</span> Ingresos</a>
     <a href="#" onclick="goSection('studentsPage',this)"><span class="nav-ic">👥</span> Estudiantes</a>
     <a href="#" onclick="goSection('requestsPage',this)"><span class="nav-ic">📋</span> Solicitudes</a>
     <a href="#" onclick="goSection('remindersPage',this)"><span class="nav-ic">✉</span> Recordatorios</a>
@@ -942,6 +942,16 @@ tr:hover td{background:rgba(232,185,63,.06)}
         <table>
           <thead><tr><th>Mes</th><th>Ingresos</th><th>Estudiantes nuevos</th><th>Programa líder</th><th>Conversión</th><th>Solicitudes</th></tr></thead>
           <tbody id="monthlyTable"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="card-head"><div><h3>Ingresos por pagos confirmados</h3><p>Pagos marcados desde el perfil del estudiante</p></div></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Estudiante</th><th>Programa</th><th>Monto</th><th>Email</th><th>Estado</th></tr></thead>
+          <tbody id="paymentsTable"><tr><td colspan="6"><div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -1077,7 +1087,7 @@ tr:hover td{background:rgba(232,185,63,.06)}
         <div class="pf"><span>WhatsApp</span><p id="mWa">—</p></div>
       </div>
       <div class="modal-actions">
-        <button class="btn-sm btn-sm-gold" onclick="sendWhatsApp()">✓ Aceptar y enviar WhatsApp</button>
+        <button class="btn-sm btn-sm-gold" onclick="markStudentPaid()">Pago realizado</button>
         <button class="btn-sm btn-sm-out" onclick="closeModal()">Cerrar</button>
       </div>
     </div>
@@ -1092,9 +1102,11 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_iTDkEkYW6QH9rj2hVl5anw_KIEa1A4L
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 const EXCEL_STORAGE_KEY = 'olonExcelWorkbookData';
+const PAYMENTS_STORAGE_KEY = 'olonStudentPayments';
 const COLORS = ['#e8b93f','#0b7686','#123a58','#f7d66b','#c89425','#5d697a'];
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 let allStudents=[], allSolicitudes=[], allIngresos=[];
+let allPayments=[];
 let selectedStudent=null;
 let currentAdmin=null;
 let reportMode='monthly';
@@ -1160,12 +1172,14 @@ document.addEventListener('keydown', e=>{
 });
 let localStudents = JSON.parse(localStorage.getItem('olonLocalStudents') || '[]');
 let hiddenStudentKeys = JSON.parse(localStorage.getItem('olonHiddenStudentKeys') || '[]');
+let localPayments = JSON.parse(localStorage.getItem(PAYMENTS_STORAGE_KEY) || '[]');
 
 function studentKey(s){
   return String([s.n||'',s.wa||'',s.email||''].join('|')).toLowerCase();
 }
 function saveLocalStudents(){localStorage.setItem('olonLocalStudents', JSON.stringify(localStudents));}
 function saveHiddenStudentKeys(){localStorage.setItem('olonHiddenStudentKeys', JSON.stringify(hiddenStudentKeys));}
+function saveLocalPayments(){localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(localPayments));}
 
 function goSection(id,el){
   if(el){document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));el.classList.add('active');}
@@ -1296,6 +1310,140 @@ async function syncStudentToSubscription(student){
     .from('student_subscriptions')
     .upsert(payload,{onConflict:'portal_request_id'});
   if(error) throw error;
+}
+
+function paymentKey(payment){
+  return String(payment.id || [payment.full_name,payment.email,payment.amount,payment.paid_at].join('|')).toLowerCase();
+}
+function normalizePayment(row){
+  return {
+    id:row.id || 'LOCAL_'+Date.now()+'_'+Math.random().toString(16).slice(2),
+    student_subscription_id:row.student_subscription_id || null,
+    full_name:row.full_name || row.n || '—',
+    email:row.email || '—',
+    whatsapp:row.whatsapp || row.wa || '—',
+    country:row.country || null,
+    city:row.city || null,
+    plan_name:row.plan_name || row.prog || 'Olon Society Academy',
+    amount:moneyNumber(row.amount),
+    currency:row.currency || 'USD',
+    paid_at:String(row.paid_at || new Date().toISOString().slice(0,10)).slice(0,10),
+    source:row.source || 'dashboard',
+    status:row.status || 'paid'
+  };
+}
+function mergePayments(remotePayments=[]){
+  const seen=new Set();
+  const merged=[];
+  [...remotePayments.map(normalizePayment),...localPayments.map(normalizePayment)].forEach(payment=>{
+    const key=paymentKey(payment);
+    if(seen.has(key) || !payment.amount) return;
+    seen.add(key);
+    merged.push(payment);
+  });
+  return merged.sort((a,b)=>String(b.paid_at).localeCompare(String(a.paid_at)));
+}
+async function refreshStudentPayments(silent=true){
+  try{
+    const { data, error } = await supabaseClient
+      .from('student_payments')
+      .select('*')
+      .order('paid_at',{ascending:false});
+    if(error) throw error;
+    allPayments=mergePayments(data || []);
+    return true;
+  }catch(error){
+    console.warn('No se pudieron cargar pagos confirmados:', error);
+    allPayments=mergePayments([]);
+    if(!silent) setSyncState('error','No se pudieron cargar pagos confirmados. Ejecuta la migracion de student_payments.');
+    return false;
+  }
+}
+function getMonthInfo(value=new Date()){
+  const date=value instanceof Date ? value : new Date(`${String(value).slice(0,10)}T00:00:00`);
+  const safeDate=Number.isNaN(date.getTime()) ? new Date() : date;
+  return {year:safeDate.getFullYear(),mes:MESES[safeDate.getMonth()],monthIndex:safeDate.getMonth()};
+}
+function topProgramFromPayments(payments){
+  const counts={};
+  payments.forEach(payment=>{
+    const plan=payment.plan_name || '—';
+    counts[plan]=(counts[plan]||0)+1;
+  });
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  return top ? top[0] : '—';
+}
+function getIncomeRows(){
+  const rows=(allIngresos || []).map(row=>({...row,rev:row.rev||0,students:row.students||0,sol:row.sol||0}));
+  const map=new Map(rows.map(row=>[`${row.year||2026}-${row.mes}`,row]));
+  const paymentGroups={};
+  (allPayments || []).forEach(payment=>{
+    if(!payment.amount) return;
+    const info=getMonthInfo(payment.paid_at);
+    const key=`${info.year}-${info.mes}`;
+    if(!map.has(key)){
+      map.set(key,{year:info.year,mes:info.mes,rev:0,students:0,prog:'—',conv:0,sol:0});
+      rows.push(map.get(key));
+    }
+    const row=map.get(key);
+    row.rev+=Number(payment.amount)||0;
+    row.students+=1;
+    if(!paymentGroups[key]) paymentGroups[key]=[];
+    paymentGroups[key].push(payment);
+  });
+  Object.entries(paymentGroups).forEach(([key,payments])=>{
+    const row=map.get(key);
+    if(row && (!row.prog || row.prog==='—')) row.prog=topProgramFromPayments(payments);
+  });
+  return rows.sort((a,b)=>(a.year||2026)-(b.year||2026) || MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+}
+function renderPaymentsTable(){
+  const target=document.getElementById('paymentsTable');
+  if(!target) return;
+  target.innerHTML=allPayments.length
+    ? allPayments.map(payment=>`<tr><td>${safeText(payment.paid_at)}</td><td><strong>${safeText(payment.full_name)}</strong></td><td>${safeText(payment.plan_name)}</td><td><span class="rev-val">$${Number(payment.amount||0).toLocaleString()}</span></td><td>${safeText(payment.email)}</td><td><span class="pill pill-green">Pagado</span></td></tr>`).join('')
+    : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Todavia no hay pagos confirmados desde el dashboard</td></tr>`;
+}
+async function findSubscriptionForStudent(student){
+  if(!student) return null;
+  const ref=subscriptionRefForStudent(student);
+  let query=supabaseClient.from('student_subscriptions').select('*').eq('portal_request_id',ref).maybeSingle();
+  let { data, error } = await query;
+  if(error && error.code !== 'PGRST116') throw error;
+  if(data) return data;
+  if(student.email && student.email !== '—'){
+    const result = await supabaseClient.from('student_subscriptions').select('*').eq('email',student.email).limit(1).maybeSingle();
+    if(result.error && result.error.code !== 'PGRST116') throw result.error;
+    if(result.data) return result.data;
+  }
+  return null;
+}
+async function pauseRemindersForStudent(student){
+  if(!currentAdmin || !student) return null;
+  let subscription=await findSubscriptionForStudent(student);
+  if(!subscription && student.email && student.email !== '—' && student.email.includes('@')){
+    await syncStudentToSubscription(student);
+    subscription=await findSubscriptionForStudent(student);
+  }
+  if(!subscription) return null;
+  const { error } = await supabaseClient
+    .from('student_subscriptions')
+    .update({status:'paused',next_payment_date:null,last_reminder_sent_for:null,last_reminder_sent_at:null})
+    .eq('id',subscription.id);
+  if(error) throw error;
+  return subscription.id;
+}
+async function saveStudentPayment(payment){
+  try{
+    const payload={...payment};
+    if(String(payload.id || '').startsWith('LOCAL_')) delete payload.id;
+    const { error } = await supabaseClient.from('student_payments').insert(payload);
+    if(error) throw error;
+  }catch(error){
+    console.warn('No se pudo guardar el pago en Supabase, se guarda local:', error);
+    localPayments.unshift(normalizePayment(payment));
+    saveLocalPayments();
+  }
 }
 
 function openExcelPicker(){
@@ -1863,6 +2011,7 @@ async function loadData(file=selectedExcelFile){
       saveExcelCache(payload);
       applyExcelData(payload);
       await refreshSupabaseRequests(true);
+      await refreshStudentPayments(true);
       renderAll();
       setSyncState('ok',`✓ Excel y formulario actualizados: ${new Date().toLocaleTimeString('es-PR')} · ${allStudents.length} estudiantes · ${allSolicitudes.length} solicitudes`);
       return;
@@ -1872,6 +2021,7 @@ async function loadData(file=selectedExcelFile){
     if(cached){
       applyExcelData(cached,true);
       await refreshSupabaseRequests(true);
+      await refreshStudentPayments(true);
       renderAll();
       setSyncState('ok',`✓ Datos cargados: Excel en cache + formulario Supabase · ${allStudents.length} estudiantes · ${allSolicitudes.length} solicitudes`);
       return;
@@ -1883,6 +2033,7 @@ async function loadData(file=selectedExcelFile){
     cleanLocalStudents();
     allStudents=[...localStudents].filter(isValidStudent);
     const requestsLoaded=await refreshSupabaseRequests(true);
+    await refreshStudentPayments(true);
     renderAll();
     setSyncState(requestsLoaded?'ok':'error',requestsLoaded
       ? `✓ Solicitudes conectadas al formulario: ${allSolicitudes.length} solicitudes`
@@ -1894,10 +2045,11 @@ async function loadData(file=selectedExcelFile){
 }
 
 function renderAll(){
-  const totalRev=allIngresos.reduce((s,r)=>s+r.rev,0);
-  const totalSol=allIngresos.reduce((s,r)=>s+r.sol,0);
+  const incomeRows=getIncomeRows();
+  const totalRev=incomeRows.reduce((s,r)=>s+r.rev,0);
+  const totalSol=incomeRows.reduce((s,r)=>s+r.sol,0);
   const activos=allStudents.filter(s=>s.estado==='Activo').length;
-  const convArr=allIngresos.filter(r=>r.conv>0);
+  const convArr=incomeRows.filter(r=>r.conv>0);
   const avgConv=convArr.length?(convArr.reduce((s,r)=>s+r.conv,0)/convArr.length).toFixed(0):'—';
   const hasRev=totalRev>0;
 
@@ -1910,7 +2062,7 @@ function renderAll(){
   document.getElementById('kSolSub').textContent=`${allSolicitudes.length} solicitudes recientes`;
   document.getElementById('kConv').textContent=avgConv+(avgConv!=='—'?'%':'');
 
-  const lastMonth=allIngresos[allIngresos.length-1];
+  const lastMonth=incomeRows[incomeRows.length-1];
   document.getElementById('kMesRev').textContent=lastMonth?'$'+lastMonth.rev.toLocaleString():'$0';
   document.getElementById('kMesRevSub').textContent=lastMonth?lastMonth.mes+' 2026':'Sin mes registrado';
 
@@ -1926,22 +2078,23 @@ function renderAll(){
   document.getElementById('kTopProg').textContent=topProg?topProg[0]:'—';
 
   if(allStudents.length>0) document.getElementById('mainNotice').style.display='none';
-  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderStudents(allStudents); renderSol();
+  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderPaymentsTable(); renderStudents(allStudents); renderSol();
 }
 
 function renderBar(){
   const svg=document.getElementById('barChart');
-  if(!allIngresos.length){svg.innerHTML=`<text x="310" y="100" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Sin datos aún</text>`;return;}
+  const incomeRows=getIncomeRows();
+  if(!incomeRows.length){svg.innerHTML=`<text x="310" y="100" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#8899b4">Sin datos aún</text>`;return;}
   const W=620,H=200,pl=36,pr=10,pt=18,pb=32,cW=W-pl-pr,cH=H-pt-pb;
-  const maxV=Math.max(...allIngresos.map(d=>d.students),1)*1.2;
-  const bW=cW/allIngresos.length,bPad=bW*.28;
+  const maxV=Math.max(...incomeRows.map(d=>d.students),1)*1.2;
+  const bW=cW/incomeRows.length,bPad=bW*.28;
   let html='';
   [0,.25,.5,.75,1].forEach(p=>{
     const y=pt+cH*(1-p);
     html+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="rgba(5,16,29,.08)" stroke-width="1"/>`;
     if(p>0) html+=`<text class="axis-t" x="${pl-3}" y="${y+4}" text-anchor="end">${Math.round(maxV*p)}</text>`;
   });
-  allIngresos.forEach((d,i)=>{
+  incomeRows.forEach((d,i)=>{
     const x=pl+i*bW+bPad/2,bh=Math.max((d.students/maxV)*cH,3),y=pt+cH-bh,bwA=bW-bPad;
     html+=`<rect x="${x}" y="${y}" width="${bwA}" height="${bh}" rx="4" fill="${COLORS[i%COLORS.length]}" opacity=".85"/>`;
     html+=`<text class="axis-t" x="${x+bwA/2}" y="${H-6}" text-anchor="middle">${d.mes.substring(0,3)}</text>`;
@@ -1974,7 +2127,7 @@ function toggleReport(mode){
 }
 function getAnnualReportData(){
   const grouped={};
-  allIngresos.forEach(d=>{
+  getIncomeRows().forEach(d=>{
     const y=d.year||2026;
     if(!grouped[y]) grouped[y]={label:String(y),year:y,rev:0,students:0,sol:0,convSum:0,convCount:0};
     grouped[y].rev+=d.rev||0;
@@ -1986,7 +2139,7 @@ function getAnnualReportData(){
 }
 function getReportData(){
   if(reportMode==='annual') return getAnnualReportData();
-  return allIngresos.map(d=>({label:d.mes.substring(0,3)+' '+(d.year||2026),fullLabel:d.mes+' '+(d.year||2026),rev:d.rev||0,students:d.students||0,sol:d.sol||0,conv:d.conv||0}));
+  return getIncomeRows().map(d=>({label:d.mes.substring(0,3)+' '+(d.year||2026),fullLabel:d.mes+' '+(d.year||2026),rev:d.rev||0,students:d.students||0,sol:d.sol||0,conv:d.conv||0}));
 }
 function renderFinanceReport(){
   const chart=document.getElementById('financeReportChart');
@@ -2041,8 +2194,9 @@ function renderFinanceReport(){
 }
 
 function renderMonthly(){
-  document.getElementById('monthlyTable').innerHTML=allIngresos.length
-    ? allIngresos.slice().reverse().map(d=>`<tr><td><strong>${d.mes} 2026</strong></td><td><span class="rev-val">${d.rev>0?'$'+d.rev.toLocaleString():'—'}</span></td><td>+${d.students}</td><td>${d.prog}</td><td>${d.conv>0?`<span class="pill pill-green">${d.conv}%</span>`:'—'}</td><td>${d.sol||'—'}</td></tr>`).join('')
+  const incomeRows=getIncomeRows();
+  document.getElementById('monthlyTable').innerHTML=incomeRows.length
+    ? incomeRows.slice().reverse().map(d=>`<tr><td><strong>${d.mes} ${d.year||2026}</strong></td><td><span class="rev-val">${d.rev>0?'$'+d.rev.toLocaleString():'—'}</span></td><td>+${d.students}</td><td>${d.prog}</td><td>${d.conv>0?`<span class="pill pill-green">${d.conv}%</span>`:'—'}</td><td>${d.sol||'—'}</td></tr>`).join('')
     : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No hay datos aún</td></tr>`;
 }
 
@@ -2210,6 +2364,42 @@ function openSMByName(encodedName){
 }
 
 function closeModal(){document.getElementById('modal').classList.remove('open')}
+async function markStudentPaid(){
+  if(!selectedStudent) return;
+  const defaultAmount=moneyNumber(selectedStudent.pago) || 125;
+  const entered=prompt(`Monto recibido de ${selectedStudent.n}`, String(defaultAmount));
+  if(entered === null) return;
+  const amount=moneyNumber(entered);
+  if(!amount){alert('Escribe un monto valido.');return;}
+  if(!confirm(`Confirmar pago de $${amount.toLocaleString()} para ${selectedStudent.n}? Esto pausara los recordatorios de este estudiante hasta que le pongas una nueva fecha de pago.`)) return;
+  try{
+    const subscriptionId=await pauseRemindersForStudent(selectedStudent);
+    const loc=splitLocation(selectedStudent.loc);
+    const payment=normalizePayment({
+      student_subscription_id:subscriptionId,
+      full_name:selectedStudent.n,
+      email:selectedStudent.email === '—' ? null : selectedStudent.email,
+      whatsapp:selectedStudent.wa === '—' ? null : selectedStudent.wa,
+      country:loc.country,
+      city:loc.city,
+      plan_name:selectedStudent.prog && selectedStudent.prog !== '—' ? selectedStudent.prog : 'Olon Society Academy',
+      amount,
+      currency:'USD',
+      paid_at:new Date().toISOString().slice(0,10),
+      source:'dashboard',
+      status:'paid'
+    });
+    await saveStudentPayment(payment);
+    await refreshStudentPayments(true);
+    await loadReminderSettings();
+    renderAll();
+    closeModal();
+    setSyncState('ok',`✓ Pago registrado: ${selectedStudent.n} · $${amount.toLocaleString()} · recordatorios pausados`);
+  }catch(error){
+    console.error(error);
+    alert(error.message || 'No se pudo registrar el pago.');
+  }
+}
 function sendWhatsApp(){
   if(!selectedStudent) return;
   const phone=cleanPhone(selectedStudent.wa);
