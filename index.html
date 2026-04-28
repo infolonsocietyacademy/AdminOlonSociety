@@ -1721,8 +1721,43 @@ async function loadReminderSettings(){
   }
 }
 
+function normalizePersonName(value){
+  return String(value||'')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/\s+/g,' ')
+    .trim()
+    .toLowerCase();
+}
 function reminderIdentity(item){
-  return String(item?.email || item?.whatsapp || item?.full_name || item?.id || '').trim().toLowerCase();
+  return [
+    String(item?.email || '').trim().toLowerCase(),
+    cleanPhone(item?.whatsapp || ''),
+    normalizePersonName(item?.full_name || '')
+  ].filter(Boolean);
+}
+function reminderScore(item){
+  let score=0;
+  if(item?.next_payment_date) score+=8;
+  if(Number(item?.amount)>0) score+=6;
+  if(item?.plan_name && item.plan_name !== 'Olon Society Academy' && item.plan_name !== 'VIP Regular') score+=4;
+  if(item?.email) score+=3;
+  if(item?.whatsapp) score+=2;
+  if(item?.status==='active') score+=1;
+  if(item?._dashboardSource) score+=5;
+  return score;
+}
+function uniqueReminderSubscriptions(items){
+  const buckets=new Map();
+  (items || []).forEach(item=>{
+    const keys=reminderIdentity(item);
+    const nameKey=normalizePersonName(item?.full_name || '');
+    const primary=nameKey || keys[1] || keys[0] || String(item?.id || '');
+    const bucketKey=primary;
+    let current=buckets.get(bucketKey);
+    if(!current || reminderScore(item)>reminderScore(current)) buckets.set(bucketKey,item);
+  });
+  return Array.from(buckets.values());
 }
 
 function studentToReminderSubscription(student){
@@ -1747,17 +1782,10 @@ function studentToReminderSubscription(student){
 }
 
 function mergeDashboardStudentsIntoSubscriptions(subscriptions){
-  const seen=new Set((subscriptions || []).map(reminderIdentity).filter(Boolean));
   const dashboardItems=(allStudents || [])
     .filter(isValidStudent)
-    .map(studentToReminderSubscription)
-    .filter(item=>{
-      const key=reminderIdentity(item);
-      if(!key || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  return [...(subscriptions || []),...dashboardItems].sort((a,b)=>String(a.full_name || '').localeCompare(String(b.full_name || '')));
+    .map(studentToReminderSubscription);
+  return uniqueReminderSubscriptions([...(subscriptions || []),...dashboardItems]).sort((a,b)=>String(a.full_name || '').localeCompare(String(b.full_name || '')));
 }
 
 function populateReminderStudents(){
