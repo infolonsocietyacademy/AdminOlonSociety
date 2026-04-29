@@ -869,6 +869,15 @@ tbody tr:hover td{background:rgba(232,185,63,.085)}
   .kpi{min-height:auto}
 }
 
+/* CENTRO DE PAGOS PRO */
+textarea{min-height:92px;border-radius:14px;border:1px solid var(--line);background:var(--paper);color:var(--text-main);padding:12px;outline:none;font-family:"DM Sans",Arial,Helvetica,sans-serif;resize:vertical}
+textarea:focus{border-color:rgba(232,185,63,.75);background:var(--white);box-shadow:0 0 0 3px rgba(232,185,63,.14)}
+.payment-center-hero{border-radius:24px;border:1px solid rgba(232,185,63,.28);background:linear-gradient(135deg,rgba(232,185,63,.16),rgba(255,255,255,.94) 42%,rgba(11,118,134,.08));box-shadow:0 22px 55px rgba(5,16,29,.12);overflow:hidden;margin-bottom:20px}
+.payment-center-hero .card-head{background:linear-gradient(135deg,var(--navy-950),var(--navy-800));color:#fff;border-bottom:1px solid rgba(247,214,107,.2)}
+.payment-center-hero .card-head h3{color:#fff;font-size:1.12rem}.payment-center-hero .card-head p{color:rgba(255,255,255,.72)}
+.payment-status-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.payment-status-row .btn-sm{height:32px;padding:0 11px;font-size:.7rem}
+.payment-actions-box{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 18px}@media(max-width:650px){.payment-actions-box .btn-sm{width:100%}}
+
 </style>
 </head>
 <body>
@@ -922,7 +931,7 @@ tbody tr:hover td{background:rgba(232,185,63,.085)}
     <a href="#" onclick="goSection('dashboardPage',this)"><span class="nav-ic">📊</span> Ingresos</a>
     <a href="#" onclick="goSection('studentsPage',this)"><span class="nav-ic">👥</span> Estudiantes</a>
     <a href="#" onclick="goSection('requestsPage',this)"><span class="nav-ic">📋</span> Solicitudes</a>
-    <a href="#" onclick="goSection('remindersPage',this)"><span class="nav-ic">✉</span> Recordatorios</a>
+    <a href="#" onclick="goSection('remindersPage',this)"><span class="nav-ic">💳</span> Centro de Pagos</a>
     <a href="#"><span class="nav-ic">💬</span> WhatsApp</a>
     <div class="nav-label">Programas</div>
     <a href="#"><span class="nav-ic">★</span> VIP Regular</a>
@@ -1112,6 +1121,21 @@ tbody tr:hover td{background:rgba(232,185,63,.085)}
   </div>
 
   <div class="content page" id="remindersPage">
+    <div class="payment-center-hero">
+      <div class="card-head"><div><h3>Centro de Pagos</h3><p>Envía recordatorios por grupo, registra pagos y mira cuánto genera la academia sin hacerlo uno por uno.</p></div><div class="report-actions"><button class="btn-sm btn-sm-gold" onclick="refreshPaymentCenter()">Actualizar</button></div></div>
+      <div class="report-summary"><div class="report-mini"><span>Total esperado</span><strong id="pcExpectedTotal">$0</strong></div><div class="report-mini"><span>Total cobrado</span><strong id="pcPaidTotal">$0</strong></div><div class="report-mini"><span>Total pendiente</span><strong id="pcPendingTotal">$0</strong></div></div>
+      <div class="form-grid">
+        <div class="form-field"><label>Enviar a</label><select id="pcPlan" onchange="refreshPaymentCenter()"><option>VIP Regular</option><option>VIP Premium</option><option>Todos los VIP</option></select></div>
+        <div class="form-field"><label>Cantidad base</label><input id="pcAmount" value="125" oninput="refreshPaymentCenter()"></div>
+        <div class="form-field"><label>Fecha límite</label><input id="pcDueDate" type="date"></div>
+        <div class="form-field"><label>Tipo de mensaje</label><select id="pcTemplate" onchange="setPaymentTemplate()"><option value="reminder">Recordatorio de pago</option><option value="dueToday">Vence hoy</option><option value="late">Pago atrasado</option></select></div>
+        <div class="form-field" style="grid-column:1/-1"><label>Mensaje</label><textarea id="pcMessage">Saludos {nombre}, te recordamos que tu pago de {plan} está pendiente. Cantidad: ${monto}. Fecha límite: {fecha}. Gracias por seguir activo en OLON Society Academy.</textarea></div>
+      </div>
+      <div class="payment-actions-box"><button class="btn-sm btn-sm-gold" onclick="sendPaymentCenterReminders()">Enviar recordatorio al grupo</button><button class="btn-sm btn-sm-out" onclick="copyPaymentCenterMessage()">Copiar mensaje + emails</button><button class="btn-sm btn-sm-out" onclick="markSelectedGroupAsPending()">Marcar grupo pendiente</button></div>
+      <div class="form-note" id="pcStatus">Selecciona un grupo para preparar los cobros.</div>
+      <div class="table-wrap"><table><thead><tr><th>Estudiante</th><th>Email</th><th>Plan</th><th>Debe pagar</th><th>Estado</th><th>Acción rápida</th></tr></thead><tbody id="pcStudentsTable"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Cargando estudiantes...</td></tr></tbody></table></div>
+    </div>
+
     <div class="table-card">
       <div class="card-head">
         <div>
@@ -2222,6 +2246,22 @@ function clearEmailPaymentLog(){
   renderEmailPaymentLog();
 }
 
+function getPaymentCenterPlan(){return document.getElementById('pcPlan')?.value || 'VIP Regular';}
+function getPaymentCenterAmount(){return moneyNumber(document.getElementById('pcAmount')?.value || 125) || 125;}
+function getPaymentCenterDueDate(){return document.getElementById('pcDueDate')?.value || new Date().toISOString().slice(0,10);}
+function paymentCenterSelectedStudents(){const plan=getPaymentCenterPlan();return allStudents.filter(s=>{const p=normalizeVipPlan(s.prog);const vip=p==='VIP Regular'||p==='VIP Premium';return plan==='Todos los VIP'?vip&&hasValidEmail(s.email):p===plan&&hasValidEmail(s.email);});}
+function getLatestEmailLogForStudent(student){const email=String(student.email||'').toLowerCase();return emailPaymentLog.find(x=>String(x.email||'').toLowerCase()===email)||null;}
+function getPaymentCenterStudentAmount(student){return moneyNumber(student.pago)||getPaymentCenterAmount();}
+function getPaymentCenterStatus(student){const row=getLatestEmailLogForStudent(student);if(row&&moneyNumber(row.paid_amount)>0)return{label:'Pagó',cls:'pill-green',paid:moneyNumber(row.paid_amount)};if(row&&row.status==='No ha pagado')return{label:'No ha pagado',cls:'pill-red',paid:0};if(row)return{label:'Recordatorio enviado',cls:'pill-gold',paid:0};return{label:'Pendiente',cls:'pill-blue',paid:0};}
+function setPaymentTemplate(){const t=document.getElementById('pcTemplate')?.value||'reminder';const msg=document.getElementById('pcMessage');if(!msg)return;if(t==='dueToday')msg.value='Saludos {nombre}, tu pago de {plan} vence hoy. Cantidad: ${monto}. Puedes enviarlo antes de finalizar el día. Gracias por seguir activo en OLON Society Academy.';else if(t==='late')msg.value='Saludos {nombre}, tu pago de {plan} aparece pendiente. Cantidad: ${monto}. Por favor confirma tu pago lo antes posible para mantener tu acceso activo.';else msg.value='Saludos {nombre}, te recordamos que tu pago de {plan} está pendiente. Cantidad: ${monto}. Fecha límite: {fecha}. Gracias por seguir activo en OLON Society Academy.';}
+function buildPaymentCenterMessage(student){const template=document.getElementById('pcMessage')?.value||'';const amount=getPaymentCenterStudentAmount(student);return template.replaceAll('{nombre}',student.n||'estudiante').replaceAll('{plan}',normalizeVipPlan(student.prog)).replaceAll('{monto}',amount.toLocaleString()).replaceAll('{fecha}',getPaymentCenterDueDate());}
+function refreshPaymentCenter(){const table=document.getElementById('pcStudentsTable');if(!table)return;const students=paymentCenterSelectedStudents();let expected=0,paid=0;students.forEach(s=>{expected+=getPaymentCenterStudentAmount(s);paid+=getPaymentCenterStatus(s).paid;});const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent='$'+Math.round(val).toLocaleString();};set('pcExpectedTotal',expected);set('pcPaidTotal',paid);set('pcPendingTotal',Math.max(expected-paid,0));const status=document.getElementById('pcStatus');if(status)status.textContent=`${students.length} estudiante(s) listos para cobrar en ${getPaymentCenterPlan()}.`;table.innerHTML=students.length?students.map(s=>{const st=getPaymentCenterStatus(s);const uid=encodeURIComponent(studentUid(s));return `<tr><td><strong>${safeText(s.n)}</strong></td><td>${safeText(s.email)}</td><td>${safeText(normalizeVipPlan(s.prog))}</td><td><span class="rev-val">$${getPaymentCenterStudentAmount(s).toLocaleString()}</span></td><td><span class="pill ${st.cls}">${st.label}</span></td><td><div class="payment-status-row"><button class="btn-sm btn-sm-gold" onclick="markPaymentCenterPaid('${uid}')">Pagó</button><button class="btn-sm btn-sm-out" onclick="markPaymentCenterPending('${uid}')">No pagó</button></div></td></tr>`;}).join(''):`<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No hay estudiantes con email válido en este grupo.</td></tr>`;}
+async function markPaymentCenterPaid(uid){const student=allStudents.find(s=>studentUid(s)===decodeURIComponent(uid));if(!student)return;const amountPrompt=prompt(`Cantidad pagada por ${student.n}:`,String(getPaymentCenterStudentAmount(student)));if(amountPrompt===null)return;const paid=moneyNumber(amountPrompt);if(!paid){alert('Escribe una cantidad válida.');return;}let item=getLatestEmailLogForStudent(student);if(!item){addEmailLogEntry({full_name:student.n,email:student.email,plan_name:normalizeVipPlan(student.prog),amount:getPaymentCenterStudentAmount(student),status:'Registrado desde Centro de Pagos'});item=getLatestEmailLogForStudent(student);}if(item){item.paid_amount=paid;item.status='Pagado';item.paid_at=new Date().toISOString().slice(0,10);await sendPaymentThanksEmail(item,paid);saveEmailPaymentLog();}localPayments.unshift(normalizePayment({full_name:student.n,email:student.email,plan_name:normalizeVipPlan(student.prog),amount:paid,paid_at:new Date().toISOString().slice(0,10),status:'paid',source:'payment_center'}));saveLocalPayments();allPayments=mergePayments([]);renderAll();}
+function markPaymentCenterPending(uid){const student=allStudents.find(s=>studentUid(s)===decodeURIComponent(uid));if(!student)return;let item=getLatestEmailLogForStudent(student);if(!item){addEmailLogEntry({full_name:student.n,email:student.email,plan_name:normalizeVipPlan(student.prog),amount:getPaymentCenterStudentAmount(student),status:'No ha pagado'});}else{item.paid_amount=0;item.status='No ha pagado';item.thank_you_sent=false;saveEmailPaymentLog();}renderEmailPaymentLog();refreshPaymentCenter();}
+function markSelectedGroupAsPending(){const students=paymentCenterSelectedStudents();if(!students.length)return alert('No hay estudiantes en este grupo.');if(!confirm(`Marcar ${students.length} estudiante(s) como pendientes?`))return;students.forEach(s=>{let item=getLatestEmailLogForStudent(s);if(!item)addEmailLogEntry({full_name:s.n,email:s.email,plan_name:normalizeVipPlan(s.prog),amount:getPaymentCenterStudentAmount(s),status:'No ha pagado'});else{item.paid_amount=0;item.status='No ha pagado';item.thank_you_sent=false;}});saveEmailPaymentLog();renderEmailPaymentLog();refreshPaymentCenter();}
+function copyPaymentCenterMessage(){const students=paymentCenterSelectedStudents();if(!students.length)return alert('No hay estudiantes con email válido.');const emails=students.map(s=>s.email).join(', ');const sample=buildPaymentCenterMessage(students[0]);const text=`EMAILS:\n${emails}\n\nMENSAJE:\n${sample}`;navigator.clipboard.writeText(text).then(()=>{const st=document.getElementById('pcStatus');if(st)st.textContent='Emails y mensaje copiados. Pégalos en Gmail o WhatsApp.';}).catch(()=>alert(text));}
+async function sendPaymentCenterReminders(){const students=paymentCenterSelectedStudents();if(!students.length)return alert('No hay estudiantes con email válido.');if(!confirm(`Enviar recordatorio de pago a ${students.length} estudiante(s)?`))return;const status=document.getElementById('pcStatus');let sent=0,failed=0;for(const student of students){try{const amount=getPaymentCenterStudentAmount(student);await invokePaymentReminders({action:'sendCustomEmail',email:student.email,fullName:student.n,planName:normalizeVipPlan(student.prog),amount,nextPaymentDate:getPaymentCenterDueDate(),subject:'Recordatorio de pago - OLON Society Academy',message:buildPaymentCenterMessage(student),athMovil:document.getElementById('reminderAthMovil')?.value?.trim()||''});addEmailLogEntry({full_name:student.n,email:student.email,plan_name:normalizeVipPlan(student.prog),amount,status:'Recordatorio de pago enviado'});sent++;}catch(error){console.error(error);failed++;}if(status)status.textContent=`Enviando: ${sent} enviados, ${failed} fallidos de ${students.length}.`;}refreshPaymentCenter();if(status)status.textContent=`Listo: ${sent} recordatorio(s) enviados. Fallidos: ${failed}.`;}
+
 function reminderSummary(result){
   if(result.test) return `Email de prueba enviado a ${result.email}.`;
   if(result.status==='disabled') return 'El envio diario esta pausado. No se enviaron recordatorios.';
@@ -2438,7 +2478,7 @@ function renderAll(){
   document.getElementById('kTopProg').textContent=topProg?topProg[0]:'—';
 
   if(allStudents.length>0) document.getElementById('mainNotice').style.display='none';
-  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderPaymentsTable(); renderEmailPaymentLog(); refreshVipEmailStats(); renderStudents(allStudents); renderSol();
+  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderPaymentsTable(); renderEmailPaymentLog(); refreshVipEmailStats(); refreshPaymentCenter(); renderStudents(allStudents); renderSol();
 }
 
 function renderBar(){
@@ -2783,6 +2823,7 @@ function exportCSV(){
 // Auto-refresh every 5 min
 setInterval(()=>{ if(currentAdmin) loadData(); }, 300000);
 initAuth();
+window.addEventListener('DOMContentLoaded',()=>{const today=new Date().toISOString().slice(0,10);const due=document.getElementById('pcDueDate');const vipDate=document.getElementById('vipEmailDate');if(due&&!due.value)due.value=today;if(vipDate&&!vipDate.value)vipDate.value=today;});
 </script>
 </body>
 </html>
