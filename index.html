@@ -776,6 +776,8 @@ tr:hover td{background:rgba(232,185,63,.06)}
   .btn,.logout-btn{width:100%}
 }
 
+.mini-select{height:34px;min-width:130px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--navy-950);padding:0 10px;font-family:"Sora",Arial,Helvetica,sans-serif;font-size:.72rem;font-weight:900;outline:none}
+.mini-select:focus{border-color:rgba(232,185,63,.75);box-shadow:0 0 0 3px rgba(232,185,63,.14)}
 </style>
 </head>
 <body>
@@ -1078,13 +1080,13 @@ tr:hover td{background:rgba(232,185,63,.06)}
         </div>
         <div class="report-summary">
           <div class="report-mini"><span>Emails enviados</span><strong id="emailSentCount">0</strong></div>
-          <div class="report-mini"><span>Total pagado</span><strong id="emailPaidTotal">-e</strong></div>
-          <div class="report-mini"><span>Promedio por pago</span><strong id="emailPaidAverage">-e</strong></div>
+          <div class="report-mini"><span>Total pagado</span><strong id="emailPaidTotal">$0</strong></div>
+          <div class="report-mini"><span>Promedio por pago</span><strong id="emailPaidAverage">$0</strong></div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Plan</th><th>Monto email</th><th>Pagó</th><th>Estado</th><th></th></tr></thead>
-            <tbody id="emailPaymentTable"><tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Todavía no hay emails enviados registrados.</td></tr></tbody>
+            <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Plan</th><th>Monto email</th><th>Cantidad pagada</th><th>Pago</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="emailPaymentTable"><tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted)">Todavía no hay emails enviados registrados.</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -1981,7 +1983,7 @@ function renderEmailPaymentLog(){
   if(count) count.textContent=emailPaymentLog.length.toLocaleString();
   if(totalBox) totalBox.textContent='$'+total.toLocaleString();
   if(avgBox) avgBox.textContent=paidRows?'$'+Math.round(total/paidRows).toLocaleString():'$0';
-  table.innerHTML=emailPaymentLog.length ? emailPaymentLog.map((item,index)=>`<tr><td>${safeText(String(item.sent_at||'').slice(0,10))}</td><td><strong>${safeText(item.full_name)}</strong></td><td>${safeText(item.email)}</td><td>${safeText(item.plan_name)}</td><td><span class="rev-val">$${moneyNumber(item.amount).toLocaleString()}</span></td><td><span class="rev-val">$${moneyNumber(item.paid_amount).toLocaleString()}</span></td><td><span class="pill ${moneyNumber(item.paid_amount)>0?'pill-green':'pill-gold'}">${moneyNumber(item.paid_amount)>0?'Pagado':'Pendiente'}</span></td><td><button class="btn-sm btn-sm-gold" onclick="registerEmailPayment(${index})">Registrar pago</button></td></tr>`).join('') : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Todavía no hay emails enviados registrados.</td></tr>`;
+  table.innerHTML=emailPaymentLog.length ? emailPaymentLog.map((item,index)=>`<tr><td>${safeText(String(item.sent_at||'').slice(0,10))}</td><td><strong>${safeText(item.full_name)}</strong></td><td>${safeText(item.email)}</td><td>${safeText(item.plan_name)}</td><td><span class="rev-val">$${moneyNumber(item.amount).toLocaleString()}</span></td><td><span class="rev-val">$${moneyNumber(item.paid_amount).toLocaleString()}</span></td><td><span class="pill ${moneyNumber(item.paid_amount)>0?'pill-green':'pill-gold'}">${moneyNumber(item.paid_amount)>0?'Pagado':'Pendiente'}</span></td><td><button class="btn-sm btn-sm-gold" onclick="registerEmailPayment(${index})">Registrar pago</button></td></tr>`).join('') : `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted)">Todavía no hay emails enviados registrados.</td></tr>`;
 }
 function registerEmailPayment(index){
   const item=emailPaymentLog[index];
