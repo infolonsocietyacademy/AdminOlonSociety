@@ -779,6 +779,96 @@ tr:hover td{background:rgba(232,185,63,.06)}
 
 .mini-select{height:34px;min-width:130px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--navy-950);padding:0 10px;font-family:"Sora",Arial,Helvetica,sans-serif;font-size:.72rem;font-weight:900;outline:none}
 .mini-select:focus{border-color:rgba(232,185,63,.75);box-shadow:0 0 0 3px rgba(232,185,63,.14)}
+
+
+/* ================================
+   18. MILLIONAIRE PREMIUM DASHBOARD PATCH
+   Más moderno, más elegante y con mejor lectura.
+   ================================ */
+body{
+  background:
+    radial-gradient(circle at 18% 8%,rgba(232,185,63,.18),transparent 28%),
+    radial-gradient(circle at 82% 0%,rgba(11,118,134,.16),transparent 30%),
+    linear-gradient(145deg,#06101d 0%,#0a1d31 34%,#f7f2df 34.4%,#fbfaf4 100%);
+}
+.topbar{
+  border:1px solid rgba(255,255,255,.55);
+  border-left:0;
+  border-right:0;
+  background:rgba(255,255,255,.78);
+  backdrop-filter:blur(22px) saturate(140%);
+}
+.content{position:relative}
+.content::before{
+  content:"OLON SOCIETY";
+  position:fixed;
+  right:24px;
+  bottom:14px;
+  z-index:0;
+  pointer-events:none;
+  font-family:"Sora",Arial,sans-serif;
+  font-size:clamp(2.2rem,8vw,7rem);
+  font-weight:900;
+  letter-spacing:-.08em;
+  color:rgba(5,16,29,.035);
+}
+.page{position:relative;z-index:1}
+.kpi,.chart-card,.table-card,.report-card,.add-card{
+  border:1px solid rgba(255,255,255,.76);
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.74));
+  backdrop-filter:blur(18px) saturate(125%);
+  box-shadow:0 22px 60px rgba(5,16,29,.12), inset 0 1px 0 rgba(255,255,255,.75);
+}
+.kpi{
+  min-height:122px;
+  border-radius:24px;
+}
+.kpi::after{
+  content:"";
+  position:absolute;
+  width:86px;height:86px;
+  right:-32px;bottom:-32px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(232,185,63,.22),transparent 70%);
+}
+.kpi-val{font-size:2rem;letter-spacing:-.05em}
+.card-head{
+  background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(247,242,223,.72));
+}
+.sidebar{
+  background:
+    radial-gradient(circle at 40% 0,rgba(247,214,107,.26),transparent 25%),
+    linear-gradient(90deg,rgba(247,214,107,.12) 0 1px,transparent 1px 100%),
+    linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 100%),
+    linear-gradient(160deg,#0b243b,#05101d 72%);
+  background-size:auto,86px 86px,86px 86px,auto;
+}
+.nav a{box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.nav a.active{
+  background:linear-gradient(135deg,#fff0aa,#e8b93f 58%,#b9821b);
+  box-shadow:0 16px 36px rgba(232,185,63,.30), inset 0 1px 0 rgba(255,255,255,.52);
+}
+.btn-gold,.btn-sm-gold,.tab.active,.report-toggle.active{
+  background:linear-gradient(135deg,#fff0aa,#e8b93f 60%,#b9821b);
+  box-shadow:0 14px 32px rgba(232,185,63,.26), inset 0 1px 0 rgba(255,255,255,.55);
+}
+.btn-sm-red{
+  border-color:rgba(196,59,67,.28);
+  color:#9f1f2b;
+  background:linear-gradient(180deg,rgba(255,238,239,.95),rgba(196,59,67,.09));
+}
+tbody tr{transition:.18s ease}
+tbody tr:hover td{background:rgba(232,185,63,.085)}
+.pill{box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.search,.form-field input,.form-field select,.auth-field input{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 20px rgba(5,16,29,.05);
+}
+@media(max-width:860px){
+  body{background:linear-gradient(180deg,#06101d 0,#0a1d31 230px,#fbfaf4 230px,#fbfaf4 100%)}
+  .topbar-left h2{font-size:1.16rem}
+  .kpi{min-height:auto}
+}
+
 </style>
 </head>
 <body>
@@ -1226,14 +1316,30 @@ document.addEventListener('keydown', e=>{
 });
 let localStudents = JSON.parse(localStorage.getItem('olonLocalStudents') || '[]');
 let hiddenStudentKeys = JSON.parse(localStorage.getItem('olonHiddenStudentKeys') || '[]');
+let hiddenStudentIds = JSON.parse(localStorage.getItem('olonHiddenStudentIds') || '[]');
 let localPayments = JSON.parse(localStorage.getItem(PAYMENTS_STORAGE_KEY) || '[]');
 let emailPaymentLog = JSON.parse(localStorage.getItem(EMAIL_PAYMENT_LOG_KEY) || '[]');
 
 function studentKey(s){
   return String([s.n||'',s.wa||'',s.email||''].join('|')).toLowerCase();
 }
-function saveLocalStudents(){localStorage.setItem('olonLocalStudents', JSON.stringify(localStudents));}
+function saveLocalStudents(){localStudents=ensureStudentIds(localStudents);localStorage.setItem('olonLocalStudents', JSON.stringify(localStudents));}
 function saveHiddenStudentKeys(){localStorage.setItem('olonHiddenStudentKeys', JSON.stringify(hiddenStudentKeys));}
+function saveHiddenStudentIds(){localStorage.setItem('olonHiddenStudentIds', JSON.stringify(hiddenStudentIds));}
+function studentUid(s){
+  if(!s) return '';
+  if(s._uid) return String(s._uid);
+  if(s._id) return String(s._id);
+  return String([s._source||'student', s._rowIndex ?? '', studentKey(s)].join('::')).toLowerCase();
+}
+function ensureStudentIds(list){
+  return (list||[]).map((s,i)=>{
+    if(!s._id && s._source==='local') s._id='LOCAL_'+Date.now()+'_'+i+'_'+Math.random().toString(16).slice(2);
+    if(s._rowIndex===undefined) s._rowIndex=i;
+    s._uid=studentUid(s);
+    return s;
+  });
+}
 function saveLocalPayments(){localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(localPayments));}
 function saveEmailPaymentLog(){localStorage.setItem(EMAIL_PAYMENT_LOG_KEY, JSON.stringify(emailPaymentLog));}
 
@@ -1277,14 +1383,17 @@ async function addStudentLocal(){
   s._source='local';
   let syncWarning='';
   if(editingStudentKey){
-    const original=allStudents.find(item=>studentKey(item)===editingStudentKey);
+    const original=allStudents.find(item=>studentUid(item)===editingStudentKey);
     s._id=original?._id || Date.now()+'_'+Math.random().toString(16).slice(2);
-    localStudents=localStudents.filter(item=>studentKey(item)!==editingStudentKey);
-    if(original && original._source!=='local' && !hiddenStudentKeys.includes(editingStudentKey)){
-      hiddenStudentKeys.push(editingStudentKey);
+    localStudents=localStudents.filter(item=>studentUid(item)!==editingStudentKey);
+    if(original && original._source!=='local'){
+      if(!hiddenStudentIds.includes(editingStudentKey)) hiddenStudentIds.push(editingStudentKey);
+      saveHiddenStudentIds();
+      const oldKey=studentKey(original);
+      if(!hiddenStudentKeys.includes(oldKey)) hiddenStudentKeys.push(oldKey);
       saveHiddenStudentKeys();
     }
-    allStudents=allStudents.filter(item=>studentKey(item)!==editingStudentKey);
+    allStudents=allStudents.filter(item=>studentUid(item)!==editingStudentKey);
     localStudents.unshift(s);
     allStudents.unshift(s);
     saveLocalStudents();
@@ -1598,9 +1707,9 @@ function parseIngresosRows(rows){
 
 function parseStudentRows(rows){
   const result=[];
-  rows.forEach(row=>{
+  rows.forEach((row,idx)=>{
     const n=row[1]||'';
-    const s={n,wa:row[2]||'—',email:row[3]||'—',pago:row[4]||'',prog:row[5]||'—',loc:row[6]||'—',estado:row[7]||'—',notas:row[8]||'',_source:'excel'};
+    const s={n,wa:row[2]||'—',email:row[3]||'—',pago:row[4]||'',prog:row[5]||'—',loc:row[6]||'—',estado:row[7]||'—',notas:row[8]||'',_source:'excel',_rowIndex:idx,_id:'EXCEL_'+idx+'_'+cleanSubscriptionRef([n,row[3]||'',row[2]||''].join('_'))};
     if(isValidStudent(s)) result.push(s);
   });
   return result;
@@ -1694,8 +1803,8 @@ function mergeAcceptedRequestsIntoStudents(){
     .filter(isValidStudent);
   acceptedStudents.forEach(student=>{
     const key=studentKey(student);
-    if(hiddenStudentKeys.includes(key)) return;
-    if(!allStudents.some(item=>studentKey(item)===key)){
+    if(hiddenStudentKeys.includes(key) || hiddenStudentIds.includes(studentUid(student))) return;
+    if(!allStudents.some(item=>studentUid(item)===studentUid(student) || studentKey(item)===key)){
       allStudents.unshift(student);
     }
   });
@@ -1720,10 +1829,11 @@ async function upsertSubscriptionFromRequest(request, student){
 
 function applyExcelData(payload, fromCache=false){
   allIngresos=payload.ingresos || [];
-  const excelStudents=(payload.students || []).filter(s=>!hiddenStudentKeys.includes(studentKey(s)));
-  localStudents = JSON.parse(localStorage.getItem('olonLocalStudents') || '[]');
+  const excelStudents=ensureStudentIds(payload.students || []).filter(s=>!hiddenStudentKeys.includes(studentKey(s)) && !hiddenStudentIds.includes(studentUid(s)));
+  localStudents = ensureStudentIds(JSON.parse(localStorage.getItem('olonLocalStudents') || '[]'));
   cleanLocalStudents();
-  allStudents=[...localStudents,...excelStudents].filter(isValidStudent);
+  allStudents=ensureStudentIds([...localStudents,...excelStudents].filter(isValidStudent)).filter(s=>!hiddenStudentIds.includes(studentUid(s)));
+  saveLocalStudents();
   allSolicitudes=payload.solicitudes || [];
   const label=payload.fileName ? ` · ${payload.fileName}` : '';
   const source=fromCache ? 'Datos cargados del último Excel importado' : 'Excel actualizado';
@@ -2195,7 +2305,7 @@ function isValidStudent(s){
 }
 function cleanLocalStudents(){
   const before=localStudents.length;
-  localStudents=localStudents.filter(isValidStudent);
+  localStudents=ensureStudentIds(localStudents.filter(isValidStudent));
   if(localStudents.length!==before) saveLocalStudents();
 }
 
@@ -2278,9 +2388,10 @@ async function loadData(file=selectedExcelFile){
 
     allIngresos=[];
     allSolicitudes=[];
-    localStudents = JSON.parse(localStorage.getItem('olonLocalStudents') || '[]');
+    localStudents = ensureStudentIds(JSON.parse(localStorage.getItem('olonLocalStudents') || '[]'));
     cleanLocalStudents();
-    allStudents=[...localStudents].filter(isValidStudent);
+    allStudents=ensureStudentIds([...localStudents].filter(isValidStudent)).filter(s=>!hiddenStudentIds.includes(studentUid(s)));
+    saveLocalStudents();
     const requestsLoaded=await refreshSupabaseRequests(true);
     await refreshStudentPayments(true);
     renderAll();
@@ -2451,7 +2562,7 @@ function renderMonthly(){
 
 function cleanBadStudentRows(){
   const before=allStudents.length;
-  localStudents=localStudents.filter(isValidStudent);
+  localStudents=ensureStudentIds(localStudents.filter(isValidStudent));
   saveLocalStudents();
   allStudents=allStudents.filter(isValidStudent);
   renderAll();
@@ -2462,7 +2573,7 @@ function renderStudents(list){
   list=(list||[]).filter(isValidStudent);
   document.getElementById('studentsTable').innerHTML=list.length
     ? list.map((s,i)=>{
-        const key=encodeURIComponent(studentKey(s));
+        const key=encodeURIComponent(studentUid(s));
         const tag=s._source==='local'
           ? '<span class="pill pill-blue" style="margin-left:8px">Manual</span>'
           : s._source==='form'
@@ -2488,7 +2599,7 @@ function renderStudents(list){
 
 function deleteStudent(encodedKey){
   const key=decodeURIComponent(encodedKey);
-  const s=allStudents.find(x=>studentKey(x)===key);
+  const s=allStudents.find(x=>studentUid(x)===key);
   if(!s) return;
   const isLocal=s._source==='local';
   const msg=isLocal
@@ -2498,19 +2609,22 @@ function deleteStudent(encodedKey){
       : `Este estudiante viene de Excel. Se ocultara del dashboard, pero para borrarlo permanente tienes que eliminarlo tambien en tu archivo Excel. ¿Continuar?`;
   if(!confirm(msg)) return;
   if(isLocal){
-    localStudents=localStudents.filter(x=>studentKey(x)!==key);
+    localStudents=localStudents.filter(x=>studentUid(x)!==key);
     saveLocalStudents();
   }else{
-    if(!hiddenStudentKeys.includes(key)) hiddenStudentKeys.push(key);
+    if(!hiddenStudentIds.includes(key)) hiddenStudentIds.push(key);
+    saveHiddenStudentIds();
+    const oldKey=studentKey(s);
+    if(!hiddenStudentKeys.includes(oldKey)) hiddenStudentKeys.push(oldKey);
     saveHiddenStudentKeys();
   }
-  allStudents=allStudents.filter(x=>studentKey(x)!==key);
+  allStudents=allStudents.filter(x=>studentUid(x)!==key);
   renderAll();
 }
 
 function editStudent(encodedKey){
   const key=decodeURIComponent(encodedKey);
-  const s=allStudents.find(x=>studentKey(x)===key);
+  const s=allStudents.find(x=>studentUid(x)===key);
   if(!s) return;
   editingStudentKey=key;
   document.getElementById('newName').value=s.n || '';
@@ -2528,7 +2642,7 @@ function editStudent(encodedKey){
 
 function openSMByKey(encodedKey){
   const key=decodeURIComponent(encodedKey);
-  const s=allStudents.find(x=>studentKey(x)===key); if(!s) return;
+  const s=allStudents.find(x=>studentUid(x)===key); if(!s) return;
   selectedStudent=s;
   document.getElementById('modalName').textContent=s.n;
   document.getElementById('mLoc').textContent=s.loc;
@@ -2609,7 +2723,7 @@ document.getElementById('searchInput').addEventListener('input',e=>{
 function openSMByName(encodedName){
   const name=decodeURIComponent(encodedName);
   const s=allStudents.find(x=>x.n===name); if(!s) return;
-  openSMByKey(encodeURIComponent(studentKey(s)));
+  openSMByKey(encodeURIComponent(studentUid(s)));
 }
 
 function closeModal(){document.getElementById('modal').classList.remove('open')}
