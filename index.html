@@ -1066,6 +1066,28 @@ tr:hover td{background:rgba(232,185,63,.06)}
         <button class="btn-sm btn-sm-gold" onclick="sendReminderTestEmail()">Enviar email de prueba</button>
       </div>
       <div class="form-note" id="reminderStatus">Cargando configuracion de recordatorios...</div>
+      <div class="table-card" style="margin:16px 0 0">
+        <div class="card-head">
+          <div>
+            <h3>Emails enviados y pagos generados</h3>
+            <p>Lista automática de emails enviados. Registra cuánto pagó cada estudiante y el sistema suma el total.</p>
+          </div>
+          <div class="report-actions">
+            <button class="btn-sm btn-sm-out" onclick="clearEmailPaymentLog()">Limpiar lista</button>
+          </div>
+        </div>
+        <div class="report-summary">
+          <div class="report-mini"><span>Emails enviados</span><strong id="emailSentCount">0</strong></div>
+          <div class="report-mini"><span>Total pagado</span><strong id="emailPaidTotal">-e</strong></div>
+          <div class="report-mini"><span>Promedio por pago</span><strong id="emailPaidAverage">-e</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Plan</th><th>Monto email</th><th>Pagó</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="emailPaymentTable"><tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Todavía no hay emails enviados registrados.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </main>
@@ -1103,6 +1125,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLI
 
 const EXCEL_STORAGE_KEY = 'olonExcelWorkbookData';
 const PAYMENTS_STORAGE_KEY = 'olonStudentPayments';
+const EMAIL_PAYMENT_LOG_KEY = 'olonEmailPaymentLog';
 const COLORS = ['#e8b93f','#0b7686','#123a58','#f7d66b','#c89425','#5d697a'];
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 let allStudents=[], allSolicitudes=[], allIngresos=[];
@@ -1173,6 +1196,7 @@ document.addEventListener('keydown', e=>{
 let localStudents = JSON.parse(localStorage.getItem('olonLocalStudents') || '[]');
 let hiddenStudentKeys = JSON.parse(localStorage.getItem('olonHiddenStudentKeys') || '[]');
 let localPayments = JSON.parse(localStorage.getItem(PAYMENTS_STORAGE_KEY) || '[]');
+let emailPaymentLog = JSON.parse(localStorage.getItem(EMAIL_PAYMENT_LOG_KEY) || '[]');
 
 function studentKey(s){
   return String([s.n||'',s.wa||'',s.email||''].join('|')).toLowerCase();
@@ -1180,6 +1204,7 @@ function studentKey(s){
 function saveLocalStudents(){localStorage.setItem('olonLocalStudents', JSON.stringify(localStudents));}
 function saveHiddenStudentKeys(){localStorage.setItem('olonHiddenStudentKeys', JSON.stringify(hiddenStudentKeys));}
 function saveLocalPayments(){localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(localPayments));}
+function saveEmailPaymentLog(){localStorage.setItem(EMAIL_PAYMENT_LOG_KEY, JSON.stringify(emailPaymentLog));}
 
 function goSection(id,el){
   if(el){document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));el.classList.add('active');}
@@ -1894,6 +1919,93 @@ async function invokePaymentReminders(payload){
   return result;
 }
 
+function getReminderItemName(item){
+  return item?.full_name || item?.fullName || item?.name || item?.student_name || item?.subscription?.full_name || '—';
+}
+function getReminderItemEmail(item){
+  return item?.email || item?.to || item?.recipient || item?.subscription?.email || '—';
+}
+function getReminderItemPlan(item){
+  return item?.plan_name || item?.planName || item?.plan || item?.subscription?.plan_name || '—';
+}
+function getReminderItemAmount(item){
+  return moneyNumber(item?.amount || item?.subscription?.amount || item?.payment_amount || 0);
+}
+function addEmailLogEntry(entry){
+  const safeEntry={
+    id:entry.id || Date.now()+'_'+Math.random().toString(16).slice(2),
+    sent_at:entry.sent_at || new Date().toISOString(),
+    full_name:entry.full_name || '—',
+    email:entry.email || '—',
+    plan_name:entry.plan_name || '—',
+    amount:moneyNumber(entry.amount),
+    paid_amount:moneyNumber(entry.paid_amount),
+    status:entry.status || 'Email enviado'
+  };
+  const key=String([safeEntry.email,safeEntry.sent_at.slice(0,10),safeEntry.plan_name,safeEntry.amount].join('|')).toLowerCase();
+  const exists=emailPaymentLog.some(item=>String([item.email,String(item.sent_at||'').slice(0,10),item.plan_name,item.amount].join('|')).toLowerCase()===key);
+  if(!exists) emailPaymentLog.unshift(safeEntry);
+  saveEmailPaymentLog();
+  renderEmailPaymentLog();
+}
+function trackReminderResults(result){
+  if(!result) return;
+  if(result.test){
+    addEmailLogEntry({
+      full_name:result.fullName || result.full_name || document.getElementById('reminderTestName')?.value || 'Prueba Olon',
+      email:result.email || document.getElementById('reminderTestEmail')?.value || '—',
+      plan_name:document.getElementById('reminderTestPlan')?.value || 'VIP Regular',
+      amount:document.getElementById('reminderTestAmount')?.value || 0,
+      status:'Email de prueba enviado'
+    });
+    return;
+  }
+  (result.results||[]).filter(item=>item.status==='sent').forEach(item=>{
+    addEmailLogEntry({
+      full_name:getReminderItemName(item),
+      email:getReminderItemEmail(item),
+      plan_name:getReminderItemPlan(item),
+      amount:getReminderItemAmount(item),
+      status:'Email automático enviado'
+    });
+  });
+}
+function renderEmailPaymentLog(){
+  const table=document.getElementById('emailPaymentTable');
+  if(!table) return;
+  const count=document.getElementById('emailSentCount');
+  const totalBox=document.getElementById('emailPaidTotal');
+  const avgBox=document.getElementById('emailPaidAverage');
+  const total=emailPaymentLog.reduce((sum,item)=>sum+moneyNumber(item.paid_amount),0);
+  const paidRows=emailPaymentLog.filter(item=>moneyNumber(item.paid_amount)>0).length;
+  if(count) count.textContent=emailPaymentLog.length.toLocaleString();
+  if(totalBox) totalBox.textContent='$'+total.toLocaleString();
+  if(avgBox) avgBox.textContent=paidRows?'$'+Math.round(total/paidRows).toLocaleString():'$0';
+  table.innerHTML=emailPaymentLog.length ? emailPaymentLog.map((item,index)=>`<tr><td>${safeText(String(item.sent_at||'').slice(0,10))}</td><td><strong>${safeText(item.full_name)}</strong></td><td>${safeText(item.email)}</td><td>${safeText(item.plan_name)}</td><td><span class="rev-val">$${moneyNumber(item.amount).toLocaleString()}</span></td><td><span class="rev-val">$${moneyNumber(item.paid_amount).toLocaleString()}</span></td><td><span class="pill ${moneyNumber(item.paid_amount)>0?'pill-green':'pill-gold'}">${moneyNumber(item.paid_amount)>0?'Pagado':'Pendiente'}</span></td><td><button class="btn-sm btn-sm-gold" onclick="registerEmailPayment(${index})">Registrar pago</button></td></tr>`).join('') : `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Todavía no hay emails enviados registrados.</td></tr>`;
+}
+function registerEmailPayment(index){
+  const item=emailPaymentLog[index];
+  if(!item) return;
+  const amount=prompt(`Cantidad pagada por ${item.full_name || item.email}:`, item.paid_amount || item.amount || '');
+  if(amount===null) return;
+  const paid=moneyNumber(amount);
+  if(!paid){alert('Escribe una cantidad válida.');return;}
+  item.paid_amount=paid;
+  item.status='Pagado';
+  item.paid_at=new Date().toISOString().slice(0,10);
+  saveEmailPaymentLog();
+  localPayments.unshift(normalizePayment({full_name:item.full_name,email:item.email,plan_name:item.plan_name,amount:paid,paid_at:item.paid_at,status:'paid',source:'email_log'}));
+  saveLocalPayments();
+  allPayments=mergePayments([]);
+  renderAll();
+}
+function clearEmailPaymentLog(){
+  if(!confirm('¿Seguro que quieres limpiar la lista de emails enviados?')) return;
+  emailPaymentLog=[];
+  saveEmailPaymentLog();
+  renderEmailPaymentLog();
+}
+
 function reminderSummary(result){
   if(result.test) return `Email de prueba enviado a ${result.email}.`;
   if(result.status==='disabled') return 'El envio diario esta pausado. No se enviaron recordatorios.';
@@ -1908,6 +2020,7 @@ async function runReminderDryRun(){
   setReminderStatus('Probando recordatorios sin enviar emails...');
   try{
     const result=await invokePaymentReminders({dryRun:true});
+    trackReminderResults(result);
     setReminderStatus(reminderSummary(result));
   }catch(error){
     console.error(error);
@@ -1920,6 +2033,7 @@ async function runRemindersNow(){
   setReminderStatus('Ejecutando recordatorios ahora...');
   try{
     const result=await invokePaymentReminders({force:true});
+    trackReminderResults(result);
     setReminderStatus(reminderSummary(result));
   }catch(error){
     console.error(error);
@@ -1944,6 +2058,7 @@ async function sendReminderTestEmail(){
       nextPaymentDate:document.getElementById('reminderTestDate').value || new Date().toISOString().slice(0,10),
       athMovil:document.getElementById('reminderAthMovil').value.trim()
     });
+    trackReminderResults(result);
     setReminderStatus(reminderSummary(result));
   }catch(error){
     console.error(error);
@@ -2106,7 +2221,7 @@ function renderAll(){
   document.getElementById('kTopProg').textContent=topProg?topProg[0]:'—';
 
   if(allStudents.length>0) document.getElementById('mainNotice').style.display='none';
-  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderPaymentsTable(); renderStudents(allStudents); renderSol();
+  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderPaymentsTable(); renderEmailPaymentLog(); renderStudents(allStudents); renderSol();
 }
 
 function renderBar(){
