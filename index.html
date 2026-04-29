@@ -185,7 +185,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .form-field{display:flex;flex-direction:column;gap:6px}
 .form-field label{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--gold)}
 .form-field input,.form-field select{height:42px;border-radius:12px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);padding:0 12px;outline:none;font-family:inherit}
-.form-field input:focus,.form-field select:focus{border-color:var(--gold)}
+.form-field textarea{min-height:92px;border-radius:12px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);padding:12px;outline:none;font-family:inherit;resize:vertical}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--gold)}
 .form-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 18px}
 .form-note{padding:0 18px 16px;color:var(--muted);font-size:.78rem;line-height:1.5}
 .form-note strong{color:var(--gold2)}
@@ -646,12 +647,12 @@ tr:hover td{background:rgba(232,185,63,.06)}
   font-family:"Sora",Arial,Helvetica,sans-serif;
   font-weight:900;
 }
-.form-field input,.form-field select{
+.form-field input,.form-field select,.form-field textarea{
   color:var(--text-main);
   border-color:var(--line);
   background:var(--paper);
 }
-.form-field input:focus,.form-field select:focus{
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{
   border-color:rgba(232,185,63,.75);
   background:var(--white);
   box-shadow:0 0 0 3px rgba(232,185,63,.14);
@@ -1068,6 +1069,34 @@ tr:hover td{background:rgba(232,185,63,.06)}
         <button class="btn-sm btn-sm-gold" onclick="sendReminderTestEmail()">Enviar email de prueba</button>
       </div>
       <div class="form-note" id="reminderStatus">Cargando configuracion de recordatorios...</div>
+      <div class="table-card" style="margin:16px 0 0">
+        <div class="card-head">
+          <div>
+            <h3>Enviar email por grupo VIP</h3>
+            <p>Filtra por VIP Regular o VIP Premium y envia el mismo mensaje a todos los estudiantes de ese grupo.</p>
+          </div>
+          <div class="report-actions"><button class="btn-sm btn-sm-out" onclick="refreshVipEmailStats()">Actualizar lista</button></div>
+        </div>
+        <div class="report-summary">
+          <div class="report-mini"><span>VIP Regular</span><strong id="vipRegularCount">0</strong></div>
+          <div class="report-mini"><span>VIP Premium</span><strong id="vipPremiumCount">0</strong></div>
+          <div class="report-mini"><span>Total con email</span><strong id="vipEmailTotalCount">0</strong></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-field"><label>Grupo</label><select id="vipEmailPlan" onchange="refreshVipEmailStats()"><option>VIP Regular</option><option>VIP Premium</option></select></div>
+          <div class="form-field"><label>Asunto</label><input id="vipEmailSubject" value="Mensaje de OLON Society Academy"></div>
+          <div class="form-field"><label>Monto base</label><input id="vipEmailAmount" value="125"></div>
+          <div class="form-field"><label>Fecha de pago</label><input id="vipEmailDate" type="date"></div>
+          <div class="form-field" style="grid-column:1/-1"><label>Mensaje</label><textarea id="vipEmailMessage">Saludos {nombre}, este mensaje es para estudiantes del plan {plan}. Gracias por ser parte de OLON Society Academy.</textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-sm btn-sm-gold" onclick="sendVipGroupEmails()">Enviar al grupo seleccionado</button>
+          <button class="btn-sm btn-sm-out" onclick="sendVipGroupEmails('VIP Regular')">Enviar a VIP Regular</button>
+          <button class="btn-sm btn-sm-out" onclick="sendVipGroupEmails('VIP Premium')">Enviar a VIP Premium</button>
+          <button class="btn-sm btn-sm-out" onclick="copyVipGroupEmails()">Copiar emails del grupo</button>
+        </div>
+        <div class="form-note" id="vipEmailStatus">Selecciona un grupo para ver cuantos estudiantes tienen email valido.</div>
+      </div>
       <div class="table-card" style="margin:16px 0 0">
         <div class="card-head">
           <div>
@@ -1972,6 +2001,70 @@ function trackReminderResults(result){
     });
   });
 }
+
+function normalizeVipPlan(plan){
+  const txt=String(plan||'').toLowerCase();
+  if(txt.includes('premium')) return 'VIP Premium';
+  if(txt.includes('regular')) return 'VIP Regular';
+  return String(plan||'—');
+}
+function hasValidEmail(email){return !!email && email !== '—' && String(email).includes('@');}
+function getVipStudents(plan){
+  const wanted=normalizeVipPlan(plan || document.getElementById('vipEmailPlan')?.value || 'VIP Regular');
+  return allStudents.filter(s=>normalizeVipPlan(s.prog)===wanted && hasValidEmail(s.email));
+}
+function refreshVipEmailStats(){
+  const regular=getVipStudents('VIP Regular');
+  const premium=getVipStudents('VIP Premium');
+  const selectedPlan=document.getElementById('vipEmailPlan')?.value || 'VIP Regular';
+  const selected=getVipStudents(selectedPlan);
+  const regularBox=document.getElementById('vipRegularCount');
+  const premiumBox=document.getElementById('vipPremiumCount');
+  const totalBox=document.getElementById('vipEmailTotalCount');
+  const status=document.getElementById('vipEmailStatus');
+  if(regularBox) regularBox.textContent=regular.length.toLocaleString();
+  if(premiumBox) premiumBox.textContent=premium.length.toLocaleString();
+  if(totalBox) totalBox.textContent=(regular.length+premium.length).toLocaleString();
+  if(status) status.textContent=`${selected.length} estudiante(s) con email valido en ${selectedPlan}.`;
+}
+function buildVipMessage(student,plan){
+  const template=document.getElementById('vipEmailMessage')?.value || 'Saludos {nombre}, este mensaje es para estudiantes del plan {plan}.';
+  return template.replaceAll('{nombre}', student.n || 'estudiante').replaceAll('{plan}', plan || student.prog || 'VIP').replaceAll('{monto}', String(moneyNumber(student.pago) || document.getElementById('vipEmailAmount')?.value || ''));
+}
+async function sendVipGroupEmails(forcedPlan){
+  const plan=forcedPlan || document.getElementById('vipEmailPlan')?.value || 'VIP Regular';
+  const students=getVipStudents(plan);
+  if(!students.length){alert(`No hay estudiantes con email valido en ${plan}.`);return;}
+  if(!confirm(`Vas a enviar email a ${students.length} estudiante(s) de ${plan}. ¿Continuar?`)) return;
+  const status=document.getElementById('vipEmailStatus');
+  const amountDefault=document.getElementById('vipEmailAmount')?.value || '125';
+  const nextDate=document.getElementById('vipEmailDate')?.value || new Date().toISOString().slice(0,10);
+  const subject=document.getElementById('vipEmailSubject')?.value || 'Mensaje de OLON Society Academy';
+  let sent=0, failed=0;
+  for(const student of students){
+    try{
+      await invokePaymentReminders({action:'sendCustomEmail',email:student.email,fullName:student.n,planName:plan,amount:moneyNumber(student.pago)||amountDefault,nextPaymentDate:nextDate,subject,message:buildVipMessage(student,plan),athMovil:document.getElementById('reminderAthMovil')?.value?.trim() || ''});
+      sent++;
+      addEmailLogEntry({full_name:student.n,email:student.email,plan_name:plan,amount:moneyNumber(student.pago)||amountDefault,status:`Email enviado a grupo ${plan}`});
+    }catch(error){console.error('Fallo enviando email grupal:', student.email, error);failed++;}
+    if(status) status.textContent=`Enviando ${plan}: ${sent} enviados, ${failed} fallidos de ${students.length}.`;
+  }
+  refreshVipEmailStats();
+  if(status) status.textContent=`Listo: ${sent} email(s) enviados a ${plan}. Fallidos: ${failed}.`;
+}
+function copyVipGroupEmails(){
+  const plan=document.getElementById('vipEmailPlan')?.value || 'VIP Regular';
+  const emails=getVipStudents(plan).map(s=>s.email).join(', ');
+  if(!emails){alert(`No hay emails validos en ${plan}.`);return;}
+  navigator.clipboard.writeText(emails).then(()=>{const status=document.getElementById('vipEmailStatus');if(status) status.textContent=`Emails de ${plan} copiados al portapapeles.`;}).catch(()=>alert(emails));
+}
+async function sendPaymentThanksEmail(item,paid){
+  if(!item || !hasValidEmail(item.email)) return;
+  try{
+    await invokePaymentReminders({action:'sendPaymentThanksEmail',email:item.email,fullName:item.full_name||'estudiante',planName:item.plan_name||'VIP',amount:paid,subject:'Gracias por su pago - OLON Society Academy',message:`Saludos ${item.full_name || 'estudiante'}, gracias por su pago de $${Number(paid).toLocaleString()}. Su pago fue registrado correctamente en OLON Society Academy.`});
+    item.thank_you_sent=true;item.thank_you_at=new Date().toISOString();
+  }catch(error){console.warn('No se pudo enviar el email de gracias automaticamente:', error);item.thank_you_sent=false;}
+}
 function renderEmailPaymentLog(){
   const table=document.getElementById('emailPaymentTable');
   if(!table) return;
@@ -1983,9 +2076,9 @@ function renderEmailPaymentLog(){
   if(count) count.textContent=emailPaymentLog.length.toLocaleString();
   if(totalBox) totalBox.textContent='$'+total.toLocaleString();
   if(avgBox) avgBox.textContent=paidRows?'$'+Math.round(total/paidRows).toLocaleString():'$0';
-  table.innerHTML=emailPaymentLog.length ? emailPaymentLog.map((item,index)=>`<tr><td>${safeText(String(item.sent_at||'').slice(0,10))}</td><td><strong>${safeText(item.full_name)}</strong></td><td>${safeText(item.email)}</td><td>${safeText(item.plan_name)}</td><td><span class="rev-val">$${moneyNumber(item.amount).toLocaleString()}</span></td><td><span class="rev-val">$${moneyNumber(item.paid_amount).toLocaleString()}</span></td><td><span class="pill ${moneyNumber(item.paid_amount)>0?'pill-green':'pill-gold'}">${moneyNumber(item.paid_amount)>0?'Pagado':'Pendiente'}</span></td><td><button class="btn-sm btn-sm-gold" onclick="registerEmailPayment(${index})">Registrar pago</button></td></tr>`).join('') : `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted)">Todavía no hay emails enviados registrados.</td></tr>`;
+  table.innerHTML=emailPaymentLog.length ? emailPaymentLog.map((item,index)=>`<tr><td>${safeText(String(item.sent_at||'').slice(0,10))}</td><td><strong>${safeText(item.full_name)}</strong></td><td>${safeText(item.email)}</td><td>${safeText(item.plan_name)}</td><td><span class="rev-val">$${moneyNumber(item.amount).toLocaleString()}</span></td><td><span class="rev-val">$${moneyNumber(item.paid_amount).toLocaleString()}</span></td><td><span class="pill ${moneyNumber(item.paid_amount)>0?'pill-green':'pill-gold'}">${moneyNumber(item.paid_amount)>0?'Pagó':'No ha pagado'}</span></td><td>${safeText(item.thank_you_sent?'Gracias enviado':(item.status||'Email enviado'))}</td><td><button class="btn-sm btn-sm-gold" onclick="registerEmailPayment(${index})">Pagó</button> <button class="btn-sm btn-sm-out" onclick="markEmailNotPaid(${index})">No pagó</button></td></tr>`).join('') : `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted)">Todavía no hay emails enviados registrados.</td></tr>`;
 }
-function registerEmailPayment(index){
+async function registerEmailPayment(index){
   const item=emailPaymentLog[index];
   if(!item) return;
   const amount=prompt(`Cantidad pagada por ${item.full_name || item.email}:`, item.paid_amount || item.amount || '');
@@ -1995,11 +2088,22 @@ function registerEmailPayment(index){
   item.paid_amount=paid;
   item.status='Pagado';
   item.paid_at=new Date().toISOString().slice(0,10);
+  await sendPaymentThanksEmail(item, paid);
   saveEmailPaymentLog();
   localPayments.unshift(normalizePayment({full_name:item.full_name,email:item.email,plan_name:item.plan_name,amount:paid,paid_at:item.paid_at,status:'paid',source:'email_log'}));
   saveLocalPayments();
   allPayments=mergePayments([]);
   renderAll();
+}
+function markEmailNotPaid(index){
+  const item=emailPaymentLog[index];
+  if(!item) return;
+  item.paid_amount=0;
+  item.status='No ha pagado';
+  item.paid_at='';
+  item.thank_you_sent=false;
+  saveEmailPaymentLog();
+  renderEmailPaymentLog();
 }
 function clearEmailPaymentLog(){
   if(!confirm('¿Seguro que quieres limpiar la lista de emails enviados?')) return;
@@ -2223,7 +2327,7 @@ function renderAll(){
   document.getElementById('kTopProg').textContent=topProg?topProg[0]:'—';
 
   if(allStudents.length>0) document.getElementById('mainNotice').style.display='none';
-  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderPaymentsTable(); renderEmailPaymentLog(); renderStudents(allStudents); renderSol();
+  renderBar(); renderDonut(); renderFinanceReport(); renderMonthly(); renderPaymentsTable(); renderEmailPaymentLog(); refreshVipEmailStats(); renderStudents(allStudents); renderSol();
 }
 
 function renderBar(){
